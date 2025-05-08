@@ -1,9 +1,14 @@
 <script setup>
-import {defineProps} from "vue";
+import {defineProps, ref} from "vue";
+import ExperienceDelete from "@/Experience/Presentation/experience-delete.component.vue";
 
 const props = defineProps({
   experience:{type:Object, required:true}
 });
+const openModal= ref(false)
+const handleDeleted = () => {
+  openModal.value = false
+}
 
 </script>
 
@@ -18,7 +23,7 @@ const props = defineProps({
           <span class="stars">★★★★★</span><span class="score">4</span>
         </div>
         <p class="experience-details">
-          S/{{ experience.price }} · {{ experience.duration }} · {{ experience.frequencies.map(s => s.value).join(' | ') }}
+          S/{{ experience.price }} · {{ experience.duration }} h · {{ experience.frequencies.map(s => s.value).join(' | ') }}
         </p>
         <p class="experience-schedule">
           {{ experience.schedules.map(s => s.value).join(' | ') }}
@@ -30,9 +35,12 @@ const props = defineProps({
     <p class="experience-description">{{ experience.description }}</p>
 
     <div class="experience-buttons">
-      <button class="btn delete">Eliminar</button>
+      <button @click="openModal = true" class="btn delete">Eliminar</button>
       <button class="btn edit">Editar</button>
     </div>
+    <teleport to="body">
+      <ExperienceDelete v-if="openModal" :experienceId="experience.id" @close="openModal = false" @deleted="handleDeleted" />
+    </teleport>
   </div>
 </template>
 

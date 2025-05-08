@@ -15,8 +15,7 @@ const openModal = ref(false)
     </div>
 
     <teleport to="body">
-
-      <ExperienceForm v-if="openModal" @close="openModal = false" @save="guardarExperiencia" />
+      <ExperienceForm v-if="openModal" @close="openModal = false"  />
     </teleport>
     <div class="article-list">
       <ExperienceList/>

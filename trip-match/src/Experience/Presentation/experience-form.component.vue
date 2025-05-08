@@ -3,7 +3,6 @@ import { ref, reactive } from 'vue'
 import {ExperiencesApiService} from "@/Experience/Application/experiences-api.service.js"
 import router from "@/router.js";
 
-
 const experiencesApiService= new ExperiencesApiService()
 const title = ref("")
 const description = ref("")
@@ -13,8 +12,9 @@ const price = ref(null)
 const frequencies = ref([])
 const schedules = ref([])
 const images = ref([])
-
 const imageUrl = ref("")
+
+const formInvalid = ref(false)
 
 const addImageByUrl = () => {
   if (imageUrl.value.trim() !== "") {
@@ -25,9 +25,6 @@ const addImageByUrl = () => {
     imageUrl.value = ""
   }
 }
-const form = reactive({
-
-})
 
 const frecuencias = [
   { label: 'Lunes a Viernes', value: 'Lunes a Viernes' },
@@ -53,6 +50,13 @@ const horariosDisponibles = [
 
 
 const SaveExperience = async () => {
+  if(!title.value|| !description.value || !location.value || !duration.value || !price.value || !frequencies.value.length===0 || !schedules.value.length===0 || !images.value.length===0){
+    formInvalid.value = true
+    return
+  }
+
+  formInvalid.value = false
+
   var experience ={
     title: title.value,
     description: description.value,
@@ -96,14 +100,16 @@ const SaveExperience = async () => {
             <pv-multi-select v-model="schedules" :options="horariosDisponibles" option-label="label" placeholder="Selecciona los horarios" class="custom-multiselect"  />
 
             <input v-model="imageUrl" type="text" placeholder="Pega la URL de la imagen (ej. https://i.imgur.com/abc.jpg)" class="input mt-2"/>
-            <button type="button" @click="addImageByUrl" class="mt-2 bg-blue-600 text-white px-3 py-1 rounded">Agregar imagen por URL</button>
+            <button type="button" @click="addImageByUrl" class="button-add-image">Agregar imagen por URL</button>
+
             <div class="mt-4 grid grid-cols-3 gap-2">
               <div v-for="(img, index) in images" :key="index" class="border p-1 rounded">
                 <img :src="img.url || img.objectUrl" alt="Imagen" class="w-full h-32 object-cover rounded" width="40px" height="40px"/>
                 <p class="text-xs mt-1 break-all">{{ img.name }}</p>
               </div>
             </div>
-            <button @click="SaveExperience" type="submit" class="mt-4 bg-green-600 text-white px-4 py-2 rounded">Guardar</button>
+            <p v-if="formInvalid" class="alert">Complete los datos correctamente</p>
+            <button  @click="SaveExperience" type="submit" class="button-add-experience">Guardar</button>
           </form>
         </div>
       </div>
@@ -148,6 +154,25 @@ const SaveExperience = async () => {
   border-radius: 6px;
   width: 100%;
   color: black;
+}
+
+.button-add-image {
+  color: black;
+  border: 1px solid #ccc;
+  background-color: #D9F2EF;
+  padding: 4px 16px;
+  width: 250px;
+  align-items: flex-start;
+  border-radius: 6px;
+}
+
+.button-add-experience {
+  margin: 0 auto;
+  padding: 10px 30px;
+  background-color: #318C8B;
+  color: white;
+  border: none;
+  border-radius: 10px;
 }
 
 .separator {
@@ -202,6 +227,11 @@ const SaveExperience = async () => {
   display: flex;
   flex-direction: column;
   gap: 10px;
+}
+
+.alert {
+  font-size: 14px;
+  color: red;
 }
 
 </style>
