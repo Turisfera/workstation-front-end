@@ -1,0 +1,21 @@
+{
+  "sidevar": {
+    "logo": "TripMatch",
+    "home":"Inicio",
+    "experienceManager": "Gestión de Experiencias",
+    "reservations": "Reservas",
+    "queries": "Consultas",
+    "agencyProfile": "Perfil de Agencia"
+  },
+  "home": {
+    "greeting": "Hola, {user}",
+    "greetingSubtitle": "¿Listo para conectar con nuevos viajeros?",
+    "summary": "Resumen",
+    "latestReviews": "Últimas reseñas",
+    "recentReservations": "Reservas recientes"
+  },
+  "experience-view": {
+    "title": "Tus Experiencias Publicadas",
+    "button": "Añadir Nueva"
+  }
+}
