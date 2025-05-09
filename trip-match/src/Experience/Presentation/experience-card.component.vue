@@ -1,17 +1,21 @@
 <script setup>
-import {defineProps, ref} from "vue";
-import ExperienceDelete from "@/Experience/Presentation/experience-delete.component.vue";
+import {defineProps, onBeforeMount, reactive, ref} from "vue";
+import router from "@/router.js";
+import {ExperiencesApiService} from "@/Experience/Application/experiences-api.service.js"
+import {ExperienceAssembler} from "@/Experience/Application/experience.assembler.js";
 
-const props = defineProps({
-  experience:{type:Object, required:true}
-});
-const openModal= ref(false)
-const handleDeleted = () => {
-  openModal.value = false
-}
+
+const props = defineProps({ experience: Object, required: true });
+
+const editArticle = (selected) => {
+  router.push({name: "updateArticle", params: {id: selected.id}});
+};
+
+const goToDeleteExperience = (id) => {
+  router.push( `/manageExperience/delete/${id}`)
+};
 
 </script>
-
 
 <template>
   <div class="experience-card">
@@ -29,18 +33,14 @@ const handleDeleted = () => {
           {{ experience.schedules.map(s => s.value).join(' | ') }}
         </p>
       </div>
-      <span class="experience-status">Estado: Activa</span>
     </div>
 
     <p class="experience-description">{{ experience.description }}</p>
 
-    <div class="experience-buttons">
-      <button @click="openModal = true" class="btn delete">Eliminar</button>
-      <button class="btn edit">Editar</button>
-    </div>
-    <teleport to="body">
-      <ExperienceDelete v-if="openModal" :experienceId="experience.id" @close="openModal = false" @deleted="handleDeleted" />
-    </teleport>
+    <template class="experience-buttons" >
+      <button @click="goToDeleteExperience(experience.id)" class="btn delete">Eliminar</button>
+      <button class="btn edit" @click="editArticle(props.experience)">Editar</button>
+    </template>
   </div>
 </template>
 

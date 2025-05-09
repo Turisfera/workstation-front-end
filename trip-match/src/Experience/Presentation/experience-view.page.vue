@@ -1,9 +1,12 @@
 <script setup>
-import ExperienceForm from '@/Experience/Presentation/experience-form.component.vue'
 import ExperienceList from "./experience-list.component.vue"
 import {ref} from "vue";
+import router from "@/router.js"
 
 const openModal = ref(false)
+const openNew = ()=>{
+  router.push( "/manageExperience/create")
+}
 
 </script>
 
@@ -11,12 +14,9 @@ const openModal = ref(false)
   <div class="p-fluid px-3 py-3 experience-container">
     <div class="experience-container-header flex justify-content-between align-items-center mb-3">
       <h3 class=" experience-tittle text-2xl font-bold">{{ $t("experience-view.title") }}</h3>
-      <button @click="openModal = true" class="add-experience-button">{{ $t("experience-view.button") }}</button>
-    </div>
 
-    <teleport to="body">
-      <ExperienceForm v-if="openModal" @close="openModal = false"  />
-    </teleport>
+      <button @click="openNew" class="add-experience-button">{{ $t("experience-view.button") }}</button>
+    </div>
     <div class="article-list">
       <ExperienceList/>
     </div>

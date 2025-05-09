@@ -2,24 +2,25 @@
 import {ExperiencesApiService} from "@/Experience/Application/experiences-api.service.js"
 import {ref} from "vue";
 import router from "@/router.js";
+import { useRoute } from "vue-router";
 
-const props = defineProps({
-  experienceId: { type: String, required: true }
-})
-const emit = defineEmits(["close", "deleted"])
-const experiencesApiService= new ExperiencesApiService()
+const route = useRoute();
+const experienceId = route.params.id;
+
+const experiencesApiService = new ExperiencesApiService();
 
 const deleteExperience = async () => {
-  const response = await experiencesApiService.deleteExperience(props.experienceId)
+  const response = await experiencesApiService.deleteExperience(experienceId);
   if (response.status === 200 || response.status === 204) {
-    alert("Experiencia eliminada con éxito.")
-    emit("deleted")
-    emit("close")
-    await router.replace({ path: '/reload' })
+    alert("Experiencia eliminada con éxito.");
     await router.replace({ path: '/manageExperience' })
   } else {
-      alert("No se pudo eliminar la experiencia.")
+    alert("No se pudo eliminar la experiencia.");
   }
+};
+
+const close = async () => {
+  await router.replace({ path: '/manageExperience' })
 }
 
 </script>
@@ -29,14 +30,12 @@ const deleteExperience = async () => {
     <div class=" rounded-lg relative form-container">
       <div class="form-title">
         <h2>Eliminar Experiencia</h2>
-        <button @click="$emit('close')" class="button-close pi pi-times"></button>
+        <button @click="close" class="button-close pi pi-times"></button>
       </div>
       <div class="separator mb-4"></div>
       <p class="font-semibold">¿Estás seguro de que deseas cancelar esta experiencia turística? </p>
       <p class=""> Esta acción no se puede deshacer.</p>
-      <button @click="deleteExperience" :disabled="loading" class="button-delete-experience">
-        {{ "Borrar" }}
-      </button>
+      <button @click="deleteExperience" class="button-delete-experience">{{ "Borrar" }}</button>
     </div>
   </div>
 </template>
@@ -95,6 +94,7 @@ const deleteExperience = async () => {
   color: white;
   border: none;
   border-radius: 10px;
+  cursor: pointer;
 }
 
 

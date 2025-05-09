@@ -17,5 +17,23 @@
   "experience-view": {
     "title": "Tus Experiencias Publicadas",
     "button": "Añadir Nueva"
+  },
+  "create-experience-form": {
+    "delete": "Eliminar",
+    "edit": "Editar",
+    "title": "Añadir Nueva Experiencia",
+    "name": "Nombre",
+    "description": "Descripción",
+    "hour": "Duración en horas",
+    "location": "Lugar",
+    "price": "Precio",
+    "frequencies": "Selecciona las frecuencias",
+    "schedules": "Selecciona los horarios",
+    "include": "¿Qué incluye esta experiencia? (máx. 3)",
+    "img": "Pega la URL de la imagen (ej. https://i.imgur.com/abc.jpg)",
+    "img-button": "Agregar imagen por url",
+    "include-button": "Agregar",
+    "alert": "Complete los datos correctamente",
+    "save": "Guardar"
   }
 }

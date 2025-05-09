@@ -17,5 +17,23 @@
   "experience-view":{
     "title": "Your Published Experiences",
     "button": "Add New"
+  },
+  "create-experience-form": {
+    "delete": "Delete",
+    "edit": "Edit",
+    "title": "Add New Experience",
+    "name": "Name",
+    "description": "Description",
+    "hour": "Duration in hours",
+    "location": "Location",
+    "price": "Price",
+    "frequencies": "Select the frequencies",
+    "schedules": "Select the schedules",
+    "include": "What does this experience include? (max. 3)",
+    "img": "Paste the image URL (e.g. https://i.imgur.com/abc.jpg)",
+    "img-button": "Add image by URL",
+    "include-button": "Add",
+    "alert": "Please complete the form correctly",
+    "save": "Save"
   }
 }
