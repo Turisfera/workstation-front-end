@@ -27,10 +27,10 @@ const goToDeleteExperience = (id) => {
           <span class="stars">★★★★★</span><span class="score">4</span>
         </div>
         <p class="experience-details">
-          S/{{ experience.price }} · {{ experience.duration }} h · {{ experience.frequencies.map(s => s.value).join(' | ') }}
+          S/{{ experience.price }} · {{ experience.duration }} h · {{ experience.frequencies.join(' | ') }}
         </p>
         <p class="experience-schedule">
-          {{ experience.schedules.map(s => s.value).join(' | ') }}
+          {{ experience.schedules.join(' | ') }}
         </p>
       </div>
     </div>
@@ -38,8 +38,8 @@ const goToDeleteExperience = (id) => {
     <p class="experience-description">{{ experience.description }}</p>
 
     <template class="experience-buttons" >
-      <button @click="goToDeleteExperience(experience.id)" class="btn delete">Eliminar</button>
-      <button class="btn edit" @click="editArticle(props.experience)">Editar</button>
+      <button @click="goToDeleteExperience(experience.id)" class="btn delete">{{ $t("create-experience-form.delete") }}</button>
+      <button class="btn edit" @click="editArticle(props.experience)">{{ $t("create-experience-form.edit") }}</button>
     </template>
   </div>
 </template>

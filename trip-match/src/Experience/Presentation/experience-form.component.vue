@@ -118,8 +118,8 @@ const SaveExperience = async () => {
     location: location.value,
     duration: duration.value,
     price: price.value,
-    frequencies: frequencies.value,
-    schedules:schedules.value,
+    frequencies: frequencies.value.map(f => f.value || f),
+    schedules: schedules.value.map(s => s.value || s),
     images: images.value.map(img => img.url || img.objectUrl),
     includes: includes.value
 

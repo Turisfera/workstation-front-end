@@ -15,13 +15,13 @@ onBeforeMount(async () => {
   experiences.value = ExperienceAssembler.toEntitiesFromResponse(await experiencesApiService.getExperiences());
   console.log('Transformed Experiences:', experiences.value);
 });
-
+/*
 defineProps({
   experiences: {
     type: Array,
     required: true
   }
-});
+});*/
 
 </script>
 
