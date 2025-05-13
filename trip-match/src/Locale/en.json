@@ -8,11 +8,14 @@
     "agencyProfile": "Agency Profile"
   },
   "home": {
-    "greeting": "Hi, {user}",
+    "greeting": "Hello, {user}",
     "greetingSubtitle": "Ready to connect with new travelers?",
-    "summary": "Resumen",
-    "latestReviews": "Latest reviews",
-    "recentReservations": "Recent reservations"
+    "destination": "Destination",
+    "day": "Day",
+    "experienceType": "Experience type",
+    "budget": "Budget",
+    "search": "Search",
+    "recommendations": "Recommendations for you"
   },
   "experience-view":{
     "title": "Your Published Experiences",
