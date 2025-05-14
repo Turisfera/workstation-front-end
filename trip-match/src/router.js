@@ -11,7 +11,9 @@ const routes = [
     { path: '/manageExperience/create', component: ExperienceForm, exact: true },
     { path: '/manageExperience/delete/:id', component: ExperienceDelete, props: true },
     { path: '/manageExperience/update/:id', component: ExperienceForm, name: "updateArticle", props: true},
-    { path: '/agency/profile',     name: 'AgencyProfile',       component: AgencyProfilePage }
+    { path: '/agency/profile',     name: 'AgencyProfile',       component: AgencyProfilePage },
+    { path: '/queries', component: () => import('@/Search/Presentation/search-page.vue'), name: 'Queries' },
+    { path: '/search', component: () => import('@/Search/Presentation/search-page.vue'), name: 'Search' }
 ]
 
 const router = createRouter({

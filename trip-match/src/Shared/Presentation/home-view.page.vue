@@ -4,11 +4,13 @@ import { useI18n } from 'vue-i18n'
 import ExperienceCard from '@/Experience/Presentation/experience-card.component.vue'
 import { ExperiencesApiService } from '@/Experience/Application/experiences-api.service'
 import { ExperienceAssembler } from '@/Experience/Application/experience.assembler.js'
+import { useRouter } from 'vue-router'
 
 
 const experiencesApiService = new ExperiencesApiService();
 const { t } = useI18n()
 const user = 'Marcia Melgarejo'
+const router = useRouter()
 
 
 const destination = ref('')
@@ -48,6 +50,10 @@ const filterExperiences = () => {
   })
 }
 
+const goToSearch = () => {
+  router.push('/search');
+}
+
 </script>
 
 <template>
@@ -64,7 +70,7 @@ const filterExperiences = () => {
         <input v-model="day" class="input" :placeholder="t('home.day')" />
         <input v-model="experienceType" class="input" :placeholder="t('home.experienceType')" />
         <input v-model="budget" class="input" type="number" :placeholder="t('home.budget')" />
-        <button class="search-button" @click="filterExperiences">{{ t('home.search') }}</button>
+        <button class="search-button" @click="goToSearch">{{ t('home.search') }}</button>
       </div>
       <h3 class="recommendation-title">{{ t('home.recommendations') }}</h3>
       <div class="recommendation-grid">
