@@ -3,7 +3,7 @@ import App from './App.vue';
 import PrimeVue from 'primevue/config';
 import Aura from '@primeuix/themes/aura';
 import i18n from "@/i18n.js";
-import {SelectButton} from "primevue";
+import SelectButton from "primevue/selectbutton";
 import '@fontsource/montserrat';
 import 'primeicons/primeicons.css'
 import router from '@/router.js'
@@ -13,8 +13,6 @@ import '/node_modules/primeflex/primeflex.css'
 import InputNumber from 'primevue/inputnumber'
 import Toast from 'primevue/toast'
 
-import Button from 'primevue/button'
-import Lara from '@primeuix/themes/lara';
 
 const app = createApp(App)
 

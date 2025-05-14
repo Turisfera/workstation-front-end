@@ -119,7 +119,7 @@ import { ref, onBeforeMount } from "vue";
 import { useI18n } from "vue-i18n";
 import Avatar from "primevue/avatar";
 import Dialog from "primevue/dialog";
-import StarRating from "@/components/StarRating.vue";
+import StarRating from "@/Agency/Presentation/StarRating.vue";
 import AgencyForm from "./agency-form.component.vue";
 import { AgenciesApiService } from "@/Agency/Application/agencies-api.service.js";
 import { ReviewsApiService } from "@/Agency/Application/reviews-api.service.js";
