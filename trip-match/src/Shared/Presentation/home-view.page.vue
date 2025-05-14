@@ -25,6 +25,7 @@ onMounted(async () => {
   console.log('API Response:', apiResponse);
   experiences.value = ExperienceAssembler.toEntitiesFromResponse(await experiencesApiService.getExperiences());
   console.log('Transformed Experiences:', experiences.value);
+  filterExperiences();
 });
 
 
@@ -32,7 +33,7 @@ const filterExperiences = () => {
   const noFiltersApplied = !destination.value && !day.value && !experienceType.value && !budget.value;
 
   if (noFiltersApplied) {
-    filteredExperiences.value = []; // No se muestra nada
+    filteredExperiences.value = experiences.value;
     return;
   }
 
@@ -51,96 +52,88 @@ const filterExperiences = () => {
 
 <template>
   <div class="home-view">
-    <main class="main-content">
-
-      <h3 class="greetings">{{ $t('home.greeting', { user }) }}</h3>
-      <p class="welcome-message">{{ $t('home.greetingSubtitle') }}</p>
-
-
-      <div class="row">
-        <input type="text" :placeholder="$t('home.destination')" class="input" v-model="destination" />
-        <input type="text" :placeholder="$t('home.day')" class="input" v-model="day" />
+    <div class="main-content">
+      <div class="greetings">
+        <div class="welcome-message">
+          <h2>{{ t('home.greeting', { user }) }}</h2>
+          <p>{{ t('home.greetingSubtitle') }}</p>
+        </div>
       </div>
-
-
       <div class="row">
-        <input type="text" :placeholder="$t('home.experienceType')" class="input" v-model="experienceType" />
-        <input type="number" :placeholder="$t('home.budget')" class="input" v-model="budget" />
-        <button class="search-button" @click="filterExperiences">{{ $t('home.search') }}</button>
+        <input v-model="destination" class="input" :placeholder="t('home.destination')" />
+        <input v-model="day" class="input" :placeholder="t('home.day')" />
+        <input v-model="experienceType" class="input" :placeholder="t('home.experienceType')" />
+        <input v-model="budget" class="input" type="number" :placeholder="t('home.budget')" />
+        <button class="search-button" @click="filterExperiences">{{ t('home.search') }}</button>
       </div>
-
-
-      <p class="recommendation-title">{{ $t('home.recommendations') }}</p>
+      <h3 class="recommendation-title">{{ t('home.recommendations') }}</h3>
       <div class="recommendation-grid">
         <ExperienceCard
-            v-for="experience in filteredExperiences"
-            :key="experience.id"
-            :experience="experience"
+          v-for="experience in filteredExperiences"
+          :key="experience.id"
+          :experience="experience"
         />
       </div>
-    </main>
+    </div>
   </div>
 </template>
 
 <style scoped>
 .home-view {
-  color: black;
-}
-
-.main-content {
-  padding: 2rem;
-  max-width: 1200px;
+  width: 100%;
+  max-width: 1400px;
   margin: 0 auto;
 }
-
-.greetings {
-  font-size: 36px;
-  font-weight: 700;
+.main-content {
+  padding: 2rem 1rem;
 }
-
-.welcome-message {
-  font-size: 1.2rem;
-  margin-top: 0.5rem;
+.greetings {
   margin-bottom: 2rem;
 }
-
+.welcome-message h2 {
+  font-size: 2rem;
+  font-weight: 700;
+  color: #222;
+}
+.welcome-message p {
+  color: #666;
+  font-size: 1.1rem;
+}
 .row {
   display: flex;
   gap: 1rem;
-  margin-bottom: 1rem;
-  flex-wrap: wrap;
+  margin-bottom: 2rem;
 }
-
 .input {
-  flex: 1 1 250px;
-  height: 48px;
-  font-size: 16px;
-  padding: 0 1rem;
+  flex: 1;
+  padding: 0.5rem 1rem;
   border: 1px solid #ccc;
   border-radius: 8px;
+  font-size: 1rem;
 }
-
 .search-button {
-  height: 48px;
-  padding: 0 1.5rem;
-  background-color: black;
-  color: white;
-  font-weight: bold;
+  background: #318C8B;
+  color: #fff;
   border: none;
   border-radius: 8px;
-  cursor: pointer;
-}
-
-.recommendation-title {
-  font-weight: 600;
+  padding: 0.5rem 1.5rem;
   font-size: 1rem;
-  margin-top: 2rem;
-  margin-bottom: 1rem;
+  cursor: pointer;
+  font-weight: 600;
+  transition: background 0.2s;
 }
-
+.search-button:hover {
+  background: #256c6b;
+}
+.recommendation-title {
+  margin: 2rem 0 1rem 0;
+  font-size: 1.3rem;
+  font-weight: 600;
+  color: #222;
+}
 .recommendation-grid {
   display: flex;
-  flex-wrap: wrap;
+  flex-direction: column;
   gap: 1.5rem;
 }
 </style>
