@@ -35,5 +35,23 @@
     "include-button": "Agregar",
     "alert": "Complete los datos correctamente",
     "save": "Guardar"
+  },
+  "agencyProfile": {
+    "reviews":     "Reseñas",
+    "reservations":"Reservas",
+    "edit":        "Editar",
+    "editprofile": "Editar Perfil de Agencia",
+    "viewMore":    "Ver más",
+    "reviewsTitle": "Reseñas y Puntaje"
+  },
+  "createAgency": {
+    "name":        "Nombre",
+    "description": "Descripción",
+    "phone": "Teléfono",
+    "email": "Correo",
+    "img":         "URL de la imagen de perfil",
+    "facebook":    "Facebook",
+    "instagram":   "Instagram",
+    "whatsapp":    "WhatsApp"
   }
 }
