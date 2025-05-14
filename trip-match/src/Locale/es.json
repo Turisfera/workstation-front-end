@@ -38,5 +38,17 @@
     "include-button": "Agregar",
     "alert": "Complete los datos correctamente",
     "save": "Guardar"
+  },
+  "reservation-view": {
+    "title": "Panel de reservas",
+    "no-reserves": "No se encontraron resultados de reservas",
+    "search": "Buscar por nombre de viajero o experiencia",
+    "revenues": "Ingresos"
+  },
+  "reservation-info": {
+    "date": "Fecha de reserva",
+    "experience": "Experiencia",
+    "people": "Personas",
+    "total-paid": "Total Pagado"
   }
 }

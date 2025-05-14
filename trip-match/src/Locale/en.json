@@ -38,5 +38,17 @@
     "include-button": "Add",
     "alert": "Please complete the form correctly",
     "save": "Save"
+  },
+  "reservation-view": {
+    "title": "Reservation panel",
+    "no-reserves": "No results were found for reservations",
+    "search": "Search by traveler name or experience",
+    "revenues": "Revenues"
+  },
+  "reservation-info": {
+    "date": "Reservation date",
+    "experience": "Experience",
+    "people": "People",
+    "total-paid": "Total paid"
   }
 }
