@@ -1,6 +1,5 @@
 <template>
   <div class="agency-form">
-    <!-- Nombre -->
     <div class="field">
       <label for="name">{{ t('createAgency.name') }}</label>
       <InputText
@@ -9,8 +8,6 @@
           class="input-text full-width"
       />
     </div>
-
-    <!-- Descripción -->
     <div class="field">
       <label for="description">{{ t('createAgency.description') }}</label>
       <textarea
@@ -20,8 +17,6 @@
           rows="4"
       ></textarea>
     </div>
-
-    <!-- Avatar URL -->
     <div class="field">
       <label for="avatar">{{ t('createAgency.img') }}</label>
       <InputText
@@ -31,7 +26,6 @@
           placeholder="https://..."
       />
     </div>
-    <!-- Teléfono -->
     <div class="field">
       <label for="phone">{{ t('createAgency.phone') }}</label>
       <InputText
@@ -51,8 +45,6 @@
           placeholder="contacto@andesexplorer.pe"
       />
     </div>
-
-    <!-- Redes sociales -->
     <div class="field">
       <label for="facebook">{{ t('createAgency.facebook') }}</label>
       <InputText
@@ -78,19 +70,13 @@
           placeholder="https://wa.me/..."
       />
     </div>
-
-    <!-- Botones -->
-    <div class="actions">
-      <Button
-          label="Cancelar"
-          class="p-button-text"
-          @click="$emit('cancel')"
-      />
-      <Button
-          label="Guardar"
-          severity="success"
-          @click="onSave"
-      />
+    <div class="form-button-group">
+    <button class="form-button cancel" @click="$emit('cancel')">
+      {{ t('experience.cancel') || 'Cancelar' }}
+    </button>
+    <button class="form-button save" @click="onSave">
+     {{ t('experience.save') || 'Guardar' }}
+    </button>
     </div>
   </div>
 </template>
@@ -105,10 +91,10 @@ import { AgencyAssembler } from '@/Agency/Application/agency.assembler.js'
 const props = defineProps({ agency: Object })
 const emit  = defineEmits(['cancel','saved'])
 const { t } = useI18n()
-const form = reactive(AgencyAssembler.toRequestPayload(props.agency))
+const form = reactive({ ...props.agency })
 
 function onSave() {
-  emit('saved', { ...form })
+  emit('saved', AgencyAssembler.toRequestPayload(form))
 }
 </script>
 
@@ -143,10 +129,39 @@ function onSave() {
 .full-width { width: 100%; }
 
 .field { margin-bottom: 1rem; }
-
-.actions {
+.form-button {
+  padding: 12px 20px;
+  font-size: 16px;
+  border: none;
+  border-radius: 15px;
+  cursor: pointer;
   display: flex;
-  justify-content: flex-end;
-  gap: .5rem;
+  align-items: center;
+  gap: 8px;
+  color: white;
+  transition: background-color 0.3s ease;
 }
+
+.form-button.save {
+  background-color: #318C8B;
+}
+
+.form-button.save:hover {
+  background-color: #26706f;
+}
+
+.form-button.cancel {
+  background-color: #D9534F;
+}
+
+.form-button.cancel:hover {
+  background-color: #b52b27;
+}
+.form-button-group {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-top: 1.5rem;
+}
+
 </style>

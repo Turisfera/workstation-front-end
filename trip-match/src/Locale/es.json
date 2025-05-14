@@ -44,6 +44,10 @@
     "viewMore":    "Ver más",
     "reviewsTitle": "Reseñas y Puntaje"
   },
+  "experience": {
+    "cancel": "cancelar",
+    "save": "guardar"
+  },
   "createAgency": {
     "name":        "Nombre",
     "description": "Descripción",
