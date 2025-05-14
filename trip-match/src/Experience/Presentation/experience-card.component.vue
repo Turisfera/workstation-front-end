@@ -7,6 +7,28 @@ import {ExperienceAssembler} from "@/Experience/Application/experience.assembler
 
 const props = defineProps({ experience: Object, required: true });
 
+const isFavorite = ref(false);
+
+// Simulación de favoritos en localStorage (puedes cambiar a API si tienes backend)
+const FAVORITES_KEY = 'favoriteExperiences';
+
+onBeforeMount(() => {
+  const favs = JSON.parse(localStorage.getItem(FAVORITES_KEY) || '[]');
+  isFavorite.value = favs.includes(props.experience.id);
+});
+
+const toggleFavorite = () => {
+  let favs = JSON.parse(localStorage.getItem(FAVORITES_KEY) || '[]');
+  if (isFavorite.value) {
+    favs = favs.filter(id => id !== props.experience.id);
+    isFavorite.value = false;
+  } else {
+    favs.push(props.experience.id);
+    isFavorite.value = true;
+  }
+  localStorage.setItem(FAVORITES_KEY, JSON.stringify(favs));
+};
+
 const editArticle = (selected) => {
   router.push({name: "updateArticle", params: {id: selected.id}});
 };
@@ -19,72 +41,65 @@ const goToDeleteExperience = (id) => {
 
 <template>
   <div class="experience-card">
-    <div class="experience-header">
-      <img :src="experience.images[0]" alt="Imagen experiencia" class="experience-img" />
-      <div class="experience-info">
-        <h2 class="experience-title">{{ experience.title }}</h2>
-        <div class="experience-rating">
-          <span class="stars">★★★★★</span><span class="score">4</span>
-        </div>
-        <p class="experience-details">
-          S/{{ experience.price }} · {{ experience.duration }} h · {{ experience.frequencies.join(' | ') }}
-        </p>
-        <p class="experience-schedule">
-          {{ experience.schedules.join(' | ') }}
-        </p>
+    <img :src="experience.images[0]" alt="Imagen experiencia" class="experience-img" />
+    <div class="experience-content">
+      <h3 class="experience-title">{{ experience.title }}</h3>
+      <div class="experience-rating">
+        <span class="stars">★★★★★</span>
+        <span class="score">{{ experience.rating }}</span>
+      </div>
+      <p class="experience-details">
+        S/{{ experience.price }} · {{ experience.duration }} h · {{ experience.frequencies.join(' | ') }}
+      </p>
+      <p class="experience-schedule">
+        {{ experience.schedules.join(' | ') }}
+      </p>
+      <p class="experience-description">{{ experience.description }}</p>
+      <div class="experience-footer">
+        <button class="favorite-btn" @click="toggleFavorite">
+          <span :class="['heart', isFavorite ? 'heart--active' : '']">♥</span>
+        </button>
+        <button class="btn more-info">Ver más</button>
       </div>
     </div>
-
-    <p class="experience-description">{{ experience.description }}</p>
-
-    <template class="experience-buttons" >
-      <button @click="goToDeleteExperience(experience.id)" class="btn delete">{{ $t("create-experience-form.delete") }}</button>
-      <button class="btn edit" @click="editArticle(props.experience)">{{ $t("create-experience-form.edit") }}</button>
-    </template>
   </div>
 </template>
 
 <style scoped>
 .experience-card {
-  border: 1px solid #00000040;
+  display: flex;
+  flex-direction: column;
+  border: 1px solid #ddd;
   border-radius: 12px;
-  padding: 16px;
-  width: 100%;
-  max-width: 1400px;
-  font-family: sans-serif;
-  box-shadow: 2px 2px 8px #00000010;
-  margin-bottom: 16px;
+  overflow: hidden;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  transition: transform 0.2s;
 }
 
-.experience-header {
-  display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
-  position: relative;
+.experience-card:hover {
+  transform: translateY(-5px);
 }
 
 .experience-img {
-  width: 100px;
-  height: 100px;
-  border-radius: 12px;
+  width: 100%;
+  height: 180px;
   object-fit: cover;
 }
 
-.experience-info {
-  margin-left: 16px;
-  flex: 1;
+.experience-content {
+  padding: 16px;
 }
 
 .experience-title {
-  font-weight: bold;
   font-size: 1.2rem;
-  margin: 0;
+  font-weight: bold;
+  margin: 0 0 8px;
 }
 
 .experience-rating {
   display: flex;
   align-items: center;
-  margin: 4px 0;
+  margin-bottom: 8px;
 }
 
 .stars {
@@ -98,47 +113,49 @@ const goToDeleteExperience = (id) => {
 
 .experience-details,
 .experience-schedule {
-  margin: 2px 0;
-  font-size: 0.95rem;
-}
-
-.experience-status {
-  background-color: #dff4e3;
-  color: #184f28;
-  padding: 4px 8px;
-  border-radius: 12px;
-  font-size: 0.85rem;
-  position: absolute;
-  top: 0;
-  right: 0;
+  font-size: 0.9rem;
+  color: #555;
+  margin: 4px 0;
 }
 
 .experience-description {
-  margin: 16px 0 8px;
-  font-size: 0.95rem;
+  font-size: 0.9rem;
+  color: #777;
+  margin: 8px 0;
 }
 
-.experience-buttons {
+.experience-footer {
   display: flex;
-  gap: 8px;
-  justify-content: flex-end;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 16px;
 }
 
-.btn {
+.favorite-btn {
+  background: none;
   border: none;
-  padding: 8px 16px;
-  border-radius: 10px;
-  font-weight: bold;
   cursor: pointer;
+  font-size: 1.5rem;
+  color: #ccc;
+  transition: color 0.2s;
 }
 
-.btn.delete {
-  background-color: #d7f2f0;
+.favorite-btn .heart--active {
   color: #000;
 }
 
-.btn.edit {
-  background-color: #2c8a8a;
-  color: white;
+.btn.more-info {
+  background-color: #318C8B;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  padding: 8px 16px;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.btn.more-info:hover {
+  background-color: #256c6b;
 }
 </style>
