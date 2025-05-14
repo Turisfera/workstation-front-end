@@ -10,9 +10,12 @@
   "home": {
     "greeting": "Hola, {user}",
     "greetingSubtitle": "¿Listo para conectar con nuevos viajeros?",
-    "summary": "Resumen",
-    "latestReviews": "Últimas reseñas",
-    "recentReservations": "Reservas recientes"
+    "destination": "Destino",
+    "day": "Día",
+    "experienceType": "Tipo de experiencia",
+    "budget": "Presupuesto",
+    "search": "Buscar",
+    "recommendations": "Recomendaciones para ti"
   },
   "experience-view": {
     "title": "Tus Experiencias Publicadas",
