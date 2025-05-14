@@ -38,5 +38,27 @@
     "include-button": "Add",
     "alert": "Please complete the form correctly",
     "save": "Save"
+  },
+  "agencyProfile": {
+    "reviews":     "Reviews",
+    "reservations":"Reservations",
+    "edit":        "Edit",
+    "editprofile": "Edit Agency Profile",
+    "viewMore":    "View more",
+    "reviewsTitle": "Reviews & Rating"
+  },
+  "experience": {
+    "cancel": "cancel",
+    "save": "save"
+  },
+  "createAgency": {
+    "name":         "Name",
+    "description":  "Description",
+    "phone": "Phone",
+    "email": "Email",
+    "img":          "Profile Image URL",
+    "facebook":     "Facebook",
+    "instagram":    "Instagram",
+    "whatsapp":     "WhatsApp"
   }
 }

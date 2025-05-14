@@ -1,26 +1,45 @@
 <script setup>
+import { computed } from 'vue'
+import { useRoute } from 'vue-router'
+import { useI18n } from 'vue-i18n'
 import LanguageSwitcher from '@/Shared/Presentation/language-switcher.component.vue'
+
+const route = useRoute()
+const { t } = useI18n()
+
+const titleKeyMap = {
+  Home:               'home',
+  ExperienceManager:  'experienceManager',
+  Reservations:       'reservations',
+  Queries:            'queries',
+  AgencyProfile:      'agencyProfile'
+}
+
+const subtitle = computed(() => {
+  const key = titleKeyMap[route.name] || 'home'
+  return t(`sidevar.${key}`)
+})
 </script>
 
 <template>
   <div class="header-container">
-    <h2 class="subtitle"> {{ $t('sidevar.home')}}</h2>
+    <h2 class="subtitle">{{ subtitle }}</h2>
     <LanguageSwitcher/>
   </div>
 </template>
 
 <style scoped>
-  .subtitle {
-    color: black;
-    font-weight: 600;
-    font-size: 20px;
-  }
-  .header-container {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 0 1rem;
-    height: 85px;
-    border-bottom: 3px solid #ddd;
-  }
+.header-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 1rem;
+  height: 85px;
+  border-bottom: 3px solid #ddd;
+}
+.subtitle {
+  color: #000;
+  font-weight: 600;
+  font-size: 20px;
+}
 </style>
