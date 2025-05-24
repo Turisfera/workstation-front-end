@@ -32,7 +32,7 @@ const filterExperiences = () => {
   const noFiltersApplied = !destination.value && !day.value && !experienceType.value && !budget.value;
 
   if (noFiltersApplied) {
-    filteredExperiences.value = []; // No se muestra nada
+    filteredExperiences.value = [];
     return;
   }
 

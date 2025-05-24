@@ -12,7 +12,8 @@ import FileUpload from 'primevue/fileupload'
 import '/node_modules/primeflex/primeflex.css'
 import InputNumber from 'primevue/inputnumber'
 import Toast from 'primevue/toast'
-
+import InputText from 'primevue/inputtext';
+import Button    from 'primevue/button';
 
 const app = createApp(App)
 
@@ -25,7 +26,8 @@ app.use(PrimeVue,
         }
     }
 });
-
+app.component('pv-input-text', InputText);
+app.component('pv-button',    Button);
 app.component('pv-select-button', SelectButton)
 app.component('pv-multi-select', MultiSelect)
 app.component('pv-file-upload', FileUpload)
