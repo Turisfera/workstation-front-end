@@ -37,7 +37,8 @@
     "img-button": "Agregar imagen por url",
     "include-button": "Agregar",
     "alert": "Complete los datos correctamente",
-    "save": "Guardar"
+    "save": "Guardar",
+    "category": "Categoria"
   },
   "agencyProfile": {
     "reviews":     "Reseñas",

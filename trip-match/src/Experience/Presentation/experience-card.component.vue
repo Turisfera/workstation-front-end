@@ -1,14 +1,11 @@
 <script setup>
 import {defineProps, onBeforeMount, reactive, ref} from "vue";
 import router from "@/router.js";
-import {ExperiencesApiService} from "@/Experience/Application/experiences-api.service.js"
-import {ExperienceAssembler} from "@/Experience/Application/experience.assembler.js";
 
-
-const props = defineProps({ experience: Object, required: true });
+const props = defineProps({ experience: Object, categoryDescription: String, required: true });
 
 const editArticle = (selected) => {
-  router.push({name: "updateArticle", params: {id: selected.id}});
+  router.push({name: "ExperienceEdit", params: {id: selected.id}});
 };
 
 const goToDeleteExperience = (id) => {
@@ -24,10 +21,10 @@ const goToDeleteExperience = (id) => {
       <div class="experience-info">
         <h2 class="experience-title">{{ experience.title }}</h2>
         <div class="experience-rating">
-          <span class="stars">★★★★★</span><span class="score">4</span>
+          <span class="stars">★★★★★</span><span class="score">5</span>
         </div>
         <p class="experience-details">
-          S/{{ experience.price }} · {{ experience.duration }} h · {{ experience.frequencies.join(' | ') }}
+          S/{{ experience.price }} · {{ experience.duration }} h · {{ experience.frequencies.value}} · {{ categoryDescription}}
         </p>
         <p class="experience-schedule">
           {{ experience.schedules.join(' | ') }}

@@ -1,19 +1,25 @@
 <script setup>
 import {ref, reactive, onMounted} from 'vue'
 import {ExperiencesApiService} from "@/Experience/Application/experiences-api.service.js"
+import {CategoryApiService} from "@/Experience/Application/category-api.service.js";
 import router from "@/router.js";
 import {useRoute} from "vue-router";
 
+
 const experiencesApiService= new ExperiencesApiService()
+const categoryApiService= new CategoryApiService()
+
 const title = ref("")
 const description = ref("")
 const location = ref("")
 const duration = ref(null)
 const price = ref(null)
-const frequencies = ref([])
+const frequencies = ref("")
 const schedules = ref([])
 const images = ref([])
 const imageUrl = ref("")
+const category = ref("")
+const categories = ref([])
 
 const formInvalid = ref(false)
 const routes = useRoute();
@@ -32,7 +38,7 @@ defineProps({
       location: "",
       duration: 0,
       price: 0.0,
-      frequencies: [],
+      frequencies: "",
       schedules: [],
       images: []
     })
@@ -40,22 +46,32 @@ defineProps({
 });
 
 onMounted(async () => {
+  const categoryResponse =await categoryApiService.getCategory();
+  categories.value = categoryResponse.data;
+
   if (id.value !== '') {
     const response = await experiencesApiService.getById(id.value);
+
     title.value = response.data.title;
     description.value = response.data.description;
     location.value = response.data.location;
     duration.value = response.data.duration;
     price.value = response.data.price;
     frequencies.value = response.data.frequencies;
-    schedules.value = response.data.schedules;
+    schedules.value = (response.data.schedules || []).map(s => ({
+      label: s,
+      value: s
+    }));
+
     images.value = response.data.images.map(url => ({
       name: "Imagen existente",
       url
     }));
     includes.value = response.data.includes || [];
+    category.value = response.data.categoryId;
   }
 })
+
 
 const addImageByUrl = () => {
   if (imageUrl.value.trim() !== "") {
@@ -85,6 +101,7 @@ const frecuencias = [
   { label: 'Todos los días', value: 'Todos los días' }
 ];
 
+
 const horariosDisponibles = [
   { label: '08:00', value: '08:00' },
   { label: '09:00', value: '09:00' },
@@ -106,7 +123,7 @@ const close = async () => {
 }
 
 const SaveExperience = async () => {
-  if(!title.value|| !description.value || !location.value || !duration.value || !price.value || frequencies.value.length===0 || schedules.value.length===0 || images.value.length===0){
+  if(!title.value|| !description.value || !location.value || !duration.value || !price.value || !frequencies.value || schedules.value.length===0 || images.value.length===0||!category.value){
     formInvalid.value = true
     return
   }
@@ -118,11 +135,11 @@ const SaveExperience = async () => {
     location: location.value,
     duration: duration.value,
     price: price.value,
-    frequencies: frequencies.value.map(f => f.value || f),
+    frequencies: frequencies.value,
     schedules: schedules.value.map(s => s.value || s),
     images: images.value.map(img => img.url || img.objectUrl),
-    includes: includes.value
-
+    includes: includes.value,
+    categoryId: category.value
   }
 
   if(id.value!==''){
@@ -150,7 +167,7 @@ const SaveExperience = async () => {
           <button @click="close" class="button-close pi pi-times"></button>
         </div>
         <div class="separator mb-4"></div>
-        <div class="form">
+        <div class="form form-scroll">
           <form @submit.prevent="submit" class="form-fields form1">
             <Toast />
             <input v-model="title" type="text" :placeholder="$t('create-experience-form.name')" class="input" required />
@@ -158,8 +175,9 @@ const SaveExperience = async () => {
             <input v-model="location" type="text" :placeholder="$t('create-experience-form.location')" class="input " required />
             <input v-model="duration" type="number" min="1" step="1" :placeholder="$t('create-experience-form.hour')" class="input">
             <input v-model="price" type="number" min="0" step="0.10" :placeholder="$t('create-experience-form.price')" class="input">
-            <pv-multi-select v-model="frequencies" :options="frecuencias" option-label="label" :placeholder="$t('create-experience-form.frequencies')" class="w-full custom-multiselect" ></pv-multi-select>
+            <pv-input-select  v-model="frequencies" :options="frecuencias" optionLabel="label" :placeholder="$t('create-experience-form.frequencies')" class="w-full custom-multiselect"></pv-input-select>
             <pv-multi-select v-model="schedules" :options="horariosDisponibles" option-label="label" :placeholder="$t('create-experience-form.schedules')" class="custom-multiselect"  />
+            <pv-input-select  v-model="category" :options="categories" optionLabel="description" optionValue="id"  :placeholder="$t('create-experience-form.category')" class="w-full custom-multiselect"></pv-input-select>
 
             <div class="includes-section">
               <div class="flex gap-2 mb-2">
@@ -290,6 +308,13 @@ h2{
   flex-direction: column;
   justify-content: center;
   gap: 10px;
+  max-height: 90vh;
+}
+
+.form-scroll {
+  overflow-y: auto;
+  max-height: 70vh;
+  padding-right: 10px;
 }
 
 .button-close {

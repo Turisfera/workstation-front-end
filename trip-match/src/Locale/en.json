@@ -37,7 +37,8 @@
     "img-button": "Add image by URL",
     "include-button": "Add",
     "alert": "Please complete the form correctly",
-    "save": "Save"
+    "save": "Save",
+    "category": "Category"
   },
   "agencyProfile": {
     "reviews":     "Reviews",

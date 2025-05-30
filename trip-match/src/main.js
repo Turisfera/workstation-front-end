@@ -14,6 +14,7 @@ import InputNumber from 'primevue/inputnumber'
 import Toast from 'primevue/toast'
 import InputText from 'primevue/inputtext';
 import Button    from 'primevue/button';
+import Select from 'primevue/select';
 
 const app = createApp(App)
 
@@ -22,7 +23,6 @@ app.use(PrimeVue,
     theme: {
         preset: Aura,
         options: {
-            darkMode: true
         }
     }
 });
@@ -33,7 +33,7 @@ app.component('pv-multi-select', MultiSelect)
 app.component('pv-file-upload', FileUpload)
 app.component('pv-input-number', InputNumber)
 app.component('Toast', Toast)
-
+app.component('pv-input-select', Select)
 
 
 app.use(i18n)
