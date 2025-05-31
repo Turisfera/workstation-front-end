@@ -9,6 +9,7 @@ import ExperienceForm    from '@/Experience/Presentation/experience-form.compone
 import ExperienceDelete  from '@/Experience/Presentation/experience-delete.component.vue'
 import AgencyProfilePage from '@/Agency/Presentation/agency-profile.page.vue'
 import ReservationsView  from '@/Reservations/Presentation/reservations-view.page.vue'
+import ExperienceSearchResults from "@/Experience/Presentation/experience-search-results.page.vue";
 
 const routes = [
     {
@@ -44,7 +45,8 @@ const routes = [
             },
             { path: 'agency/home',          name: 'AgencyHome',     component: HomeView },
             { path: 'agency/profile',       name: 'AgencyProfile',  component: AgencyProfilePage },
-            { path: 'reservations',         name: 'Reservations',   component: ReservationsView }
+            { path: 'reservations',         name: 'Reservations',   component: ReservationsView },
+            { path: 'search', name: 'ExperienceSearch', component: ExperienceSearchResults}
         ]
     },
     { path: '/:catchAll(.*)', redirect: '/login' }

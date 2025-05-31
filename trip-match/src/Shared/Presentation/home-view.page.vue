@@ -1,16 +1,20 @@
 <script setup>
 import { ref, onMounted,watch } from 'vue'
 import { useI18n } from 'vue-i18n'
-import ExperienceCard from '@/Experience/Presentation/experience-card.component.vue'
+import ExperienceCardUser from '@/Experience/Presentation/experience-card-user.component.vue'
 import { ExperiencesApiService } from '@/Experience/Application/experiences-api.service'
 import { ExperienceAssembler } from '@/Experience/Application/experience.assembler.js'
+import {CategoryAssembler} from "@/Experience/Application/category.assembler.js";
+import {CategoryApiService} from "@/Experience/Application/category-api.service.js";
+import router from "@/router.js";
 
-
+const categoryApiService = new CategoryApiService();
 const experiencesApiService = new ExperiencesApiService();
 const { t } = useI18n()
 const user = 'Marcia Melgarejo'
 
-
+const categories = ref([])
+const categoryMap= ref({})
 const destination = ref('')
 const day = ref('')
 const experienceType = ref('')
@@ -22,29 +26,23 @@ const filteredExperiences = ref([])
 
 onMounted(async () => {
   const apiResponse = await experiencesApiService.getExperiences();
-  console.log('API Response:', apiResponse);
   experiences.value = ExperienceAssembler.toEntitiesFromResponse(await experiencesApiService.getExperiences());
-  console.log('Transformed Experiences:', experiences.value);
+  const categoryResponse = await categoryApiService.getCategory()
+  categories.value = CategoryAssembler.toEntitiesFromResponse(categoryResponse)
+
+  categoryMap.value= Object.fromEntries(categories.value.map(c=>[c.id, c.description]))
 });
 
-
-const filterExperiences = () => {
-  const noFiltersApplied = !destination.value && !day.value && !experienceType.value && !budget.value;
-
-  if (noFiltersApplied) {
-    filteredExperiences.value = [];
-    return;
-  }
-
-  filteredExperiences.value = experiences.value.filter((exp) => {
-    const matchesDestination = destination.value === '' ||
-        exp.location.toLowerCase().endsWith(destination.value.toLowerCase())
-    const matchesDay = day.value === '' || exp.frequencies.some(f => f.toLowerCase().includes(day.value.toLowerCase()))
-    const matchesType = experienceType.value === '' || exp.title.toLowerCase().includes(experienceType.value.toLowerCase())
-    const matchesBudget = budget.value === '' || exp.price <= parseFloat(budget.value)
-
-    return matchesDestination && matchesDay && matchesType && matchesBudget
-  })
+const searchExperiences = async () => {
+  router.push({
+    path: `/search`,
+    query: {
+      destination: destination.value,
+      day: day.value,
+      experienceType: experienceType.value,
+      budget: budget.value
+    }
+  });
 }
 
 </script>
@@ -66,16 +64,17 @@ const filterExperiences = () => {
       <div class="row">
         <input type="text" :placeholder="$t('home.experienceType')" class="input" v-model="experienceType" />
         <input type="number" :placeholder="$t('home.budget')" class="input" v-model="budget" />
-        <button class="search-button" @click="filterExperiences">{{ $t('home.search') }}</button>
+        <button class="search-button" @click="searchExperiences">{{ $t('home.search') }}</button>
       </div>
 
 
       <p class="recommendation-title">{{ $t('home.recommendations') }}</p>
       <div class="recommendation-grid">
-        <ExperienceCard
-            v-for="experience in filteredExperiences"
+        <ExperienceCardUser
+            v-for="experience in experiences"
             :key="experience.id"
             :experience="experience"
+            :categoryDescription="categoryMap[String(experience.categoryId)]"
         />
       </div>
     </main>
@@ -139,8 +138,8 @@ const filterExperiences = () => {
 }
 
 .recommendation-grid {
-  display: flex;
-  flex-wrap: wrap;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(500px, 1fr));
   gap: 1.5rem;
 }
 </style>

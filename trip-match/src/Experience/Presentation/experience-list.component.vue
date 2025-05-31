@@ -16,19 +16,14 @@ const categoryMap= ref({})
 
 onBeforeMount(async () => {
 
-  // Obtener experiencias
   const apiResponse = await experiencesApiService.getExperiences();
   experiences.value = ExperienceAssembler.toEntitiesFromResponse(apiResponse);
 
-  //Obtener Categorias
   const categoryResponse = await categoryApiService.getCategory()
   categories.value = CategoryAssembler.toEntitiesFromResponse(categoryResponse)
 
   categoryMap.value= Object.fromEntries(categories.value.map(c=>[c.id, c.description]))
 
-  console.log('Experiences:', experiences.value)
-  console.log('Categories:', categories.value)
-  console.log('CategoryMap:', categoryMap.value)
 });
 
 </script>
