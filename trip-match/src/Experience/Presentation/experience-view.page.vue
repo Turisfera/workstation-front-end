@@ -30,6 +30,7 @@ const openNew = ()=>{
 }
 
 .experience-container {
+  margin:  0 6.4rem;
   padding: 0 1.5rem ;
 }
 
