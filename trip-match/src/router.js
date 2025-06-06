@@ -1,6 +1,6 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import TheLogin          from '@/Security/Presentation/the-login.component.vue'
-import Register          from '@/Security/Presentation/Register.component.vue'
+import TheRegisterComponent          from '@/Security/Presentation/the-register.component.vue'
 import DefaultLayout     from '@/Shared/Presentation/default-layout.page.vue'
 import HomeView          from '@/Shared/Presentation/home-view.page.vue'
 import UserHome          from '@/Shared/Presentation/home-view.page.vue'
@@ -20,7 +20,7 @@ const routes = [
     },
     {
         path: '/register',
-        component: Register,
+        component: TheRegisterComponent,
         meta: { layout: 'auth' }
     },
     {

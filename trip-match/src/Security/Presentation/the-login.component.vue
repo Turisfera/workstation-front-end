@@ -26,12 +26,13 @@
         />
 
         <div class="forgot"><a href="#">Forgot your password?</a></div>
-
         <pv-button
-            label="Login"
             class="login-button"
             type="submit"
-        />
+            style="background-color: #047e77; color: white; border: none"
+        >
+          Login
+        </pv-button>
       </form>
 
       <div class="divider"><span>Or</span></div>
@@ -47,7 +48,13 @@
         <RouterLink to="/register">Create an account</RouterLink>
       </p>
     </div>
-    <div class="login-banner" />
+
+
+
+
+    <div class="traveler-img-wrapper">
+      <img src="/Login-TripMatch.png" alt="Traveler Image" />
+    </div>
   </div>
 </template>
 
@@ -195,8 +202,22 @@ label {
   text-decoration: none;
   font-weight: bold;
 }
-.login-banner {
+.traveler-img-wrapper {
   width: 50%;
-  background: linear-gradient(135deg, #00b8a9, #00796b);
+  height: 100%;
+  background: linear-gradient(#00C2C0,#00333A);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  overflow: hidden;
 }
+
+.traveler-img-wrapper img {
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+  background-color: transparent; /* asegura transparencia */
+}
+
+
 </style>

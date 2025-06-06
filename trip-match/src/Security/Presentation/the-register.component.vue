@@ -59,11 +59,12 @@
         <p v-if="error" class="error">{{ error }}</p>
 
         <pv-button
-            label="Registrarme"
             class="login-button"
             type="submit"
             :disabled="!canSubmit"
-        />
+        >
+          Register
+        </pv-button>
       </form>
 
       <p class="create">
@@ -71,8 +72,14 @@
         <a @click.prevent="$router.push('/login')">Inicia sesión</a>
       </p>
     </div>
-    <div class="login-banner"></div>
+    <div class="agency-img-wrapper">
+      <img src="/Register-TripMatch.png" alt="Traveler Image" />
+    </div>
   </div>
+
+
+
+
 </template>
 
 <script setup>
@@ -191,5 +198,23 @@ label {
 .login-banner {
   width: 50%;
   background: linear-gradient(135deg,#00b8a9,#00796b);
+}
+
+
+.agency-img-wrapper {
+  width: 50%;
+  height: 100%;
+  background: linear-gradient(#00C2C0,#00333A);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  overflow: hidden;
+}
+
+.agency-img-wrapper img {
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+  background-color: transparent;
 }
 </style>
