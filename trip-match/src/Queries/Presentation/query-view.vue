@@ -14,7 +14,6 @@
           v-model="searchTerm"
           placeholder="Buscar por nombre del viajero o experiencia"
           class="query-view_search-input"
-          @input="filterQueries"
       />
     </div>
 
@@ -22,14 +21,14 @@
     <div class="query-view_filters">
       <button
           class="query-view_filter-button"
-          :class="{ 'active': !showAnswered }"
+          :class="{ active: !showAnswered }"
           @click="setAnsweredFilter(false)"
       >
         Sin responder
       </button>
       <button
           class="query-view_filter-button"
-          :class="{ 'active': showAnswered }"
+          :class="{ active: showAnswered }"
           @click="setAnsweredFilter(true)"
       >
         Respondidas
@@ -49,10 +48,7 @@
         </tr>
         </thead>
         <tbody>
-        <tr
-            v-for="query in paginatedQueries"
-            :key="query.id"
-        >
+        <tr v-for="query in paginatedQueries" :key="query.id">
           <td class="query-view_user-cell">
             <img
                 v-if="query.userAvatar"
@@ -93,10 +89,7 @@
     </div>
 
     <!-- Modal -->
-    <div
-        v-if="showModal"
-        class="query-view_modal-backdrop"
-    >
+    <div v-if="showModal" class="query-view_modal-backdrop">
       <div class="query-view_modal">
         <div class="query-view_modal-header">
           <h3>
@@ -104,7 +97,6 @@
           </h3>
           <button @click="closeModal" class="query-view_modal-close">×</button>
         </div>
-
 
         <p v-if="!modalQuery.isAnswered" class="query-view_modal-hint">
           (máx. 160 caracteres)
@@ -137,21 +129,41 @@
 </template>
 
 <script setup>
-import { ref, computed } from 'vue';
-import { queryService } from '../Application/query-api.service';
+import { ref, computed, onMounted, watch } from 'vue';
+import { QueryApiService } from '../Application/query-api.service.js';
+import { QueryAssembler } from '../Application/query.assembler.js';
+
+const queryApiService = new QueryApiService();
 
 const searchTerm = ref('');
 const showAnswered = ref(false);
-const allQueries = ref(queryService.getQueriesByAnswered(showAnswered.value));
+const allQueries = ref([]);
 const modalQuery = ref(null);
 const showModal = ref(false);
 const modalResponse = ref('');
 const currentPage = ref(1);
-const perPage = 3;
+const perPage = 5;
+
+const fetchQueries = async () => {
+  try {
+    const response = await queryApiService.getAllQueries();
+    allQueries.value = QueryAssembler.toEntitiesFromResponse(response);
+  } catch (error) {
+    console.error('Error al obtener las consultas:', error);
+  }
+};
 
 const filteredQueries = computed(() => {
-  if (!searchTerm.value) return allQueries.value;
-  return queryService.searchQueries(searchTerm.value, showAnswered.value);
+  const filtered = allQueries.value.filter(
+      (q) => q.isAnswered === showAnswered.value
+  );
+  if (!searchTerm.value) return filtered;
+  const lowerTerm = searchTerm.value.toLowerCase();
+  return filtered.filter(
+      (q) =>
+          q.userName.toLowerCase().includes(lowerTerm) ||
+          q.experienceName.toLowerCase().includes(lowerTerm)
+  );
 });
 
 const paginatedQueries = computed(() => {
@@ -168,13 +180,8 @@ const paginationText = computed(() => {
 
 const setAnsweredFilter = (answered) => {
   showAnswered.value = answered;
-  allQueries.value = queryService.getQueriesByAnswered(answered);
   currentPage.value = 1;
   searchTerm.value = '';
-};
-
-const filterQueries = () => {
-  currentPage.value = 1;
 };
 
 const openModal = (query, viewOnly = false) => {
@@ -189,13 +196,33 @@ const closeModal = () => {
   modalResponse.value = '';
 };
 
-const submitResponse = () => {
+const submitResponse = async () => {
   if (modalQuery.value && modalResponse.value.trim()) {
-    queryService.respondToQuery(modalQuery.value.id, modalResponse.value.trim());
-    setAnsweredFilter(false);
-    closeModal();
+    try {
+      const updatedQuery = {
+        ...modalQuery.value,
+        isAnswered: true,
+        answer: modalResponse.value.trim(),
+      };
+      await queryApiService.updateQuery(
+          modalQuery.value.id,
+          QueryAssembler.toRequestPayload(updatedQuery)
+      );
+      await fetchQueries();
+      closeModal();
+    } catch (error) {
+      console.error('Error al enviar la respuesta:', error);
+    }
   }
 };
+
+watch(searchTerm, () => {
+  currentPage.value = 1;
+});
+
+onMounted(() => {
+  fetchQueries();
+});
 </script>
 
 <style scoped>
@@ -271,8 +298,8 @@ const submitResponse = () => {
   text-align: left;
 }
 .query-view_table tr {
-  background-color: #f0fdfa;
   border-bottom: 1px solid #e5e7eb;
+  align-items: center;
 }
 .query-view_user-cell {
   display: flex;

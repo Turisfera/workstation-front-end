@@ -1,28 +1,26 @@
-import { Query } from "../Domain/query.entity.js";
+import { Query } from "@/Queries/Domain/query.entity.js";
 
 export class QueryAssembler {
-
     static toEntityFromResource(resource) {
         return new Query({
             id: resource.id,
             userName: resource.userName,
-            userAvatar: resource.userAvatar || null,
+            userAvatar: resource.userAvatar,
             experienceName: resource.experienceName,
-            date: new Date(resource.date),
+            date: resource.date,
             question: resource.question,
-            answer: resource.answer || '',
-            isAnswered: resource.isAnswered
+            isAnswered: resource.isAnswered,
+            answer: resource.answer
         });
     }
 
     static toEntitiesFromResponse(response) {
-        if (response.status && response.status !== 200) {
-            console.error(`${response.status}, ${response.code}, ${response.message}`);
+        if (response.status !== 200) {
+            console.error(`${response.status}`, response.statusText);
             return [];
         }
 
-        const data = response.data || response;
-        return data.map(resource => this.toEntityFromResource(resource));
+        return response.data.map(resource => this.toEntityFromResource(resource));
     }
 
     static toRequestPayload(entity) {
@@ -31,10 +29,11 @@ export class QueryAssembler {
             userName: entity.userName,
             userAvatar: entity.userAvatar,
             experienceName: entity.experienceName,
-            date: entity.date.toISOString().split('T')[0],
+            date: entity.date,
             question: entity.question,
-            answer: entity.answer,
-            isAnswered: entity.isAnswered
+            isAnswered: entity.isAnswered,
+            answer: entity.answer
         };
     }
 }
+
