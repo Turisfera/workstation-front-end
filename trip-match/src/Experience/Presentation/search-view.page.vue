@@ -1,42 +1,28 @@
-<template>
-  <div class="search-container">
-    <div class="search-header">
-      <h1>{{ t('search.title') }}</h1>
-    </div>
-    
+<template>  <div class="search-container">
     <div class="search-filters">
       <div class="filters-wrapper">
         <div class="filter-item">
-          <label>{{ t('home.destination') }}</label>
-          <input v-model="destination" type="text" :placeholder="t('search.destinationPlaceholder')" />
+          <input v-model="destination" type="text" placeholder="E.g. Arequipa" class="search-input" />
         </div>
         <div class="filter-item">
-          <label>{{ t('home.day') }}</label>
-          <input v-model="day" type="text" :placeholder="t('search.dayPlaceholder')" />
+          <input v-model="day" type="text" placeholder="E.g. 01/02/25" class="search-input" />
         </div>
         <div class="filter-item">
-          <label>{{ t('home.budget') }}</label>
-          <div class="budget-range">
-            <span>{{ t('search.range') }}</span>
-            <span>50-100</span>
-          </div>
+          <input v-model="budget" type="text" class="search-input" readonly />
         </div>
         <div class="filter-item">
-          <label>{{ t('home.experienceType') }}</label>
-          <input v-model="experienceType" type="text" :placeholder="t('search.typePlaceholder')" />
+          <input v-model="experienceType" type="text" placeholder="E.g. Adventure" class="search-input" />
         </div>
       </div>
     </div>
 
     <div class="search-results-container">
-      <div class="results-column">
-        <div v-if="loading" class="loading">
-          <p>{{ t('search.loading') }}</p>
+      <div class="results-column">        <div v-if="loading" class="loading">
+          <p>Cargando experiencias...</p>
         </div>
-        
-        <div v-else-if="noResults" class="no-results">
-          <h2>{{ t('search.noResults') }}</h2>
-          <p>{{ t('search.tryAgain') }}</p>
+          <div v-else-if="noResults" class="no-results">
+          <h2>No se encontraron resultados de tu búsqueda.</h2>
+          <p>Vuelve a intentarlo con otras opciones</p>
         </div>
         
         <div v-else class="result-list">
@@ -66,14 +52,12 @@
 <script setup>
 import { onMounted, ref, computed, watch } from 'vue'
 import { useRoute } from 'vue-router'
-import { useI18n } from 'vue-i18n'
 import ExperienceCardUser from '@/Experience/Presentation/experience-card-user.component.vue'
 import { ExperiencesApiService } from '@/Experience/Application/experiences-api.service'
 import { ExperienceAssembler } from '@/Experience/Application/experience.assembler.js'
 import { CategoryApiService } from '@/Experience/Application/category-api.service.js'
 import { CategoryAssembler } from '@/Experience/Application/category.assembler.js'
 
-const { t } = useI18n()
 const route = useRoute()
 const experiencesApiService = new ExperiencesApiService()
 const categoryApiService = new CategoryApiService()
@@ -85,9 +69,9 @@ const categoryMap = ref({})
 const loading = ref(true)
 
 // Parámetros de búsqueda
-const destination = ref('')
-const day = ref('')
-const experienceType = ref('')
+const destination = ref('Arequipa')
+const day = ref('01/02/25')
+const experienceType = ref('Aventura')
 const budget = ref('50-100')
 
 // URL del mapa
@@ -120,9 +104,9 @@ onMounted(async () => {
     categoryMap.value = Object.fromEntries(categories.map(c => [c.id, c.description]))
 
     // Establecer parámetros de URL si existen
-    destination.value = route.query.destination || 'Arequipa'
-    day.value = route.query.day || '01/02/25'
-    experienceType.value = route.query.experienceType || 'Aventura'
+    destination.value = route.query.destination || ''
+    day.value = route.query.day || ''
+    experienceType.value = route.query.experienceType || ''
     budget.value = route.query.budget || '50-100'
 
     // Aplicar filtros
@@ -177,49 +161,43 @@ const filterExperiences = () => {
   padding: 1.5rem;
 }
 
-.search-header {
-  margin-bottom: 1rem;
-}
-
 .search-filters {
   margin-bottom: 2rem;
 }
 
 .filters-wrapper {
   background-color: #D9F2EF;
-  border-radius: 1rem;
-  padding: 1rem 1.5rem;
+  border-radius: 0.8rem;
+  padding: 0.8rem;
   display: flex;
   flex-wrap: wrap;
-  gap: 1rem;
+  justify-content: space-between;
+  gap: 0.5rem;
 }
 
 .filter-item {
   flex: 1;
   min-width: 150px;
-  display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
-}
-
-.filter-item label {
-  font-weight: 500;
 }
 
 .filter-item input {
-  padding: 0.5rem;
-  border: 1px solid #ddd;
-  border-radius: 4px;
+  padding: 0.8rem 1rem;
   width: 100%;
+  box-sizing: border-box;
+  font-size: 0.9rem;
 }
 
-.budget-range {
-  display: flex;
-  justify-content: space-between;
+.search-input {
   background-color: white;
-  padding: 0.5rem;
-  border: 1px solid #ddd;
+  border: none;
   border-radius: 4px;
+  box-shadow: none;
+  outline: none;
+}
+
+.search-input:focus {
+  box-shadow: none;
+  outline: none;
 }
 
 .search-results-container {
@@ -240,10 +218,9 @@ const filterExperiences = () => {
 }
 
 .map-column {
-  min-height: 400px;
-  border-radius: 10px;
+  height: calc(100vh - 150px);
+  border-radius: 0;
   overflow: hidden;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
 
 .loading, .no-results {
