@@ -1,17 +1,24 @@
 <script setup>
 import {defineProps, ref} from "vue";
 import router from "@/router.js";
+import ExperienceDetailModal from './experience-detail-modal.component.vue';
 
 const props = defineProps({ experience: Object, categoryDescription: String, required: true });
 
 const isFavorite = ref(false);
+const isModalOpen = ref(false);
 
 const toggleFavorite = () => {
   isFavorite.value = !isFavorite.value;
 };
 
 const goToDetails = () => {
-  router.push(`/experiences/${props.experience.id}`);
+  // En lugar de navegar, abrimos el modal
+  isModalOpen.value = true;
+};
+
+const closeModal = () => {
+  isModalOpen.value = false;
 };
 
 </script>
@@ -43,13 +50,19 @@ const goToDetails = () => {
           <a href="#" class="experience-agency">{{ experience.agency }} →</a>
           <button class="experience-button" @click="goToDetails">Ver más</button>
         </div>
-      </div>
-
-      <button class="favorite-btn" @click="toggleFavorite">
+      </div>      <button class="favorite-btn" @click="toggleFavorite">
         <span v-if="isFavorite"><i class=" pi pi-heart-fill"></i></span>
         <span v-else><i class=" pi pi-heart"></i></span>
       </button>
     </div>
+    
+    <!-- Modal de detalle de experiencia -->
+    <ExperienceDetailModal
+      :show="isModalOpen"
+      :experience="experience"
+      :categoryDescription="categoryDescription"
+      @close="closeModal"
+    />
   </div>
 </template>
 
