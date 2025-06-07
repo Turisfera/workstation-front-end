@@ -1,7 +1,7 @@
-{
-  "sidevar": {
+{  "sidevar": {
     "logo": "TripMatch",
     "home":"Home",
+    "search": "Search experiences",
     "experienceManager": "Experience Manager",
     "reservations": "Reservations",
     "queries": "Queries",
@@ -67,11 +67,20 @@
     "no-reserves": "No results were found for reservations",
     "search": "Search by traveler name or experience",
     "revenues": "Revenues"
-  },
-  "reservation-info": {
+  },  "reservation-info": {
     "date": "Reservation date",
     "experience": "Experience",
     "people": "People",
     "total-paid": "Total paid"
+  },
+  "search": {
+    "title": "Search",
+    "destinationPlaceholder": "E.g. Arequipa",
+    "dayPlaceholder": "E.g. 01/02/25",
+    "typePlaceholder": "E.g. Adventure",
+    "range": "50-100",
+    "loading": "Loading experiences...",
+    "noResults": "No results found for your search.",
+    "tryAgain": "Try again with different options"
   }
 }

@@ -1,13 +1,12 @@
-{
-  "sidevar": {
+{  "sidevar": {
     "logo": "TripMatch",
     "home":"Inicio",
+    "search": "Buscar experiencias",
     "experienceManager": "Gestión de Experiencias",
     "reservations": "Reservas",
     "queries": "Consultas",
     "agencyProfile": "Perfil de Agencia"
-  },
-  "home": {
+  },  "home": {
     "greeting": "Hola, {user}",
     "greetingSubtitle": "¿Listo para conectar con nuevos viajeros?",
     "destination": "Destino",
@@ -16,6 +15,16 @@
     "budget": "Presupuesto",
     "search": "Buscar",
     "recommendations": "Recomendaciones para ti"
+  },
+  "search": {
+    "title": "Busqueda",
+    "destinationPlaceholder": "Ej. Arequipa",
+    "dayPlaceholder": "Ej. 01/02/25",
+    "typePlaceholder": "Ej. Aventura",
+    "range": "50-100",
+    "loading": "Cargando experiencias...",
+    "noResults": "No se encontraron resultados de tu búsqueda.",
+    "tryAgain": "Vuelve a intentarlo con otras opciones"
   },
   "experience-view": {
     "title": "Tus Experiencias Publicadas",
@@ -73,5 +82,28 @@
     "experience": "Experiencia",
     "people": "Personas",
     "total-paid": "Total Pagado"
+  },
+  "search": {
+    "title": "Busqueda de Experiencias",
+    "subtitle": "Descubre experiencias increíbles para tu próximo viaje",
+    "destination": "Destino",
+    "destination-placeholder": "¿A dónde quieres ir?",
+    "day": "Día",
+    "any-day": "Cualquier día",
+    "category": "Categoría",
+    "all-categories": "Todas las categorías",
+    "budget": "Presupuesto",
+    "budget-placeholder": "Presupuesto máximo",
+    "search-button": "Buscar",
+    "loading": "Buscando experiencias...",
+    "results-count": "{count} experiencias encontradas",
+    "sort-by": "Ordenar por:",
+    "price-asc": "Precio: menor a mayor",
+    "price-desc": "Precio: mayor a menor",
+    "best-rated": "Mejor valoradas",
+    "no-results-title": "No se encontraron resultados",
+    "no-results-text": "Intenta con filtros diferentes o explora todas nuestras experiencias disponibles",
+    "clear-filters": "Limpiar filtros",
+    "map-title": "Mapa de ubicaciones"
   }
 }

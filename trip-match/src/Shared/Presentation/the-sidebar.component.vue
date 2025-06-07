@@ -36,11 +36,11 @@ const props = defineProps({ isCollapsed: Boolean })
 const emit = defineEmits(['toggle'])
 const { t } = useI18n()
 
-const links = [
-  { label: 'sidevar.home',             path: '/',                 icon: 'pi pi-home'           },
+const links = [  { label: 'sidevar.home',             path: '/',                 icon: 'pi pi-home'           },
+  { label: 'sidevar.search',           path: '/busqueda',         icon: 'pi pi-search'         },
   { label: 'sidevar.experienceManager',path: '/manageExperience', icon: 'pi pi-objects-column' },
   { label: 'sidevar.reservations',     path: '/reservations',     icon: 'pi pi-pen-to-square'  },
-  { label: 'sidevar.queries',          path: '/queries',          icon: 'pi pi-search'         },
+  { label: 'sidevar.queries',          path: '/queries',          icon: 'pi pi-question-circle' },
   { label: 'sidevar.agencyProfile',    path: '/agency/profile',   icon: 'pi pi-building'       }
 ]
 </script>

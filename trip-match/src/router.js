@@ -10,7 +10,9 @@ import ExperienceDelete  from '@/Experience/Presentation/experience-delete.compo
 import AgencyProfilePage from '@/Agency/Presentation/agency-profile.page.vue'
 import ReservationsView  from '@/Reservations/Presentation/reservations-view.page.vue'
 import ExperienceSearchResults from "@/Experience/Presentation/experience-search-results.page.vue";
-import QueryView         from "@/Queries/Presentation/query-view.vue";
+import ExperienceAdvancedSearch from "@/Experience/Presentation/experience-advanced-search.page.vue";
+import SearchView       from "@/Experience/Presentation/search-view.page.vue";
+import QueryView        from "@/Queries/Presentation/query-view.vue";
 
 const routes = [
     {
@@ -43,11 +45,11 @@ const routes = [
                 name: 'ExperienceEdit',
                 component: ExperienceForm,
                 props: true
-            },
-            { path: 'agency/home',          name: 'AgencyHome',     component: HomeView },
-            { path: 'agency/profile',       name: 'AgencyProfile',  component: AgencyProfilePage },
-            { path: 'reservations',         name: 'Reservations',   component: ReservationsView },
-            { path: 'search',               name: 'ExperienceSearch', component: ExperienceSearchResults},
+            },            { path: 'agency/home',          name: 'AgencyHome',     component: HomeView },
+            { path: 'agency/profile',       name: 'AgencyProfile',  component: AgencyProfilePage },            { path: 'reservations',         name: 'Reservations',   component: ReservationsView },
+            { path: 'search',               name: 'ExperienceSearch', component: ExperienceAdvancedSearch},
+            { path: 'search-results',       name: 'ExperienceSearchResults', component: ExperienceSearchResults},
+            { path: 'busqueda',            name: 'SearchView', component: SearchView },
             { path: 'queries',              name: 'Queries', component: QueryView },
         ]
     },
