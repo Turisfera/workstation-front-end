@@ -14,10 +14,7 @@ const confirm = useConfirm();
 const toast = useToast();
 
 const allReservations = ref([]);
-const selectedDate = ref(null); // Lo inicializamos en null para que no haya día pre-seleccionado
-
-// --- CORRECCIÓN 1: Se crea un Set para guardar las fechas resaltadas ---
-// Un Set es mucho más rápido para buscar si un elemento existe.
+const selectedDate = ref(null);
 const highlightedDateSet = ref(new Set());
 
 const setupMockData = () => {
@@ -29,12 +26,9 @@ const setupMockData = () => {
     { id: 104, bookingDate: new Date(today.getFullYear(), today.getMonth(), today.getDate() + 8), experience: { id: 'exp4', title: 'Paseo en Bote', description: 'Navega por las islas y observa la fauna.', price: 100, duration: 5, rating: 4.6, images: ['https://placehold.co/600x400/2980b9/white?text=Bote'], schedules: ['09:00'] } },
   ];
   allReservations.value = mockData;
-
-  // --- CORRECCIÓN 2: Se llena el Set con un formato de texto 'AÑO-MES-DÍA' ---
   highlightedDateSet.value = new Set(
       mockData.map(res => {
         const d = res.bookingDate;
-        // Creamos una clave única para cada fecha
         return `${d.getFullYear()}-${d.getMonth()}-${d.getDate()}`;
       })
   );
@@ -52,11 +46,7 @@ const reservationsForSelectedDate = computed(() => {
     return resKey === selectedKey;
   });
 });
-
-// --- CORRECCIÓN 3: Se crea una función para usar en el template ---
-// Esta función comprueba si una fecha del calendario debe ser resaltada.
 const isDayHighlighted = (date) => {
-  // 'date' aquí es el objeto {day, month, year} que viene del slot del calendario
   const key = `${date.year}-${date.month}-${date.day}`;
   return highlightedDateSet.value.has(key);
 }
@@ -134,7 +124,6 @@ const handleCancelReservation = (reservationId) => {
 </template>
 
 <style scoped>
-/* Tus estilos se mantienen igual, solo se ajusta el resaltado */
 .itinerary-view {
   max-width: 1400px;
   margin: 0 auto;
@@ -161,7 +150,7 @@ const handleCancelReservation = (reservationId) => {
   background-color: #f8fafc;
   border-radius: 12px;
   padding: 2rem;
-  min-height: 500px; /* Altura mínima para que no salte el layout */
+  min-height: 500px;
 }
 .placeholder {
   display: flex;
