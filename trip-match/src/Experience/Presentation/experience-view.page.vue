@@ -5,7 +5,7 @@ import router from "@/router.js"
 
 const openModal = ref(false)
 const openNew = ()=>{
-  router.push( "/manageExperience/create")
+  router.push({ name: 'ExperienceCreate' });
 }
 
 </script>

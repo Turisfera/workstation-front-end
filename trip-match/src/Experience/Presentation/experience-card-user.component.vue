@@ -1,53 +1,46 @@
 <script setup>
-import {defineProps, ref} from "vue";
-import router from "@/router.js";
+import { ref, computed } from "vue";
+import { useRouter } from "vue-router";
 
 const props = defineProps({ experience: Object, categoryDescription: String, required: true });
-
+const router = useRouter();
 const isFavorite = ref(false);
 
-const toggleFavorite = () => {
-  isFavorite.value = !isFavorite.value;
-};
+// --- CORRECCIÓN: Se crea una propiedad computada para "limpiar" el rating ---
+const displayRating = computed(() => {
+  const rating = Number(props.experience.rating) || 0;
+  // Asegura que el valor esté siempre entre 0 y 5
+  return Math.max(0, Math.min(5, rating));
+});
 
-const goToDetails = () => {
-  router.push(`/experiences/${props.experience.id}`);
-};
-
+const toggleFavorite = () => { isFavorite.value = !isFavorite.value; };
+const goToDetails = () => { router.push({ name: 'ExperienceDetail', params: { id: props.experience.id } }); };
 </script>
 
 <template>
   <div class="experience-card">
     <div class="experience-header">
       <img :src="experience.images[0]" alt="Imagen experiencia" class="experience-img" />
-
       <div class="experience-info">
         <h2 class="experience-title">{{ experience.title }}</h2>
-
         <div class="experience-rating">
-          <span class="stars">{{ '★'.repeat(Math.round(experience.rating)) }}</span>
-          <span class="score">{{ experience.rating }}</span>
+          <span class="stars">{{ '★'.repeat(Math.round(displayRating)) }}</span>
+          <span class="score">{{ displayRating.toFixed(1) }}</span>
         </div>
-
         <p class="experience-details">
-          S/{{ experience.price }} · {{ experience.duration }}h · {{ experience.frequencies.value }} · {{ categoryDescription }}
+          S/ {{ experience.price }} · {{ experience.duration }}h · {{ categoryDescription }}
         </p>
-
         <p class="experience-schedule">
-          {{ experience.schedules.join(' | ') }}
+          Horarios: {{ experience.schedules.join(' | ') }}
         </p>
-
         <p class="experience-description">{{ experience.description }}</p>
-
         <div class="experience-footer">
-          <a href="#" class="experience-agency">{{ experience.agency }} →</a>
+          <a href="#" class="experience-agency">{{ experience.agencyName || 'Agencia Verificada' }} →</a>
           <button class="experience-button" @click="goToDetails">Ver más</button>
         </div>
       </div>
-
       <button class="favorite-btn" @click="toggleFavorite">
-        <span v-if="isFavorite"><i class=" pi pi-heart-fill"></i></span>
-        <span v-else><i class=" pi pi-heart"></i></span>
+        <i :class="isFavorite ? 'pi pi-heart-fill' : 'pi pi-heart'"></i>
       </button>
     </div>
   </div>

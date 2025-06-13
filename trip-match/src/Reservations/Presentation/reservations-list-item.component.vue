@@ -1,109 +1,88 @@
 <script setup>
-const props = defineProps({
-  name: {
-    type: String,
-    required: true,
-  },
-  date: {
-    type: String,
-    required: true,
-  },
-  experience: {
-    type: String,
-    required: true,
-  },
-  people: {
-    type: Number,
-    required: true,
-  },
-  totalPaid: {
-    type: Number,
-    required: true,
+defineProps({
+  reservation: {
+    type: Object,
+    required: true
   }
 })
 </script>
 
 <template>
-  <div class="reservations-list-container">
-    <div class="reservations-info-container">
-      <div class="reservations-info-profile">
-        <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQwrlmv2j_7cRIEHVtQvB8A7P65LIYogeqlGA&s" alt="Foto" class="profile-photo" />
-        <h1>{{ name }}</h1>
+  <div class="reservation-card">
+    <div class="traveler-info">
+      <img
+          :src="reservation.traveler.avatarUrl"
+          alt="Avatar viajero"
+          class="profile-photo"
+      />
+      <span class="traveler-name">{{ reservation.traveler.name }}</span>
+    </div>
+    <div class="details-grid">
+      <div class="detail-item">
+        <label>Fecha de reserva</label>
+        <span>{{ reservation.bookingDate }}</span>
       </div>
-      <div class="reservations-info-total">
-        <div>
-          <h2>{{ $t("reservation-info.date") }}</h2>
-          <h3>{{ date }}</h3>
-        </div>
-        <div>
-          <h2>{{ $t("reservation-info.experience") }}</h2>
-          <h3>{{ experience }}</h3>
-        </div>
-        <div>
-          <h2>{{ $t("reservation-info.people") }}</h2>
-          <h3>{{ people }}</h3>
-        </div>
-        <div>
-          <h2>{{ $t("reservation-info.total-paid") }}</h2>
-          <h3>S/ {{ totalPaid }}</h3>
-        </div>
+      <div class="detail-item">
+        <label>Experiencia</label>
+        <span>{{ reservation.experienceName }}</span>
+      </div>
+      <div class="detail-item">
+        <label>Personas</label>
+        <span>{{ reservation.pax }}</span>
+      </div>
+      <div class="detail-item">
+        <label>Total pagado</label>
+        <span class="total-paid">S/ {{ reservation.totalPaid.toFixed(2) }}</span>
       </div>
     </div>
   </div>
 </template>
 
 <style scoped>
-.reservations-info-container {
-  width: 100%;
-  border-color: black;
-  border-style: solid;
-  border-radius: 10px;
-  padding: 2rem;
-}
-
-.reservations-list-container {
-  text-align: center;
-  padding: 1rem 4rem;
-}
-
-.reservations-info-profile {
-  text-align: left;
-  display: flex;
-  align-items: center;
-  gap: 1rem;
-  padding-bottom: 1.5rem;
-  padding-left: 2rem;
-}
-
-.reservations-info-total {
-  padding: 1rem 4rem 1rem 2rem;
-  display: flex;
-  gap: 2rem;
-  justify-content: space-between;
-  text-align: center;
-}
-
-h1 {
-  font-size: 1.5rem;
-}
-
-h2 {
-  color: #00606C;
-  font-size: 1.2rem;
-}
-
-h3 {
-  padding-top: 1rem;
-  text-align: center;
-  font-size: 1.2rem;
+.reservation-card {
+  background-color: #fff;
+  border: 1px solid #e2e8f0;
+  border-radius: 16px;
+  padding: 1.5rem;
+  box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);
 }
 
 .profile-photo {
-  width: 60px;
-  height: 60px;
+  width: 48px;
+  height: 48px;
   border-radius: 50%;
   object-fit: cover;
   border: 2px solid #ccc;
 }
 
+.traveler-info {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding-bottom: 1rem;
+  margin-bottom: 1rem;
+  border-bottom: 1px solid #f1f5f9;
+}
+
+.traveler-name {
+  font-size: 1.125rem;
+  font-weight: 600;
+}
+
+.details-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 1rem;
+}
+.detail-item label {
+  font-size: 0.8rem;
+  color: #64748b;
+  margin-bottom: 0.25rem;
+}
+.detail-item span {
+  font-weight: 500;
+}
+.total-paid {
+  font-weight: 600;
+}
 </style>

@@ -1,11 +1,28 @@
 <script setup>
-import ReservationListItem from '@/Reservations/Presentation/reservations-list-item.component.vue'
+import ReservationListItem from '@/Reservations/Presentation/reservations-list-item.component.vue';
+
+defineProps({
+  reservations: {
+    type: Array,
+    required: true
+  }
+});
 </script>
 
 <template>
-  <ReservationListItem total-paid="800" people="3" experience="City Tour Arequipa" date="14/04/2025" name="Carla Medina" />
+  <div class="reservations-list">
+    <ReservationListItem
+        v-for="reservation in reservations"
+        :key="reservation.id"
+        :reservation="reservation"
+    />
+  </div>
 </template>
 
 <style scoped>
-
+.reservations-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
 </style>

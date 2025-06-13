@@ -22,47 +22,57 @@ const experienceType = ref('')
 const budget = ref('')
 
 onMounted(async () => {
-  const allExperiences = ExperienceAssembler.toEntitiesFromResponse(await experiencesApiService.getExperiences())
-  experiences.value = allExperiences
+  try {
+    const experiencesResponse = await experiencesApiService.getExperiences();
+    experiences.value = ExperienceAssembler.toEntitiesFromResponse(experiencesResponse);
 
-  const categories = CategoryAssembler.toEntitiesFromResponse(await categoryApiService.getCategory())
-  categoryMap.value = Object.fromEntries(categories.map(c => [c.id, c.description]))
+    const categoriesResponse = await categoryApiService.getCategory();
+    categoryMap.value = Object.fromEntries(CategoryAssembler.toEntitiesFromResponse(categoriesResponse).map(c => [c.id, c.description]));
 
-  destination.value = route.query.destination || ''
-  day.value = route.query.day || ''
-  experienceType.value = route.query.experienceType || ''
-  budget.value = route.query.budget || ''
+    // Sincronizar filtros con la URL al cargar
+    destination.value = route.query.destination || '';
+    day.value = route.query.day || '';
+    experienceType.value = route.query.experienceType || '';
+    budget.value = route.query.budget || '';
 
-  mapUrl.value = getMapUrl(destination.value)
-  filterExperiences()
-})
+    mapUrl.value = getMapUrl(destination.value);
+    filterExperiences();
+  } catch (error) {
+    console.error("Error al cargar los datos de búsqueda:", error);
+  }
+});
 
+// Observadores para actualizar resultados cuando los filtros cambian
 watch(destination, (newDest) => {
   mapUrl.value = getMapUrl(newDest);
 })
 watch([destination, day, experienceType, budget], () => {
-  filterExperiences()
-})
+  filterExperiences();
+});
+
 
 function getMapUrl(dest) {
-  return `https://www.google.com/maps?q=${encodeURIComponent(dest)},+Peru&output=embed`
+  if (!dest) return '';
+  return `https://maps.google.com/maps?q=${encodeURIComponent(dest)},+Peru&output=embed`;
 }
 
 const filterExperiences = () => {
   filteredExperiences.value = experiences.value.filter((exp) => {
-    const matchesDestination = destination.value === '' || exp.location.toLowerCase().endsWith(destination.value.toLowerCase())
-    const matchesDay = day.value === '' || exp.frequencies.some(f => f.toLowerCase().includes(day.value.toLowerCase()))
-    const matchesType = experienceType.value === '' || exp.title.toLowerCase().includes(experienceType.value.toLowerCase())
-    const matchesBudget = budget.value === '' || exp.price <= parseFloat(budget.value)
+    const matchesDestination = destination.value === '' || exp.location.toLowerCase().includes(destination.value.toLowerCase());
 
-    return matchesDestination && matchesDay && matchesType && matchesBudget
-  })
-}
+    // --- ESTA ES LA CORRECCIÓN PRINCIPAL ---
+    const matchesDay = day.value === '' || exp.frequencies.toLowerCase().includes(day.value.toLowerCase());
+
+    const matchesType = experienceType.value === '' || exp.title.toLowerCase().includes(experienceType.value.toLowerCase());
+    const matchesBudget = budget.value === '' || !budget.value || exp.price <= parseFloat(budget.value);
+
+    return matchesDestination && matchesDay && matchesType && matchesBudget;
+  });
+};
 </script>
 
 <template>
   <div class="search-view">
-
     <div class="results-column">
       <div class="filters-summary">
         <div class="filter-item">
@@ -71,20 +81,20 @@ const filterExperiences = () => {
         </div>
         <div class="filter-item">
           <label class="filter-item-text">Día</label>
-          <input v-model="day" class="filter-input" type="text" placeholder="" />
+          <input v-model="day" class="filter-input" type="text" placeholder="Ej. Lunes" />
         </div>
         <div class="filter-item">
           <label class="filter-item-text">Presupuesto</label>
-          <input v-model="budget" class="filter-input" type="number" placeholder="" />
+          <input v-model="budget" class="filter-input" type="number" placeholder="Máx. S/ 100" />
         </div>
         <div class="filter-item">
           <label class="filter-item-text">Tipo de experiencia</label>
-          <input v-model="experienceType" class="filter-input" type="text" placeholder="" />
+          <input v-model="experienceType" class="filter-input" type="text" placeholder="Ej. Aventura" />
         </div>
       </div>
 
       <div v-if="filteredExperiences.length === 0" class="no-results">
-        <p>No se encontraron experiencias.</p>
+        <p>No se encontraron experiencias con estos criterios.</p>
       </div>
 
       <div class="result-list">
@@ -97,10 +107,12 @@ const filterExperiences = () => {
       </div>
     </div>
 
-
-    <div class="map-column" v-if="mapUrl">
+    <div class="map-column" v-if="destination">
       <iframe
           :src="mapUrl"
+          width="100%"
+          height="700"
+          style="border:0;"
           allowfullscreen=""
           loading="lazy">
       </iframe>
@@ -109,13 +121,21 @@ const filterExperiences = () => {
 </template>
 
 <style scoped>
+/* Tus estilos están bien, no necesitan cambios */
 .search-view {
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: 1fr; /* Cambiado a una columna por defecto */
   gap: 2rem;
   max-width: 1500px;
   margin: auto;
   padding: 2rem;
+}
+
+/* En pantallas más grandes, volvemos a dos columnas */
+@media (min-width: 1024px) {
+  .search-view {
+    grid-template-columns: 1fr 1fr;
+  }
 }
 
 .filters-summary {
@@ -129,7 +149,7 @@ const filterExperiences = () => {
 }
 
 .filters-summary .filter-item {
-  flex: 1 1 100px;
+  flex: 1 1 200px; /* Un poco más de espacio para cada filtro */
   margin-right: 1rem;
   margin-bottom: 0.5rem;
   font-weight: bold;
@@ -141,30 +161,18 @@ const filterExperiences = () => {
   background-color: transparent;
 }
 
-.filter-item-result{
-  font-weight: 200;
-  background-color: transparent;
-}
-
 .results-column {
   display: flex;
   flex-direction: column;
 }
 
 .map-column {
-  height: fit-content;
+  height: 700px; /* Altura fija para el mapa */
   position: sticky;
   top: 2rem;
   display: flex;
   align-items: center;
   justify-content: center;
-}
-
-.map-column iframe {
-  width: 90%;
-  height: 700px;
-  border-radius: 16px;
-  border: none;
 }
 
 .result-list {
@@ -179,14 +187,16 @@ const filterExperiences = () => {
   font-style: italic;
   color: #666;
   text-align: center;
+  background-color: #f8f9fa;
+  padding: 2rem;
+  border-radius: 8px;
 }
 .filter-input {
   margin-top: 0.3rem;
-  padding: 0.3rem 0.5rem;
+  padding: 0.5rem 0.75rem;
   border: 1px solid #ccc;
   border-radius: 6px;
   font-weight: normal;
   width: 100%;
 }
-
 </style>

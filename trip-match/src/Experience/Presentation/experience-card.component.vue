@@ -9,7 +9,7 @@ const editArticle = (selected) => {
 };
 
 const goToDeleteExperience = (id) => {
-  router.push( `/manageExperience/delete/${id}`)
+  router.push({ name: 'ExperienceDelete', params: { id: id } });
 };
 
 </script>

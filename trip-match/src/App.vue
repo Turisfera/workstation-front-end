@@ -1,22 +1,39 @@
 <script setup>
+import { computed } from 'vue'
 import { useRoute } from 'vue-router'
-import DefaultLayout from '@/Shared/Presentation/default-layout.page.vue'
 const route = useRoute()
+const layoutComponent = computed(() => {
+  if (route.matched.length > 0 && route.matched[0].components.default) {
+    return route.matched[0].components.default;
+  }
+  return null;
+});
 </script>
 
 <template>
   <router-view v-slot="{ Component }">
-    <component :is="route.meta.layout === 'auth' ? Component : DefaultLayout">
+    <template v-if="route.meta.layout === 'auth'">
       <component :is="Component" />
-    </component>
+    </template>
+
+    <template v-else>
+      <component :is="layoutComponent">
+        <component :is="Component" />
+      </component>
+    </template>
   </router-view>
 </template>
 
 <style>
-* {
+
+body {
   background-color: white;
-  font-family: 'Montserrat', sans-serif;
   margin: 0;
   padding: 0;
+}
+
+* {
+  font-family: 'Montserrat', sans-serif;
+  box-sizing: border-box;
 }
 </style>

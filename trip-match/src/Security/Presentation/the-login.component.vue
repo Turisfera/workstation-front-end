@@ -86,10 +86,11 @@ async function login() {
       localStorage.setItem('name',      data.name)
       localStorage.setItem('avatar',    data.avatar)
       localStorage.setItem('isAgency',  data.isAgency)
+
       if (data.isAgency) {
         router.push('/agency/home')
       } else {
-        router.push('/user/home')
+        router.push('/')
       }
     }
   } catch (err) {
@@ -216,7 +217,7 @@ label {
   max-width: 100%;
   max-height: 100%;
   object-fit: contain;
-  background-color: transparent; /* asegura transparencia */
+  background-color: transparent;
 }
 
 
