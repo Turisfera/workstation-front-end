@@ -15,6 +15,8 @@ import Toast from 'primevue/toast';
 import InputText from 'primevue/inputtext';
 import Button    from 'primevue/button';
 import Select from 'primevue/select';
+import ConfirmationService from 'primevue/confirmationservice';
+import ToastService from 'primevue/toastservice';
 
 const app = createApp(App);
 app.use(PrimeVue, {
@@ -32,6 +34,8 @@ app.component('pv-file-upload', FileUpload);
 app.component('pv-input-number', InputNumber);
 app.component('Toast', Toast);
 app.component('pv-input-select', Select);
+app.use(ConfirmationService);
+app.use(ToastService);
 
 app.use(i18n);
 app.use(router);
