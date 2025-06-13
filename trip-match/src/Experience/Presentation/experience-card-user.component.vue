@@ -1,19 +1,25 @@
 <script setup>
 import { ref, computed } from "vue";
 import { useRouter } from "vue-router";
-
+import { FavoritesService } from '@/Favorites/Application/favorites.service.js';
 const props = defineProps({ experience: Object, categoryDescription: String, required: true });
 const router = useRouter();
-const isFavorite = ref(false);
+const favoritesService = new FavoritesService();
+const isFavorite = ref(favoritesService.isFavorite(props.experience.id));
 
-// --- CORRECCIÓN: Se crea una propiedad computada para "limpiar" el rating ---
 const displayRating = computed(() => {
   const rating = Number(props.experience.rating) || 0;
-  // Asegura que el valor esté siempre entre 0 y 5
   return Math.max(0, Math.min(5, rating));
 });
+const toggleFavorite = () => {
+  if (isFavorite.value) {
+    favoritesService.removeFavorite(props.experience.id);
+  } else {
+    favoritesService.addFavorite(props.experience.id);
+  }
+  isFavorite.value = !isFavorite.value;
+};
 
-const toggleFavorite = () => { isFavorite.value = !isFavorite.value; };
 const goToDetails = () => { router.push({ name: 'ExperienceDetail', params: { id: props.experience.id } }); };
 </script>
 
@@ -39,111 +45,71 @@ const goToDetails = () => { router.push({ name: 'ExperienceDetail', params: { id
           <button class="experience-button" @click="goToDetails">Ver más</button>
         </div>
       </div>
-      <button class="favorite-btn" @click="toggleFavorite">
-        <i :class="isFavorite ? 'pi pi-heart-fill' : 'pi pi-heart'"></i>
+      <button class="favorite-btn" @click.stop.prevent="toggleFavorite">
+        <i :class="isFavorite ? 'pi pi-heart-fill text-red-500' : 'pi pi-heart'"></i>
       </button>
     </div>
   </div>
 </template>
 
 <style scoped>
+.pi-heart-fill {
+  color: #ef4444;
+}
 .experience-card {
-  border: 1px solid #00000030;
+  border: 1px solid #e2e8f0;
   border-radius: 12px;
-  padding: 16px;
-  width: 100%;
-  max-width: 600px;
-  font-family: sans-serif;
-  box-shadow: 0 2px 6px #00000010;
-  position: relative;
+  padding: 1rem;
+  background: white;
+  transition: box-shadow 0.2s;
 }
-
-.experience-header {
-  display: flex;
-  gap: 16px;
-  position: relative;
+.experience-card:hover {
+  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
 }
-
-.experience-img {
-  width: 100px;
-  height: 100px;
-  border-radius: 12px;
-  object-fit: cover;
-}
-
-.experience-info {
-  flex: 1;
-}
-
-.experience-title {
-  font-weight: bold;
-  font-size: 1.1rem;
-  margin: 0;
-}
-
-.experience-rating {
-  display: flex;
-  align-items: center;
-  font-size: 0.95rem;
-  margin: 4px 0;
-}
-
-.stars {
-  color: #f5a623;
-  margin-right: 4px;
-}
-
-.score {
-  font-weight: bold;
-}
-
-.experience-details,
-.experience-schedule {
-  font-size: 0.9rem;
-  margin: 2px 0;
-  color: #333;
-}
-
+.experience-header { display: flex; gap: 1rem; position: relative; }
+.experience-img { width: 120px; height: 120px; border-radius: 8px; object-fit: cover; }
+.experience-info { flex: 1; }
+.experience-title { font-weight: 600; font-size: 1.1rem; margin: 0 0 0.25rem 0; color: #1e293b;}
+.experience-rating { display: flex; align-items: center; font-size: 0.9rem; margin-bottom: 0.5rem; }
+.stars { color: #f59e0b; margin-right: 0.25rem; }
+.score { font-weight: 600; color: #475569; }
+.experience-details, .experience-schedule { font-size: 0.85rem; margin: 2px 0; color: #64748b; }
 .experience-description {
   font-size: 0.9rem;
-  margin: 8px 0 12px;
-  color: #444;
+  margin: 0.75rem 0;
+  color: #475569;
+  line-height: 1.5;
+  /* Limitar a 2 líneas de texto */
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
 }
-
-.experience-footer {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-.experience-agency {
-  color: #009688;
-  font-weight: 500;
-  text-decoration: none;
-}
-
+.experience-footer { display: flex; justify-content: space-between; align-items: center; margin-top: 1rem; }
+.experience-agency { color: #318C8B; font-weight: 500; text-decoration: none; }
 .experience-button {
-  background-color: #b2dfdb;
+  background-color: #318C8B;
+  color: white;
   border: none;
-  padding: 6px 12px;
+  padding: 0.5rem 1rem;
   border-radius: 8px;
   font-weight: 500;
   cursor: pointer;
-  transition: background-color 0.3s;
 }
-
-.experience-button:hover {
-  background-color: #80cbc4;
-}
-
 .favorite-btn {
   position: absolute;
-  top: 8px;
-  right: 8px;
-  background: transparent;
+  top: 0.5rem;
+  right: 0.5rem;
+  background: rgba(255, 255, 255, 0.7);
   border: none;
-  font-size: 20px;
+  border-radius: 50%;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   cursor: pointer;
+  font-size: 1.1rem;
+  color: #475569;
 }
-
 </style>

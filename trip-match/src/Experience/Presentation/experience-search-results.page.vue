@@ -28,8 +28,6 @@ onMounted(async () => {
 
     const categoriesResponse = await categoryApiService.getCategory();
     categoryMap.value = Object.fromEntries(CategoryAssembler.toEntitiesFromResponse(categoriesResponse).map(c => [c.id, c.description]));
-
-    // Sincronizar filtros con la URL al cargar
     destination.value = route.query.destination || '';
     day.value = route.query.day || '';
     experienceType.value = route.query.experienceType || '';
@@ -42,7 +40,6 @@ onMounted(async () => {
   }
 });
 
-// Observadores para actualizar resultados cuando los filtros cambian
 watch(destination, (newDest) => {
   mapUrl.value = getMapUrl(newDest);
 })
@@ -59,13 +56,9 @@ function getMapUrl(dest) {
 const filterExperiences = () => {
   filteredExperiences.value = experiences.value.filter((exp) => {
     const matchesDestination = destination.value === '' || exp.location.toLowerCase().includes(destination.value.toLowerCase());
-
-    // --- ESTA ES LA CORRECCIÓN PRINCIPAL ---
     const matchesDay = day.value === '' || exp.frequencies.toLowerCase().includes(day.value.toLowerCase());
-
     const matchesType = experienceType.value === '' || exp.title.toLowerCase().includes(experienceType.value.toLowerCase());
     const matchesBudget = budget.value === '' || !budget.value || exp.price <= parseFloat(budget.value);
-
     return matchesDestination && matchesDay && matchesType && matchesBudget;
   });
 };
@@ -121,17 +114,15 @@ const filterExperiences = () => {
 </template>
 
 <style scoped>
-/* Tus estilos están bien, no necesitan cambios */
 .search-view {
   display: grid;
-  grid-template-columns: 1fr; /* Cambiado a una columna por defecto */
+  grid-template-columns: 1fr;
   gap: 2rem;
   max-width: 1500px;
   margin: auto;
   padding: 2rem;
 }
 
-/* En pantallas más grandes, volvemos a dos columnas */
 @media (min-width: 1024px) {
   .search-view {
     grid-template-columns: 1fr 1fr;
@@ -149,7 +140,7 @@ const filterExperiences = () => {
 }
 
 .filters-summary .filter-item {
-  flex: 1 1 200px; /* Un poco más de espacio para cada filtro */
+  flex: 1 1 200px;
   margin-right: 1rem;
   margin-bottom: 0.5rem;
   font-weight: bold;
@@ -167,7 +158,7 @@ const filterExperiences = () => {
 }
 
 .map-column {
-  height: 700px; /* Altura fija para el mapa */
+  height: 700px;
   position: sticky;
   top: 2rem;
   display: flex;
