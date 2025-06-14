@@ -25,21 +25,18 @@ const close = async () => {
 </script>
 
 <template>
-  <div class="fixed flex items-center justify-center">
-    <div class="form-container">
+  <div class="fixed flex items-center justify-center ">
+    <div class=" rounded-lg relative form-container">
       <div class="form-title">
         <h2>Eliminar Experiencia</h2>
         <button @click="close" class="button-close pi pi-times"></button>
       </div>
       <div class="separator mb-4"></div>
-      <p class="font-semibold">
-        ¿Estás seguro de que deseas cancelar esta experiencia turística?
-      </p>
-      <p>Esta acción no se puede deshacer.</p>
-      <div class="form-button-group">
-        <button @click="close" class="form-button cancel">Cancelar</button>
-        <button @click="deleteExperience" class="form-button save">Borrar</button>
+      <div>
+        <p class="font-semibold">¿Estás seguro de que deseas cancelar esta experiencia turística?</p>
+        <p>Esta acción no se puede deshacer.</p>
       </div>
+      <button @click="deleteExperience" class="button-delete-experience">{{ "Borrar" }}</button>
     </div>
   </div>
 </template>
@@ -65,20 +62,8 @@ const close = async () => {
   border-radius: 10px;
   display: flex;
   flex-direction: column;
-  gap: 1rem;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-}
-
-.form-title {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-.form-title h2 {
-  margin: 0;
-  font-size: 1.25rem;
-  color: #0f172a;
+  gap: unset;
 }
 
 .button-close {
@@ -92,34 +77,32 @@ const close = async () => {
 .separator {
   width: 100%;
   height: 1px;
-  background-color: #e5e7eb;
+  background-color: #726E6E;
 }
 
-.font-semibold {
-  font-weight: 600;
-}
-
-.form-button-group {
+.form-title {
   display: flex;
-  justify-content: flex-end;
-  gap: 1rem;
-  margin-top: 1rem;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 12px;
 }
 
-.form-button {
-  padding: 10px 20px;
-  font-size: 1rem;
+.button-close {
+  width: 30px;
+  color: black;
   border: none;
-  border-radius: 8px;
   cursor: pointer;
-  color: white;
 }
 
-.form-button.save {
+.button-delete-experience {
+
+  margin: 0 auto;
+  padding: 10px 30px;
   background-color: #318C8B;
+  color: white;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
 }
 
-.form-button.cancel {
-  background-color: #D9534F;
-}
 </style>

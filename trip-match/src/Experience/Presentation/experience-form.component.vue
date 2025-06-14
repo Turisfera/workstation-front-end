@@ -155,103 +155,126 @@ const SaveExperience = async () => {
 </script>
 
 <template>
-  <div class="fixed flex items-center justify-center">
-    <div class="rounded-lg relative form-container">
+  <div class="fixed flex items-center justify-center ">
+    <div class=" rounded-lg relative form-container">
       <div class="form-title">
         <h2>{{$t("create-experience-form.title")}}</h2>
         <button @click="close" class="button-close pi pi-times"></button>
       </div>
       <div class="separator mb-4"></div>
       <div class="form form-scroll">
-        <div class="form-fields">
+        <form @submit.prevent="submit" class="form-fields form1">
           <Toast />
 
-          <label>{{$t('create-experience-form.name')}}</label>
-          <pv-input-text v-model="title" required />
-
-          <label>{{$t('create-experience-form.description')}}</label>
-          <textarea v-model="description" rows="4" maxlength="200" class="p-inputtextarea p-inputtext p-component p-filled"></textarea>
-
-          <label>{{$t('create-experience-form.location')}}</label>
-          <pv-input-text v-model="location" required />
-
-          <div class="grid grid-cols-2 gap-4">
-            <div>
-              <label>{{$t('create-experience-form.hour')}}</label>
-              <pv-input-number v-model="duration" :min="1" :step="1" class="w-full" />
-            </div>
-            <div>
-              <label>{{$t('create-experience-form.price')}}</label>
-              <pv-input-number v-model="price" mode="currency" currency="USD" :min="0" :step="0.10" class="w-full" />
-            </div>
+          <div class="field-group">
+            <label for="title">{{$t('create-experience-form.name')}}</label>
+            <input v-model="title" id="title" type="text" :placeholder="$t('create-experience-form.name')" class="input" required />
           </div>
 
-          <label>{{$t('create-experience-form.frequencies')}}</label>
-          <pv-input-select v-model="frequencies" :options="frecuencias" optionLabel="label" class="w-full" />
+          <div class="field-group">
+            <label for="description">{{$t('create-experience-form.description')}}</label>
+            <textarea v-model="description" id="description" :placeholder="$t('create-experience-form.description')" class="input no-resize" rows="4" maxlength="200"></textarea>
+          </div>
 
-          <label>{{$t('create-experience-form.schedules')}}</label>
-          <pv-multi-select v-model="schedules" :options="horariosDisponibles" option-label="label" class="w-full" />
+          <div class="field-group">
+            <label for="location">{{$t('create-experience-form.location')}}</label>
+            <input v-model="location" id="location" type="text" :placeholder="$t('create-experience-form.location')" class="input" required />
+          </div>
 
-          <label>{{$t('create-experience-form.category')}}</label>
-          <pv-input-select v-model="category" :options="categories" optionLabel="description" optionValue="id" class="w-full" />
+          <div class="field-group">
+            <label for="duration">{{$t('create-experience-form.hour')}}</label>
+            <input v-model="duration" id="duration" type="number" min="1" step="1" :placeholder="$t('create-experience-form.hour')" class="input" />
+          </div>
 
-          <div class="includes-section">
-            <label>{{$t('create-experience-form.include')}}</label>
-            <div class="flex gap-2 mb-2">
-              <pv-input-text v-model="newIncludeItem" class="flex-1" />
-              <button type="button" class="btn-include-item" @click="addIncludeItem" :disabled="includes.length >= 3 || !newIncludeItem">
+          <div class="field-group">
+            <label for="price">{{$t('create-experience-form.price')}}</label>
+            <input v-model="price" id="price" type="number" min="0" step="0.10" :placeholder="$t('create-experience-form.price')" class="input" />
+          </div>
+
+          <div class="field-group">
+            <label for="frequencies">{{$t('create-experience-form.frequencies')}}</label>
+            <pv-input-select v-model="frequencies" :options="frecuencias" optionLabel="label" :placeholder="$t('create-experience-form.frequencies')" class="w-full custom-multiselect"></pv-input-select>
+          </div>
+
+          <div class="field-group">
+            <label for="schedules">{{$t('create-experience-form.schedules')}}</label>
+            <pv-multi-select v-model="schedules" :options="horariosDisponibles" option-label="label" :placeholder="$t('create-experience-form.schedules')" class="custom-multiselect" />
+          </div>
+
+          <div class="field-group">
+            <label for="category">{{$t('create-experience-form.category')}}</label>
+            <pv-input-select v-model="category" :options="categories" optionLabel="description" optionValue="id" :placeholder="$t('create-experience-form.category')" class="w-full custom-multiselect"></pv-input-select>
+          </div>
+
+          <div class="field-group includes-section">
+            <label for="includes">{{$t('create-experience-form.include')}}</label>
+            <div class="includes-input-wrapper">
+              <input v-model="newIncludeItem" id="includes" type="text" class="input include-input" :placeholder="$t('create-experience-form.include')" />
+              <button
+                  type="button"
+                  class="include-add-button"
+                  @click="addIncludeItem"
+                  :disabled="includes.length >= 3 || !newIncludeItem"
+              >
+                <i class="pi pi-plus mr-1"></i>
                 {{ $t("create-experience-form.include-button") }}
               </button>
             </div>
-            <ul class="list-disc pl-5" v-if="includes.length > 0">
-              <li v-for="(item, index) in includes" :key="index" class="include-item">
+            <div class="include-chip-wrapper">
+              <div class="include-chip" v-for="(item, index) in includes" :key="index">
                 {{ item }}
-                <button type="button" class="remove-include-btn" @click="removeIncludeItem(index)">✖</button>
-              </li>
-            </ul>
+                <button type="button" class="include-chip-remove pi pi-times" @click="removeIncludeItem(index)"></button>
+              </div>
+            </div>
           </div>
 
-          <div class="images-section">
-            <label>{{$t('create-experience-form.img')}}</label>
-            <div class="flex gap-2 mb-2">
-              <pv-input-text v-model="imageUrl" class="flex-1" />
-              <button type="button" @click="addImageByUrl" class="btn-add-image">
-                {{ $t("create-experience-form.img-button") }}
-              </button>
-            </div>
+          <div class="field-group">
+            <label for="imageUrl">Imagen por URL</label>
+            <input v-model="imageUrl" id="imageUrl" type="text" :placeholder="$t('create-experience-form.img')" class="input mt-2" />
+            <button type="button" @click="addImageByUrl" class="button-add-image">{{ $t("create-experience-form.img-button") }}</button>
+          </div>
 
-            <div class="grid grid-cols-3 gap-2 mt-4" v-if="images.length > 0">
-              <div v-for="(img, index) in images" :key="index" class="image-preview">
-                <img :src="img.url || img.objectUrl" alt="Imagen" class="preview-img" />
-                <p class="image-name">{{ img.name }}</p>
+          <div class="field-group">
+            <label>Imágenes agregadas</label>
+            <div class="mt-2 grid grid-cols-3 gap-2">
+              <div v-for="(img, index) in images" :key="index" class="border p-1 rounded">
+                <img :src="img.url || img.objectUrl" alt="Imagen" class="w-full h-32 object-cover rounded" width="40px" height="40px" />
+                <p class="text-xs mt-1 break-all">{{ img.name }}</p>
               </div>
             </div>
           </div>
 
           <p v-if="formInvalid" class="alert">{{ $t("create-experience-form.alert") }}</p>
 
-          <div class="form-button-group">
-            <button @click="close" class="form-button cancel">Cancelar</button>
-            <button @click="SaveExperience" class="form-button save">{{ $t("create-experience-form.save") }}</button>
-          </div>
-
-        </div>
+          <button @click="SaveExperience" type="submit" class="button-add-experience">{{ $t("create-experience-form.save") }}</button>
+        </form>
       </div>
     </div>
   </div>
 </template>
 
 <style scoped>
+.fixed {
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: rgba(0, 0, 0, 0.5);
+}
+
 .form-container {
+  background-color: #fff;
   width: 600px;
-  background: white;
-  padding: 30px 40px;
-  margin: 20px;
-  border-radius: 10px;
+  max-height: 90vh;
+  border-radius: 12px;
+  padding: 24px 32px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
   display: flex;
   flex-direction: column;
-  gap: 10px;
-  max-height: 90vh;
+  gap: 16px;
+  position: relative;
 }
 
 .form-title {
@@ -261,209 +284,182 @@ const SaveExperience = async () => {
 }
 
 .form-title h2 {
-  color: black;
-  margin: 0;
+  font-size: 20px;
+  font-weight: 600;
+  color: #333;
 }
 
 .button-close {
-  width: 30px;
-  height: 30px;
-  color: black;
-  border: none;
   background: none;
+  border: none;
+  font-size: 18px;
   cursor: pointer;
-  font-size: 16px;
-}
-
-.form-scroll {
-  overflow-y: auto;
-  max-height: 70vh;
-  padding-right: 15px;
-}
-
-.form-fields {
-  display: flex;
-  flex-direction: column;
-  gap: 0.75rem;
-}
-
-.form-fields label {
-  font-weight: 600;
-  margin-bottom: -0.25rem;
-  color: black;
+  color: #333;
 }
 
 .separator {
   width: 100%;
   height: 1px;
-  background-color: #e5e7eb;
+  background-color: #ccc;
+  margin-bottom: 16px;
 }
 
-.form-button-group {
+.form-scroll {
+  overflow-y: auto;
+  max-height: 65vh;
+  padding-right: 8px;
+}
+
+.form-fields {
   display: flex;
-  justify-content: flex-end;
-  gap: 1rem;
-  margin-top: 1.5rem;
-  padding-top: 1.5rem;
-  border-top: 1px solid #e5e7eb;
+  flex-direction: column;
+  gap: 16px;
 }
 
-.form-button {
-  padding: 12px 20px;
-  font-size: 16px;
-  border: none;
-  border-radius: 15px;
-  cursor: pointer;
+.field-group {
+  display: flex;
+  flex-direction: column;
+}
+
+.field-group label {
+  font-size: 14px;
+  margin-bottom: 6px;
+  color: #222;
+}
+
+.input,
+textarea {
+  padding: 10px 12px;
+  font-size: 14px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  width: 100%;
+  box-sizing: border-box;
+  color: #333;
+  background-color: #fff;
+}
+
+.no-resize {
+  resize: none !important;
+}
+
+.custom-multiselect {
+  color: #333;
+}
+
+.custom-multiselect .pv-multi-select,
+.custom-multiselect .pv-input-select {
+  border: 1px solid #ccc;
+  border-radius: 6px;
+}
+
+.custom-multiselect .pv-chip {
+  background-color: #318C8B;
   color: white;
 }
 
-.form-button.save {
-  background-color: #318C8B;
+.custom-multiselect .pv-multi-select-panel {
+  max-height: 200px;
+  overflow-y: auto;
 }
 
-.form-button.cancel {
-  background-color: #D9534F;
-}
-
-.fixed {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  z-index: 50;
+.includes-input-wrapper {
   display: flex;
-  justify-content: center;
+  gap: 8px;
+  margin-bottom: 8px;
   align-items: center;
-  background-color: rgba(0, 0, 0, 0.6);
 }
 
-.grid {
-  display: grid;
-}
-
-.grid-cols-2 {
-  grid-template-columns: repeat(2, 1fr);
-}
-
-.grid-cols-3 {
-  grid-template-columns: repeat(3, 1fr);
-}
-
-.gap-2 {
-  gap: 0.5rem;
-}
-
-.gap-4 {
-  gap: 1rem;
-}
-
-.w-full {
-  width: 100%;
-}
-
-.flex {
-  display: flex;
-}
-
-.flex-1 {
+.include-input {
   flex: 1;
 }
 
-.mb-2 {
-  margin-bottom: 0.5rem;
-}
-
-.mb-4 {
-  margin-bottom: 1rem;
-}
-
-.mt-4 {
-  margin-top: 1rem;
-}
-
-.pl-5 {
-  padding-left: 1.25rem;
-}
-
-.includes-section {
-  margin-bottom: 1rem;
-}
-
-.include-item {
-  color: black;
-  font-size: 14px;
+.include-add-button {
   display: flex;
   align-items: center;
-  justify-content: space-between;
-}
-
-.remove-include-btn {
-  color: #dc2626;
-  background: none;
+  gap: 4px;
+  background-color: #318C8B;
+  color: white;
   border: none;
-  cursor: pointer;
-  margin-left: 0.5rem;
-  font-size: 12px;
-}
-
-.btn-include-item,
-.btn-add-image {
-  padding: 8px 16px;
-  background-color: #D9F2EF;
-  color: black;
-  border: 1px solid #ccc;
+  padding: 8px 14px;
   border-radius: 6px;
+  font-size: 13px;
   cursor: pointer;
-  white-space: nowrap;
+  transition: background 0.3s ease;
 }
 
-.btn-include-item:disabled {
-  opacity: 0.5;
+.include-add-button:disabled {
+  background-color: #ccc;
   cursor: not-allowed;
 }
 
-.images-section {
-  margin-bottom: 1rem;
+.include-chip-wrapper {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
 }
 
-.image-preview {
-  border: 1px solid #e5e7eb;
-  padding: 0.25rem;
+.include-chip {
+  display: flex;
+  align-items: center;
+  background-color: #D9F2EF;
+  color: #333;
+  padding: 6px 10px;
+  border-radius: 20px;
+  font-size: 13px;
+  position: relative;
+}
+
+.include-chip-remove {
+  background: none;
+  border: none;
+  color: #e74c3c;
+  font-size: 14px;
+  margin-left: 6px;
+  cursor: pointer;
+}
+
+.button-add-image {
+  margin-top: 8px;
+  padding: 8px 16px;
+  background-color: #D9F2EF;
+  color: #333;
   border-radius: 6px;
-  text-align: center;
+  border: 1px solid #ccc;
+  cursor: pointer;
 }
 
-.preview-img {
+.grid-cols-3 {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+}
+
+img {
   width: 100%;
-  height: 128px;
+  height: 100%;
   object-fit: cover;
-  border-radius: 4px;
 }
 
-.image-name {
-  font-size: 12px;
-  margin-top: 0.25rem;
-  color: #666;
-  word-break: break-all;
+.button-add-experience {
+  align-self: center;
+  padding: 10px 28px;
+  background-color: #318C8B;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.3s ease;
+}
+
+.button-add-experience:hover {
+  background-color: #246d6c;
 }
 
 .alert {
+  color: red;
   font-size: 14px;
-  color: #dc2626;
-  background-color: #fee2e2;
-  padding: 0.5rem;
-  border-radius: 4px;
-  border: 1px solid #fecaca;
-}
-
-.p-inputtextarea {
-  resize: none !important;
-  width: 100%;
-  min-height: 100px;
-}
-
-.list-disc {
-  list-style-type: disc;
+  margin-top: 6px;
 }
 </style>
