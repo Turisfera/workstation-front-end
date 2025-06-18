@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const BASE_URL = 'https://68242a2a65ba058033991eb6.mockapi.io/tripmatch';
+const BASE_URL = import.meta.env.VITE_API_URL;
 
 export class AgenciesApiService {
     async getProfile(agencyId) {
