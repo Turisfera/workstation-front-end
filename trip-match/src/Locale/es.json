@@ -133,7 +133,9 @@
     "experienceCreateSuccess": "Experiencia creada con éxito.",
     "loadSearchResultsError": "Error al cargar los datos de búsqueda:",
     "loadAgencyDataError": "Error cargando datos de agencia o reseñas:",
-    "saveAgencyChangesError": "Error al guardar cambios:"
+    "saveAgencyChangesError": "Error al guardar cambios:",
+    "selectScheduleAlert": "Por favor, selecciona un horario para la reserva.",
+    "bookingSuccessAlertWithSchedule": "¡Gracias por tu interés! Funcionalidad de reserva en desarrollo.\nHas seleccionado: {people} persona(s) para el {date} a las {schedule}."
 
 },
   "queryView": {
@@ -293,6 +295,8 @@
     "deleteButton": "Borrar"
   },
   "experienceDetail": {
+    "scheduleLabel": "Horario",
+    "schedulePlaceholder": "Elige un horario",
     "loadingDetails": "Cargando detalles de la experiencia...",
     "descriptionTitle": "Descripción",
     "includesTitle": "¿Qué incluye?",

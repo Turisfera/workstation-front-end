@@ -123,8 +123,9 @@
     "experienceCreateSuccess": "Experience created successfully.",
     "loadSearchResultsError": "Error loading search data:",
     "loadAgencyDataError": "Error loading agency data or reviews:",
-    "saveAgencyChangesError": "Error saving changes:"
-
+    "saveAgencyChangesError": "Error saving changes:",
+    "selectScheduleAlert": "Please select a time slot for your booking.",
+    "bookingSuccessAlertWithSchedule": "Thank you for your interest! Booking functionality is under development. You have selected: {people} for {date} at {schedule}."
   },
     "queryView": {
       "title": "Query Inbox",
@@ -283,6 +284,8 @@
       "deleteButton": "Delete"
     },
     "experienceDetail": {
+      "scheduleLabel": "Schedule",
+      "schedulePlaceholder": "Choose a time slot",
       "loadingDetails": "Loading experience details...",
       "descriptionTitle": "Description",
       "includesTitle": "What's included?",

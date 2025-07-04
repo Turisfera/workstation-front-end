@@ -8,7 +8,6 @@
       <div class="header">
         <h1 class="title">{{ experience.title }}</h1>
         <div class="meta-info">
-          <span class="rating">★ {{ experience.rating.toFixed(1) }}</span>
           <span class="location"><i class="pi pi-map-marker"></i> {{ experience.location }}</span>
         </div>
       </div>
@@ -49,6 +48,9 @@
             <Calendar v-model="selectedDate" :placeholder="$t('experienceDetail.datePlaceholder')" dateFormat="dd/mm/yy" class="w-full" />
           </div>
           <div class="form-group">
+            <label>{{ $t('experienceDetail.scheduleLabel') }}</label> <Dropdown v-model="selectedSchedule" :options="experience.schedules" :placeholder="$t('experienceDetail.schedulePlaceholder')" class="w-full" />
+          </div>
+          <div class="form-group">
             <label>{{ $t('experienceDetail.numberOfPeopleLabel') }}</label>
             <InputNumber v-model="numberOfPeople" mode="decimal" showButtons :min="1" :max="10" class="w-full" />
           </div>
@@ -76,7 +78,8 @@ import Galleria from 'primevue/galleria';
 import Calendar from 'primevue/calendar';
 import InputNumber from 'primevue/inputnumber';
 import Button from 'primevue/button';
-import { useI18n } from 'vue-i18n'; // Importado para internacionalización
+import Dropdown from 'primevue/dropdown'; // Importado para el selector de horarios
+import { useI18n } from 'vue-i18n';
 
 const props = defineProps({
   id: {
@@ -90,7 +93,8 @@ const experience = ref(null);
 const isLoading = ref(true);
 const selectedDate = ref(null);
 const numberOfPeople = ref(1);
-const { t } = useI18n(); // Inicializa la función de traducción
+const selectedSchedule = ref(null); // Nuevo ref para el horario seleccionado
+const { t } = useI18n();
 
 const totalPrice = computed(() => {
   if (experience.value) {
@@ -118,17 +122,26 @@ const handleBooking = () => {
     alert(t('error.selectDateAlert'));
     return;
   }
+  if (!selectedSchedule.value) { // Validación de horario
+    alert(t('error.selectScheduleAlert')); // Nueva clave de traducción
+    return;
+  }
 
   const bookingDetails = {
     experienceId: experience.value.id,
     experienceTitle: experience.value.title,
-    date: selectedDate.value.toLocaleDateString('es-ES'), // Formato de fecha específico del locale, considerar usar i18n date formatting
+    date: selectedDate.value.toLocaleDateString('es-ES'),
     people: numberOfPeople.value,
+    schedule: selectedSchedule.value, // Incluye el horario seleccionado
     total: totalPrice.value
   };
 
-  console.log('Datos de la reserva:', bookingDetails); // Log para desarrolladores, no necesita traducción
-  alert(t('error.bookingSuccessAlert', { people: bookingDetails.people, date: bookingDetails.date }));
+  console.log('Datos de la reserva:', bookingDetails);
+  alert(t('error.bookingSuccessAlertWithSchedule', { // Nueva clave de traducción con horario
+    people: bookingDetails.people,
+    date: bookingDetails.date,
+    schedule: bookingDetails.schedule
+  }));
 };
 </script>
 
@@ -160,11 +173,12 @@ const handleBooking = () => {
 .info-column .meta-info .pi {
   margin-right: 0.5rem;
 }
+/* Estilo de rating eliminado
 .info-column .rating {
   font-weight: 600;
   color: #e8a900;
 }
-
+*/
 .section {
   margin-top: 2rem;
   border-top: 1px solid #eee;

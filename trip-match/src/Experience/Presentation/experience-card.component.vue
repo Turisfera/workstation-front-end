@@ -22,9 +22,6 @@ const goToDeleteExperience = (id) => {
       <img :src="experience.images[0]" :alt="$t('experienceCard.imageAlt')" class="experience-img" />
       <div class="experience-info">
         <h2 class="experience-title">{{ experience.title }}</h2>
-        <div class="experience-rating">
-          <span class="stars">{{ $t('experienceCard.stars') }}</span><span class="score">{{ experience.rating || '5' }}</span>
-        </div>
         <p class="experience-details">
           {{ $t('experienceCard.pricePrefix') }}{{ experience.price }} {{ $t('experienceCard.separator') }} {{ experience.duration }}{{ $t('experienceCard.durationUnit') }} {{ $t('experienceCard.separator') }} {{ experience.frequencies.value}} {{ $t('experienceCard.separator') }} {{ categoryDescription}}
         </p>
@@ -80,6 +77,7 @@ const goToDeleteExperience = (id) => {
   margin: 0;
 }
 
+/* Estilos de rating eliminados ya que el elemento se ha quitado del template
 .experience-rating {
   display: flex;
   align-items: center;
@@ -94,6 +92,7 @@ const goToDeleteExperience = (id) => {
 .score {
   font-weight: bold;
 }
+*/
 
 .experience-details,
 .experience-schedule {
