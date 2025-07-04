@@ -1,4 +1,9 @@
 <script setup>
+import { defineProps } from 'vue';
+import { useI18n } from 'vue-i18n'; // Importa useI18n
+
+const { t } = useI18n(); // Inicializa useI18n
+
 defineProps({
   reservation: {
     type: Object,
@@ -12,27 +17,27 @@ defineProps({
     <div class="traveler-info">
       <img
           :src="reservation.traveler.avatarUrl"
-          alt="Avatar viajero"
+          :alt="$t('reservation-view.listItem.travelerAvatarAlt')"
           class="profile-photo"
       />
       <span class="traveler-name">{{ reservation.traveler.name }}</span>
     </div>
     <div class="details-grid">
       <div class="detail-item">
-        <label>Fecha de reserva</label>
+        <label>{{ $t('reservation-view.listItem.bookingDateLabel') }}</label>
         <span>{{ reservation.bookingDate }}</span>
       </div>
       <div class="detail-item">
-        <label>Experiencia</label>
+        <label>{{ $t('reservation-view.listItem.experienceLabel') }}</label>
         <span>{{ reservation.experienceName }}</span>
       </div>
       <div class="detail-item">
-        <label>Personas</label>
+        <label>{{ $t('reservation-view.listItem.paxLabel') }}</label>
         <span>{{ reservation.pax }}</span>
       </div>
       <div class="detail-item">
-        <label>Total pagado</label>
-        <span class="total-paid">S/ {{ reservation.totalPaid.toFixed(2) }}</span>
+        <label>{{ $t('reservation-view.listItem.totalPaidLabel') }}</label>
+        <span class="total-paid">{{ $t('reservation-view.currencySymbol') }} {{ reservation.totalPaid.toFixed(2) }}</span>
       </div>
     </div>
   </div>

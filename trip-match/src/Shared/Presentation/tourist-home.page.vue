@@ -23,7 +23,7 @@ const isLoading = ref(true);
 
 onMounted(async () => {
   try {
-    user.value = localStorage.getItem('name') || 'Viajero';
+    user.value = localStorage.getItem('name') || t('home.defaultUser');
     const [experienceResponse, categoryResponse] = await Promise.all([
       experiencesApiService.getExperiences(),
       categoryApiService.getCategory()
@@ -34,7 +34,7 @@ onMounted(async () => {
     categoryMap.value = Object.fromEntries(categories.value.map(c => [c.id, c.description]));
 
   } catch (error) {
-    console.error("Error al cargar los datos del home:", error);
+    console.error(t('error.fetchHomeData'), error);
   } finally {
     isLoading.value = false;
   }
@@ -57,7 +57,7 @@ const searchExperiences = () => {
   <div class="home-view">
     <main class="main-content">
       <h3 class="greetings">{{ $t('home.greeting', { user: user }) }}</h3>
-      <p class="welcome-message">{{ $t('home.greetingSubtitle') }}</p>
+      <p class="welcome-message">{{ $t('home.greetingSubtitle2') }}</p>
 
       <div class="search-form">
         <div class="row">
@@ -74,7 +74,7 @@ const searchExperiences = () => {
       <p class="recommendation-title">{{ $t('home.recommendations') }}</p>
 
       <div v-if="isLoading" class="loading-state">
-        Cargando recomendaciones...
+        {{ $t('home.loadingRecommendations') }}
       </div>
       <div v-else class="recommendation-grid">
         <ExperienceCardUser

@@ -8,10 +8,12 @@ import ExperienceCardUser from '@/Experience/Presentation/experience-card-user.c
 import Button from 'primevue/button';
 import ConfirmDialog from 'primevue/confirmdialog';
 import Toast from 'primevue/toast';
+import { useI18n } from 'vue-i18n';
 
 const router = useRouter();
 const confirm = useConfirm();
 const toast = useToast();
+const { t } = useI18n();
 
 const allReservations = ref([]);
 const selectedDate = ref(null);
@@ -53,20 +55,20 @@ const isDayHighlighted = (date) => {
 
 const handleCancelReservation = (reservationId) => {
   confirm.require({
-    message: '¿Estás seguro de que quieres cancelar esta reserva?',
-    header: 'Confirmación de Cancelación',
+    message: t('itineraryView.confirmDialog.message'),
+    header: t('itineraryView.confirmDialog.header'),
     icon: 'pi pi-info-circle',
-    rejectLabel: 'No, volver',
-    acceptLabel: 'Sí, cancelar',
+    rejectLabel: t('itineraryView.confirmDialog.rejectLabel'),
+    acceptLabel: t('itineraryView.confirmDialog.acceptLabel'),
     rejectClass: 'p-button-secondary p-button-outlined',
     acceptClass: 'p-button-danger',
     accept: () => {
       allReservations.value = allReservations.value.filter(res => res.id !== reservationId);
-      setupMockData(); // Regeneramos los datos para actualizar el calendario
-      toast.add({ severity: 'success', summary: 'Cancelado', detail: 'La reserva ha sido cancelada.', life: 3000 });
+      setupMockData();
+      toast.add({ severity: 'success', summary: t('itineraryView.toast.cancelSuccessSummary'), detail: t('itineraryView.toast.cancelSuccessDetail'), life: 3000 });
     },
     reject: () => {
-      toast.add({ severity: 'info', summary: 'Acción Abortada', detail: 'No se ha cancelado la reserva.', life: 3000 });
+      toast.add({ severity: 'info', summary: t('itineraryView.toast.cancelAbortSummary'), detail: t('itineraryView.toast.cancelAbortDetail'), life: 3000 });
     }
   });
 };
@@ -78,26 +80,26 @@ const handleCancelReservation = (reservationId) => {
 
   <div class="itinerary-view">
     <header class="view-header">
-      <h1>Mi Itinerario de Viaje</h1>
-      <p>Selecciona un día en el calendario para ver los detalles de tus reservas.</p>
+      <h1>{{ $t('itineraryView.title') }}</h1>
+      <p>{{ $t('itineraryView.subtitle') }}</p>
     </header>
 
     <div class="content-layout">
       <div class="reservations-details">
         <div v-if="!selectedDate" class="placeholder">
           <i class="pi pi-calendar-plus"></i>
-          <span>Selecciona un día marcado para ver tus actividades</span>
+          <span>{{ $t('itineraryView.placeholderSelectDay') }}</span>
         </div>
         <div v-else-if="reservationsForSelectedDate.length === 0" class="placeholder">
           <i class="pi pi-sun"></i>
-          <span>No tienes actividades programadas para este día</span>
+          <span>{{ $t('itineraryView.placeholderNoActivities') }}</span>
         </div>
         <div v-else class="cards-container">
           <div v-for="reservation in reservationsForSelectedDate" :key="reservation.id" class="reservation-item">
             <ExperienceCardUser :experience="reservation.experience" />
             <div class="cancel-button-container">
               <Button
-                  label="Cancelar Reserva"
+                  :label="$t('itineraryView.cancelReservationButton')"
                   severity="danger"
                   outlined
                   @click="handleCancelReservation(reservation.id)"

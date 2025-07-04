@@ -2,10 +2,13 @@
 import { ref, computed } from "vue";
 import { useRouter } from "vue-router";
 import { FavoritesService } from '@/Favorites/Application/favorites.service.js';
+import { useI18n } from 'vue-i18n';
+
 const props = defineProps({ experience: Object, categoryDescription: String, required: true });
 const router = useRouter();
 const favoritesService = new FavoritesService();
 const isFavorite = ref(favoritesService.isFavorite(props.experience.id));
+const { t } = useI18n();
 
 const displayRating = computed(() => {
   const rating = Number(props.experience.rating) || 0;
@@ -26,7 +29,7 @@ const goToDetails = () => { router.push({ name: 'ExperienceDetail', params: { id
 <template>
   <div class="experience-card">
     <div class="experience-header">
-      <img :src="experience.images[0]" alt="Imagen experiencia" class="experience-img" />
+      <img :src="experience.images[0]" :alt="$t('experienceCardUser.imageAlt')" class="experience-img" />
       <div class="experience-info">
         <h2 class="experience-title">{{ experience.title }}</h2>
         <div class="experience-rating">
@@ -34,15 +37,15 @@ const goToDetails = () => { router.push({ name: 'ExperienceDetail', params: { id
           <span class="score">{{ displayRating.toFixed(1) }}</span>
         </div>
         <p class="experience-details">
-          S/ {{ experience.price }} · {{ experience.duration }}h · {{ categoryDescription }}
+          {{ $t('experienceCardUser.currencyPrefix') }} {{ experience.price }} {{ $t('experienceCardUser.detailsSeparator') }} {{ experience.duration }}{{ $t('experienceCardUser.durationUnit') }} {{ $t('experienceCardUser.detailsSeparator') }} {{ categoryDescription }}
         </p>
         <p class="experience-schedule">
-          Horarios: {{ experience.schedules.join(' | ') }}
+          {{ $t('experienceCardUser.schedulesPrefix') }}{{ experience.schedules.join($t('experienceCardUser.scheduleItemSeparator')) }}
         </p>
         <p class="experience-description">{{ experience.description }}</p>
         <div class="experience-footer">
-          <a href="#" class="experience-agency">{{ experience.agencyName || 'Agencia Verificada' }} →</a>
-          <button class="experience-button" @click="goToDetails">Ver más</button>
+          <a href="#" class="experience-agency">{{ experience.agencyName || $t('experienceCardUser.defaultAgencyName') }} {{ $t('experienceCardUser.agencyLinkSuffix') }}</a>
+          <button class="experience-button" @click="goToDetails">{{ $t('experienceCardUser.viewMoreButton') }}</button>
         </div>
       </div>
       <button class="favorite-btn" @click.stop.prevent="toggleFavorite">
@@ -79,7 +82,6 @@ const goToDetails = () => { router.push({ name: 'ExperienceDetail', params: { id
   margin: 0.75rem 0;
   color: #475569;
   line-height: 1.5;
-  /* Limitar a 2 líneas de texto */
   display: -webkit-box;
   -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;

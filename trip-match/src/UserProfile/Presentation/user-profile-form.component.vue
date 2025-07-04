@@ -1,6 +1,7 @@
 <script setup>
 import { reactive, watch } from 'vue';
 import InputText from 'primevue/inputtext';
+import { useI18n } from 'vue-i18n';
 
 const props = defineProps({
   user: {
@@ -9,6 +10,7 @@ const props = defineProps({
   }
 });
 const emit = defineEmits(['save', 'cancel']);
+const { t } = useI18n();
 
 const form = reactive({});
 
@@ -24,31 +26,31 @@ const onSave = () => {
 <template>
   <div class="user-form">
     <div class="field">
-      <label for="name">Nombre Completo</label>
+      <label for="name">{{ $t('userProfile.form.fullNameLabel') }}</label>
       <InputText id="name" v-model="form.name" class="w-full" />
     </div>
     <div class="field">
-      <label for="email">Correo Electrónico (no se puede cambiar)</label>
+      <label for="email">{{ $t('userProfile.form.emailLabel') }}</label>
       <InputText id="email" v-model="form.email" disabled class="w-full" />
     </div>
     <div class="field">
-      <label for="avatar">URL de la Foto de Perfil</label>
+      <label for="avatar">{{ $t('userProfile.form.avatarUrlLabel') }}</label>
       <InputText id="avatar" v-model="form.avatarUrl" class="w-full" />
     </div>
     <div class="grid grid-cols-2 gap-4">
       <div class="field">
-        <label for="country">País</label>
+        <label for="country">{{ $t('userProfile.form.countryLabel') }}</label>
         <InputText id="country" v-model="form.country" class="w-full" />
       </div>
       <div class="field">
-        <label for="phone">Teléfono</label>
+        <label for="phone">{{ $t('userProfile.form.phoneLabel') }}</label>
         <InputText id="phone" v-model="form.phone" class="w-full" />
       </div>
     </div>
 
     <div class="form-button-group">
-      <button class="form-button cancel" @click="$emit('cancel')">Cancelar</button>
-      <button class="form-button save" @click="onSave">Guardar Cambios</button>
+      <button class="form-button cancel" @click="$emit('cancel')">{{ $t('userProfile.form.cancelButton') }}</button>
+      <button class="form-button save" @click="onSave">{{ $t('userProfile.form.saveButton') }}</button>
     </div>
   </div>
 </template>

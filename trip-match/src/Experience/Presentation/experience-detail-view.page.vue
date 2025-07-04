@@ -1,6 +1,6 @@
 <template>
   <div v-if="isLoading" class="loading-container">
-    <p>Cargando detalles de la experiencia...</p>
+    <p>{{ $t('experienceDetail.loadingDetails') }}</p>
   </div>
 
   <div v-else-if="experience" class="detail-container">
@@ -20,12 +20,12 @@
       </Galleria>
 
       <div class="section">
-        <h2>Descripción</h2>
+        <h2>{{ $t('experienceDetail.descriptionTitle') }}</h2>
         <p>{{ experience.description }}</p>
       </div>
 
       <div class="section">
-        <h2>¿Qué incluye?</h2>
+        <h2>{{ $t('experienceDetail.includesTitle') }}</h2>
         <ul>
           <li v-for="(item, index) in experience.includes" :key="index">
             <i class="pi pi-check-circle" style="color: #2c8a8a;"></i> {{ item }}
@@ -33,39 +33,39 @@
         </ul>
       </div>
       <div class="section">
-        <h2>Horarios y Frecuencia</h2>
-        <p><strong>Frecuencia:</strong> {{ experience.frequencies }}</p>
-        <p><strong>Horarios de inicio disponibles:</strong> {{ experience.schedules.join(', ') }}</p>
+        <h2>{{ $t('experienceDetail.schedulesTitle') }}</h2>
+        <p><strong>{{ $t('experienceDetail.frequencyLabel') }}</strong> {{ experience.frequencies }}</p>
+        <p><strong>{{ $t('experienceDetail.availableSchedulesLabel') }}</strong> {{ experience.schedules.join(', ') }}</p>
       </div>
 
     </div>
 
     <div class="booking-column">
       <div class="booking-card">
-        <h3 class="price">S/ {{ experience.price }} <span class="price-unit">/ persona</span></h3>
+        <h3 class="price">{{ $t('experienceDetail.priceCurrency') }} {{ experience.price }} <span class="price-unit">{{ $t('experienceDetail.priceUnit') }}</span></h3>
         <div class="booking-form">
           <div class="form-group">
-            <label>Fecha</label>
-            <Calendar v-model="selectedDate" placeholder="Elige una fecha" dateFormat="dd/mm/yy" class="w-full" />
+            <label>{{ $t('experienceDetail.dateLabel') }}</label>
+            <Calendar v-model="selectedDate" :placeholder="$t('experienceDetail.datePlaceholder')" dateFormat="dd/mm/yy" class="w-full" />
           </div>
           <div class="form-group">
-            <label>Número de personas</label>
+            <label>{{ $t('experienceDetail.numberOfPeopleLabel') }}</label>
             <InputNumber v-model="numberOfPeople" mode="decimal" showButtons :min="1" :max="10" class="w-full" />
           </div>
         </div>
         <div class="total-price">
-          <span>Total</span>
-          <span>S/ {{ totalPrice.toFixed(2) }}</span>
+          <span>{{ $t('experienceDetail.totalLabel') }}</span>
+          <span>{{ $t('experienceDetail.priceCurrency') }} {{ totalPrice.toFixed(2) }}</span>
         </div>
-        <Button label="Reservar ahora" class="w-full booking-button" @click="handleBooking" />
+        <Button :label="$t('experienceDetail.bookNowButton')" class="w-full booking-button" @click="handleBooking" />
       </div>
     </div>
   </div>
 
   <div v-else class="not-found-container">
-    <h2>Experiencia no encontrada</h2>
-    <p>La experiencia que buscas no existe o no está disponible.</p>
-    <router-link to="/">Volver al inicio</router-link>
+    <h2>{{ $t('experienceDetail.notFoundTitle') }}</h2>
+    <p>{{ $t('experienceDetail.notFoundMessage') }}</p>
+    <router-link to="/">{{ $t('experienceDetail.backToHomeButton') }}</router-link>
   </div>
 </template>
 
@@ -76,6 +76,8 @@ import Galleria from 'primevue/galleria';
 import Calendar from 'primevue/calendar';
 import InputNumber from 'primevue/inputnumber';
 import Button from 'primevue/button';
+import { useI18n } from 'vue-i18n'; // Importado para internacionalización
+
 const props = defineProps({
   id: {
     type: String,
@@ -88,6 +90,8 @@ const experience = ref(null);
 const isLoading = ref(true);
 const selectedDate = ref(null);
 const numberOfPeople = ref(1);
+const { t } = useI18n(); // Inicializa la función de traducción
+
 const totalPrice = computed(() => {
   if (experience.value) {
     return experience.value.price * numberOfPeople.value;
@@ -102,7 +106,7 @@ onMounted(async () => {
       experience.value = response.data;
     }
   } catch (error) {
-    console.error("Error al cargar la experiencia:", error);
+    console.error(t('error.loadExperienceError'), error);
     experience.value = null;
   } finally {
     isLoading.value = false;
@@ -111,20 +115,20 @@ onMounted(async () => {
 
 const handleBooking = () => {
   if (!selectedDate.value) {
-    alert('Por favor, selecciona una fecha para la reserva.');
+    alert(t('error.selectDateAlert'));
     return;
   }
 
   const bookingDetails = {
     experienceId: experience.value.id,
     experienceTitle: experience.value.title,
-    date: selectedDate.value.toLocaleDateString('es-ES'),
+    date: selectedDate.value.toLocaleDateString('es-ES'), // Formato de fecha específico del locale, considerar usar i18n date formatting
     people: numberOfPeople.value,
     total: totalPrice.value
   };
 
-  console.log('Datos de la reserva:', bookingDetails);
-  alert(`¡Gracias por tu interés! Funcionalidad de reserva en desarrollo.\nHas seleccionado: ${bookingDetails.people} persona(s) para el ${bookingDetails.date}.`);
+  console.log('Datos de la reserva:', bookingDetails); // Log para desarrolladores, no necesita traducción
+  alert(t('error.bookingSuccessAlert', { people: bookingDetails.people, date: bookingDetails.date }));
 };
 </script>
 

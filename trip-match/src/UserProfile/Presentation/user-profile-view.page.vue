@@ -4,16 +4,18 @@ import { UserProfileApiService } from '../Application/user-profile-api.service.j
 import UserProfileForm from './user-profile-form.component.vue';
 import Dialog from 'primevue/dialog';
 import Button from 'primevue/button';
+import { useI18n } from 'vue-i18n';
 
 const userProfileApi = new UserProfileApiService();
 const user = ref({});
 const isEditing = ref(false);
 const isLoading = ref(true);
+const { t } = useI18n();
 
 onMounted(async () => {
   const userId = localStorage.getItem('token');
   if (!userId) {
-    console.error("No se encontró el ID del usuario para cargar el perfil.");
+    console.error(t('error.userIdNotFound'));
     isLoading.value = false;
     return;
   }
@@ -22,7 +24,7 @@ onMounted(async () => {
     const response = await userProfileApi.getProfile(userId);
     user.value = response.data;
   } catch (error) {
-    console.error("Error al cargar el perfil del usuario:", error);
+    console.error(t('error.fetchProfileError'), error);
   } finally {
     isLoading.value = false;
   }
@@ -35,10 +37,10 @@ const handleSave = async (updatedUserData) => {
     localStorage.setItem('name', user.value.name);
     localStorage.setItem('avatar', user.value.avatarUrl);
     isEditing.value = false;
-    alert('¡Perfil actualizado con éxito!');
+    alert(t('userProfile.updateSuccessAlert'));
   } catch (error) {
-    console.error("Error al actualizar el perfil:", error);
-    alert('No se pudo actualizar el perfil.');
+    console.error(t('error.updateProfileError'), error);
+    alert(t('userProfile.updateFailedAlert'));
   }
 };
 </script>
@@ -48,17 +50,16 @@ const handleSave = async (updatedUserData) => {
     <div class="profile-card">
 
       <header class="profile-header">
-        <h1>Mi Perfil</h1>
-        <Button label="Editar Perfil" icon="pi pi-pencil" @click="isEditing = true" />
+        <h1>{{ $t('userProfile.title') }}</h1>
+        <Button :label="$t('userProfile.editButton')" icon="pi pi-pencil" @click="isEditing = true" />
       </header>
 
       <div class="profile-content">
-        <!-- Usamos img nativo para forzar carga por URL -->
         <div class="avatar-wrapper">
           <img
               v-if="user.avatarUrl"
               :src="user.avatarUrl"
-              alt="Avatar"
+              :alt="$t('userProfile.avatarAlt')"
               class="profile-avatar"
               @error="user.avatarUrl = ''"
           />
@@ -89,7 +90,7 @@ const handleSave = async (updatedUserData) => {
     <Dialog
         v-model:visible="isEditing"
         modal
-        header="Editar Mi Perfil"
+        :header="$t('userProfile.editModalHeader')"
         :style="{ width: '40rem' }"
     >
       <UserProfileForm
@@ -101,7 +102,7 @@ const handleSave = async (updatedUserData) => {
   </div>
 
   <div v-else class="loading-state">
-    Cargando perfil...
+    {{ $t('userProfile.loadingProfile') }}
   </div>
 </template>
 

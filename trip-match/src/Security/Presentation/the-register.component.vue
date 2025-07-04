@@ -1,58 +1,58 @@
 <template>
   <div class="login-container">
     <div class="login-box">
-      <h2>Crear cuenta</h2>
-      <p class="subtitle">Regístrate para empezar</p>
+      <h2>{{ $t('register.title') }}</h2>
+      <p class="subtitle">{{ $t('register.subtitle') }}</p>
 
       <form @submit.prevent="onRegister">
-        <label for="name">Nombre completo</label>
+        <label for="name">{{ $t('register.nameLabel') }}</label>
         <pv-input-text
             id="name"
             v-model="name"
             class="input"
-            placeholder="Tu nombre"
+            :placeholder="$t('register.namePlaceholder')"
             required
         />
 
-        <label for="email">Email</label>
+        <label for="email">{{ $t('register.emailLabel') }}</label>
         <pv-input-text
             id="email"
             v-model="email"
             type="email"
             class="input"
-            placeholder="usuario@ejemplo.com"
+            :placeholder="$t('register.emailPlaceholder')"
             required
         />
 
-        <label for="password">Contraseña</label>
+        <label for="password">{{ $t('register.passwordLabel') }}</label>
         <pv-input-text
             id="password"
             v-model="password"
             type="password"
             class="input"
-            placeholder="••••••••"
+            :placeholder="$t('register.passwordPlaceholder')"
             required
         />
 
-        <label for="confirm">Confirmar contraseña</label>
+        <label for="confirm">{{ $t('register.confirmPasswordLabel') }}</label>
         <pv-input-text
             id="confirm"
             v-model="confirmPassword"
             type="password"
             class="input"
-            placeholder="••••••••"
+            :placeholder="$t('register.confirmPasswordPlaceholder')"
             required
         />
 
-        <label>Tipo de cuenta</label>
+        <label>{{ $t('register.accountTypeLabel') }}</label>
         <div class="radio-group">
           <label>
             <input type="radio" :value="false" v-model="isAgency" />
-            Usuario
+            {{ $t('register.userType') }}
           </label>
           <label>
             <input type="radio" :value="true" v-model="isAgency" />
-            Agencia
+            {{ $t('register.agencyType') }}
           </label>
         </div>
 
@@ -63,29 +63,26 @@
             type="submit"
             :disabled="!canSubmit"
         >
-          Register
+          {{ $t('register.registerButton') }}
         </pv-button>
       </form>
 
       <p class="create">
-        ¿Ya tienes cuenta?
-        <a @click.prevent="$router.push('/login')">Inicia sesión</a>
+        {{ $t('register.alreadyHaveAccount') }}
+        <a @click.prevent="$router.push('/login')">{{ $t('register.loginLink') }}</a>
       </p>
     </div>
     <div class="agency-img-wrapper">
-      <img src="/Register-TripMatch.png" alt="Traveler Image" />
+      <img src="/Register-TripMatch.png" :alt="$t('register.travelerImageAlt')" />
     </div>
   </div>
-
-
-
-
 </template>
 
 <script setup>
 import { ref, computed } from 'vue'
 import { useRouter }     from 'vue-router'
 import { UserService }   from '@/Security/Application/user.service.js'
+import { useI18n } from 'vue-i18n';
 
 const name            = ref('')
 const email           = ref('')
@@ -96,6 +93,8 @@ const error           = ref('')
 
 const userService = new UserService()
 const router      = useRouter()
+const { t } = useI18n();
+
 const canSubmit = computed(() => {
   return (
       name.value.trim() &&
@@ -109,7 +108,7 @@ const canSubmit = computed(() => {
 async function onRegister() {
   error.value = ''
   if (password.value !== confirmPassword.value) {
-    error.value = 'Las contraseñas no coinciden'
+    error.value = t('error.passwordsMismatch')
     return
   }
   try {
@@ -120,12 +119,12 @@ async function onRegister() {
       isAgency:        isAgency.value
     })
     if (resp.status === 201) {
-      alert('Cuenta creada, ya puedes iniciar sesión.')
+      alert(t('register.accountCreatedSuccess'))
       router.push('/login')
     }
   } catch (err) {
     console.error(err)
-    error.value = 'No se pudo crear la cuenta. Intenta de nuevo.'
+    error.value = t('error.accountCreationFailure')
   }
 }
 </script>
@@ -199,8 +198,6 @@ label {
   width: 50%;
   background: linear-gradient(135deg,#00b8a9,#00796b);
 }
-
-
 .agency-img-wrapper {
   width: 50%;
   height: 100%;
@@ -210,7 +207,6 @@ label {
   align-items: center;
   overflow: hidden;
 }
-
 .agency-img-wrapper img {
   max-width: 100%;
   max-height: 100%;

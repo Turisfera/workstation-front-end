@@ -3,19 +3,21 @@ import { ExperiencesApiService } from "@/Experience/Application/experiences-api.
 import { ref } from "vue";
 import router from "@/router.js";
 import { useRoute } from "vue-router";
+import { useI18n } from 'vue-i18n';
 
 const route = useRoute();
 const experienceId = route.params.id;
 
 const experiencesApiService = new ExperiencesApiService();
+const { t } = useI18n();
 
 const deleteExperience = async () => {
   const response = await experiencesApiService.deleteExperience(experienceId);
   if (response.status === 200 || response.status === 204) {
-    alert("Experiencia eliminada con éxito.");
+    alert(t('error.experienceDeleteSuccess'));
     await router.replace({ name: 'ExperienceList' });
   } else {
-    alert("No se pudo eliminar la experiencia.");
+    alert(t('error.experienceDeleteFailed'));
   }
 };
 
@@ -28,15 +30,15 @@ const close = async () => {
   <div class="fixed flex items-center justify-center ">
     <div class=" rounded-lg relative form-container">
       <div class="form-title">
-        <h2>Eliminar Experiencia</h2>
+        <h2>{{ $t('experienceDelete.title') }}</h2>
         <button @click="close" class="button-close pi pi-times"></button>
       </div>
       <div class="separator mb-4"></div>
       <div>
-        <p class="font-semibold">¿Estás seguro de que deseas cancelar esta experiencia turística?</p>
-        <p>Esta acción no se puede deshacer.</p>
+        <p class="font-semibold">{{ $t('experienceDelete.confirmMessage1') }}</p>
+        <p>{{ $t('experienceDelete.confirmMessage2') }}</p>
       </div>
-      <button @click="deleteExperience" class="button-delete-experience">{{ "Borrar" }}</button>
+      <button @click="deleteExperience" class="button-delete-experience">{{ $t('experienceDelete.deleteButton') }}</button>
     </div>
   </div>
 </template>
@@ -104,5 +106,4 @@ const close = async () => {
   border-radius: 10px;
   cursor: pointer;
 }
-
 </style>

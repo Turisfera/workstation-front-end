@@ -1,6 +1,5 @@
 <template>
   <div class="agency-profile">
-    <!-- HEADER -->
     <div class="header">
       <h1 class="agency-name">{{ agency.name }}</h1>
       <button class="add-experience-button" @click="editing = true">
@@ -10,7 +9,7 @@
 
     <div class="content-grid">
       <div class="main-col">
-        <p class="tax-id"><strong>RUC / NIT:</strong> {{ agency.taxId }}</p>
+        <p class="tax-id"><strong>{{ t('agencyProfile.taxIdLabel') }}</strong> {{ agency.taxId }}</p>
         <p class="description">{{ agency.description }}</p>
 
         <div class="stats">
@@ -31,7 +30,6 @@
           </div>
         </div>
 
-        <!-- Reseñas -->
         <div class="reviews">
           <div
               v-for="rev in agency.reviews.slice(0, 2)"
@@ -55,7 +53,7 @@
       </div>
 
       <div class="side-col">
-        <img :src="agency.avatarUrl" alt="Logo Agencia" class="agency-logo" />
+        <img :src="agency.avatarUrl" :alt="t('agencyProfile.agencyLogoAlt')" class="agency-logo" />
         <p class="contact">{{ agency.contact.email }}</p>
         <p class="contact">{{ agency.contact.phone }}</p>
         <div class="social-icons">
@@ -181,7 +179,7 @@ onBeforeMount(async () => {
       reviews: reviews,
     };
   } catch (error) {
-    console.error("Error cargando datos de agencia o reseñas:", error);
+    console.error(t('error.loadAgencyDataError'), error);
   }
 });
 
@@ -205,7 +203,7 @@ async function onSaved(updated) {
 
     editing.value = false;
   } catch (error) {
-    console.error("Error al guardar cambios:", error);
+    console.error(t('error.saveAgencyChangesError'), error);
   }
 }
 
@@ -448,4 +446,3 @@ async function onSaved(updated) {
 
 
 </style>
-

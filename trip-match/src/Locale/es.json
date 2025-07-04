@@ -18,7 +18,10 @@
     "experienceType": "Tipo de experiencia",
     "budget": "Presupuesto",
     "search": "Buscar",
-    "recommendations": "Recomendaciones para ti"
+    "recommendations": "Recomendaciones para ti",
+    "defaultUser": "Viajero",
+    "loadingRecommendations": "Cargando recomendaciones...",
+    "greetingSubtitle2": "Encuentra tu próxima aventura."
   },
   "experience-view": {
     "title": "Tus Experiencias Publicadas",
@@ -39,42 +42,284 @@
     "img": "Pega la URL de la imagen (ej. https://i.imgur.com/abc.jpg)",
     "img-button": "Agregar imagen por url",
     "include-button": "Agregar",
-    "alert": "Complete los datos correctamente",
-    "save": "Guardar",
-    "category": "Categoria"
+    "category": "Categoria",
+    "imageUrlLabel": "Imagen por URL",
+    "addedImagesLabel": "Imágenes agregadas",
+    "alert": "Por favor, completa todos los campos requeridos.",
+    "save": "Guardar Experiencia",
+    "frequenciesOptions": {
+      "weekdays": "Lunes a Viernes",
+      "weekends": "Fines de Semana",
+      "everyDay": "Todos los días"
+    },
+    "existingImageName": "Imagen existente",
+    "externalImageName": "Imagen externa",
+    "imageAltText": "Imagen de la experiencia"
   },
   "agencyProfile": {
-    "reviews":     "Reseñas",
-    "reservations":"Reservas",
-    "edit":        "Editar",
+    "edit": "Editar Perfil",
+    "taxIdLabel": "RUC / NIT:",
+    "reviews": "Reseñas",
+    "reservations": "Reservas",
+    "viewMore": "Ver más",
+    "agencyLogoAlt": "Logo Agencia",
     "editprofile": "Editar Perfil de Agencia",
-    "viewMore":    "Ver más",
-    "reviewsTitle": "Reseñas y Puntaje"
+    "reviewsTitle": "Reseñas de la Agencia"
   },
   "experience": {
     "cancel": "cancelar",
     "save": "guardar"
   },
   "createAgency": {
-    "name":        "Nombre",
+    "name": "Nombre de Agencia",
     "description": "Descripción",
+    "img": "URL de la Foto de Perfil",
     "phone": "Teléfono",
-    "email": "Correo",
-    "img":         "URL de la imagen de perfil",
-    "facebook":    "Facebook",
-    "instagram":   "Instagram",
-    "whatsapp":    "WhatsApp"
+    "email": "Email de Contacto",
+    "facebook": "Enlace de Facebook",
+    "instagram": "Enlace de Instagram",
+    "whatsapp": "Enlace de WhatsApp",
+    "placeholder": {
+      "avatarUrl": "https://...",
+      "phone": "+51 987 654 321",
+      "email": "contacto@andesexplorer.pe",
+      "whatsapp": "https://wa.me/..."
+    }
+  },
+  "common": {
+    "cancel": "Cancelar",
+    "save": "Guardar"
   },
   "reservation-view": {
+    "listItem": {
+      "travelerAvatarAlt": "Avatar viajero",
+      "bookingDateLabel": "Fecha de reserva",
+      "experienceLabel": "Experiencia",
+      "paxLabel": "Personas",
+      "totalPaidLabel": "Total pagado"
+    },
     "title": "Panel de reservas",
     "no-reserves": "No se encontraron resultados de reservas",
     "search": "Buscar por nombre de viajero o experiencia",
-    "revenues": "Ingresos"
+    "revenues": "Ingresos",
+    "currencySymbol": "S/",
+    "noResults": "No se encontraron reservas con el término \"{searchTerm}\""
   },
   "reservation-info": {
     "date": "Fecha de reserva",
     "experience": "Experiencia",
     "people": "Personas",
     "total-paid": "Total Pagado"
+  },
+  "error": {
+    "fetchQueries": "Error al obtener las consultas:",
+    "submitResponse": "Error al enviar la respuesta:",
+    "fetchHomeData": "Error al cargar los datos del home:",
+    "fetchDashboardData": "Error al cargar los datos del dashboard:",
+    "fetchFavoritesError": "Error al cargar las experiencias favoritas:",
+    "userIdNotFound": "No se encontró el ID del usuario para cargar el perfil.",
+    "fetchProfileError": "Error al cargar el perfil del usuario:",
+    "updateProfileError": "Error al actualizar el perfil:",
+    "passwordsMismatch": "Las contraseñas no coinciden",
+    "accountCreationFailure": "No se pudo crear la cuenta. Intenta de nuevo.",
+    "authError": "Error de autenticación: revisa tus credenciales.",
+    "agencyProfileLoadError": "Header: No se pudo cargar el perfil de la agencia.",
+    "experienceDeleteSuccess": "Experiencia eliminada con éxito.",
+    "experienceDeleteFailed": "No se pudo eliminar la experiencia.",
+    "loadExperienceError": "Error al cargar la experiencia:",
+    "selectDateAlert": "Por favor, selecciona una fecha para la reserva.",
+    "bookingSuccessAlert": "¡Gracias por tu interés! Funcionalidad de reserva en desarrollo.\nHas seleccionado: {people} persona(s) para el {date}.",
+    "articleUpdateSuccess": "Experiencia actualizada con éxito.",
+    "experienceCreateSuccess": "Experiencia creada con éxito.",
+    "loadSearchResultsError": "Error al cargar los datos de búsqueda:",
+    "loadAgencyDataError": "Error cargando datos de agencia o reseñas:",
+    "saveAgencyChangesError": "Error al guardar cambios:"
+
+},
+  "queryView": {
+    "title": "Bandeja de Consultas",
+    "subtitle": "Gestiona las preguntas de los viajeros y responde a tiempo para mejorar tu reputación.",
+    "searchPlaceholder": "Buscar por nombre del viajero o experiencia",
+    "filterNotAnswered": "Sin responder",
+    "filterAnswered": "Respondidas",
+    "tableHeader": {
+      "user": "Usuario",
+      "experience": "Experiencia",
+      "date": "Fecha",
+      "query": "Consulta",
+      "action": "Acción"
+    },
+    "noQueriesInCategory": "No hay consultas en esta categoría.",
+    "buttonAnswer": "Responder",
+    "buttonViewAnswer": "Ver respuesta",
+    "modalHeaderAnswered": "Respuesta Enviada",
+    "modalHeaderAddAnswer": "Añadir Respuesta",
+    "modalHint": "(máx. 200 caracteres)",
+    "buttonCancel": "Cancelar",
+    "buttonSendAnswer": "Enviar Respuesta",
+    "pagination": {
+      "no_entries": "0 de 0",
+      "display_range": "{start} - {end} de {total}"
+    }
+  },
+  "agencyDashboard": {
+    "welcome": "¡Bienvenido, {agencyName}!",
+    "summary": "Este es el resumen de tu actividad reciente.",
+    "addExperienceButton": "Añadir Experiencia",
+    "totalExperiencesLabel": "Experiencias Totales",
+    "newQueriesLabel": "Consultas Nuevas",
+    "totalBookingsLabel": "Reservas Totales",
+    "totalEarningsLabel": "Ganancias Totales",
+    "latestReviewsTitle": "Últimas Reseñas",
+    "latestBookingsTitle": "Últimas Reservas",
+    "viewAll": "Ver todas",
+    "loadingDashboard": "Cargando panel de control...",
+    "currencySymbol": "S/"
+  },
+  "favoritesView": {
+    "title": "Mis Experiencias Favoritas",
+    "subtitle": "Aquí encontrarás todas las experiencias que has guardado.",
+    "loadingState": "Cargando tus favoritos...",
+    "emptyStateTitle": "Aún no tienes favoritos",
+    "emptyStateSubtitle": "Explora las experiencias y presiona el corazón para guardarlas aquí.",
+    "exploreButton": "Explorar experiencias"
+  },
+  "itineraryView": {
+    "title": "Mi Itinerario de Viaje",
+    "subtitle": "Selecciona un día en el calendario para ver los detalles de tus reservas.",
+    "placeholderSelectDay": "Selecciona un día marcado para ver tus actividades",
+    "placeholderNoActivities": "No tienes actividades programadas para este día",
+    "cancelReservationButton": "Cancelar Reserva",
+    "confirmDialog": {
+      "message": "¿Estás seguro de que quieres cancelar esta reserva?",
+      "header": "Confirmación de Cancelación",
+      "rejectLabel": "No, volver",
+      "acceptLabel": "Sí, cancelar"
+    },
+    "toast": {
+      "cancelSuccessSummary": "Cancelado",
+      "cancelSuccessDetail": "La reserva ha sido cancelada.",
+      "cancelAbortSummary": "Acción Abortada",
+      "cancelAbortDetail": "No se ha cancelado la reserva."
+    }
+  },
+  "userProfile": {
+    "form": {
+      "fullNameLabel": "Nombre Completo",
+      "emailLabel": "Correo Electrónico (no se puede cambiar)",
+      "avatarUrlLabel": "URL de la Foto de Perfil",
+      "countryLabel": "País",
+      "phoneLabel": "Teléfono",
+      "cancelButton": "Cancelar",
+      "saveButton": "Guardar Cambios"
+    },
+    "title": "Mi Perfil",
+    "editButton": "Editar Perfil",
+    "avatarAlt": "Avatar",
+    "editModalHeader": "Editar Mi Perfil",
+    "loadingProfile": "Cargando perfil...",
+    "updateSuccessAlert": "¡Perfil actualizado con éxito!",
+    "updateFailedAlert": "No se pudo actualizar el perfil."
+  },
+  "register": {
+    "title": "Crear cuenta",
+    "subtitle": "Regístrate para empezar",
+    "nameLabel": "Nombre completo",
+    "namePlaceholder": "Tu nombre",
+    "emailLabel": "Email",
+    "emailPlaceholder": "usuario@ejemplo.com",
+    "passwordLabel": "Contraseña",
+    "passwordPlaceholder": "••••••••",
+    "confirmPasswordLabel": "Confirmar contraseña",
+    "confirmPasswordPlaceholder": "••••••••",
+    "accountTypeLabel": "Tipo de cuenta",
+    "userType": "Usuario",
+    "agencyType": "Agencia",
+    "registerButton": "Registrar",
+    "alreadyHaveAccount": "¿Ya tienes cuenta?",
+    "loginLink": "Inicia sesión",
+    "accountCreatedSuccess": "Cuenta creada, ya puedes iniciar sesión.",
+    "travelerImageAlt": "Imagen de Viajero"
+  },
+  "login": {
+    "title": "¡Hola!",
+    "subtitle": "Inicia sesión en tu cuenta",
+    "emailLabel": "Email",
+    "emailPlaceholder": "usuario@ejemplo.com",
+    "passwordLabel": "Contraseña",
+    "passwordPlaceholder": "••••••••",
+    "forgotPassword": "¿Olvidaste tu contraseña?",
+    "loginButton": "Iniciar sesión",
+    "orDivider": "O",
+    "newHere": "¿Eres nuevo aquí?",
+    "createAccountLink": "Crear una cuenta",
+    "travelerImageAlt": "Imagen de Viajero"
+  },
+  "header": {
+    "agencyProfileMenu": "Perfil de Agencia",
+    "logoutMenu": "Cerrar Sesión",
+    "myProfileMenu": "Mi Perfil",
+    "myFavoritesMenu": "Mis Favoritos",
+    "defaultTouristName": "Viajero",
+    "languageChangeAriaLabel": "Cambiar idioma",
+    "englishLang": "English",
+    "spanishLang": "Español",
+    "travelerAvatarAlt": "Avatar viajero",
+    "defaultPageTitle": "Página"
+  },
+  "experienceCard": {
+    "imageAlt": "Imagen experiencia",
+    "stars": "★★★★★",
+    "durationUnit": " h",
+    "separator": " · ",
+    "pricePrefix": "S/",
+    "scheduleSeparator": " | "
+  },
+  "experienceCardUser": {
+    "imageAlt": "Imagen experiencia",
+    "currencyPrefix": "S/",
+    "detailsSeparator": " · ",
+    "durationUnit": "h",
+    "schedulesPrefix": "Horarios: ",
+    "scheduleItemSeparator": " | ",
+    "agencyLinkSuffix": " →",
+    "defaultAgencyName": "Agencia Verificada",
+    "viewMoreButton": "Ver más"
+  },
+  "experienceDelete": {
+    "title": "Eliminar Experiencia",
+    "confirmMessage1": "¿Estás seguro de que deseas cancelar esta experiencia turística?",
+    "confirmMessage2": "Esta acción no se puede deshacer.",
+    "deleteButton": "Borrar"
+  },
+  "experienceDetail": {
+    "loadingDetails": "Cargando detalles de la experiencia...",
+    "descriptionTitle": "Descripción",
+    "includesTitle": "¿Qué incluye?",
+    "schedulesTitle": "Horarios y Frecuencia",
+    "frequencyLabel": "Frecuencia:",
+    "availableSchedulesLabel": "Horarios de inicio disponibles:",
+    "priceCurrency": "S/",
+    "priceUnit": "/ persona",
+    "dateLabel": "Fecha",
+    "datePlaceholder": "Elige una fecha",
+    "numberOfPeopleLabel": "Número de personas",
+    "totalLabel": "Total",
+    "bookNowButton": "Reservar ahora",
+    "notFoundTitle": "Experiencia no encontrada",
+    "notFoundMessage": "La experiencia que buscas no existe o no está disponible.",
+    "backToHomeButton": "Volver al inicio"
+  },
+  "searchResults": {
+    "filterDestinationLabel": "Destino",
+    "filterDestinationPlaceholder": "Ej. Cusco",
+    "filterDayLabel": "Día",
+    "filterDayPlaceholder": "Ej. Lunes",
+    "filterBudgetLabel": "Presupuesto",
+    "filterBudgetPlaceholder": "Máx. S/ 100",
+    "filterExperienceTypeLabel": "Tipo de experiencia",
+    "filterExperienceTypePlaceholder": "Ej. Aventura",
+    "noResultsMessage": "No se encontraron experiencias con estos criterios.",
+    "mapDefaultCountry": "Peru"
   }
 }

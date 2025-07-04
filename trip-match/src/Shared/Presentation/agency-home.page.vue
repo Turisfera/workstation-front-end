@@ -6,10 +6,13 @@ import { ReviewsApiService } from "@/Agency/Application/reviews-api.service.js";
 import { QueryApiService } from "@/Queries/Application/query-api.service.js";
 import StarRating from "@/Agency/Presentation/StarRating.vue";
 import Avatar from "primevue/avatar";
+import { useI18n } from 'vue-i18n';
+
 const router = useRouter();
 const agenciesApi = new AgenciesApiService();
 const reviewsApi = new ReviewsApiService();
 const queriesApi = new QueryApiService();
+const { t } = useI18n();
 const agencyName = ref('');
 const stats = ref({
   totalExperiences: 12,
@@ -41,9 +44,8 @@ onMounted(async () => {
     latestBookings.value = mockBookings;
     stats.value.totalBookings = 78;
     stats.value.totalEarnings = 'S/ 12,450';
-
   } catch (error) {
-    console.error("Error al cargar los datos del dashboard:", error);
+    console.error(t('error.fetchDashboardData'), error);
   } finally {
     isLoading.value = false;
   }
@@ -58,39 +60,39 @@ const navigateTo = (routeName) => {
   <div class="agency-dashboard" v-if="!isLoading">
     <header class="dashboard-header">
       <div>
-        <h1>¡Bienvenido, {{ agencyName }}!</h1>
-        <p>Este es el resumen de tu actividad reciente.</p>
+        <h1>{{ $t('agencyDashboard.welcome', { agencyName: agencyName }) }}</h1>
+        <p>{{ $t('agencyDashboard.summary') }}</p>
       </div>
       <button class="action-button-main" @click="navigateTo('ExperienceCreate')">
         <i class="pi pi-plus"></i>
-        <span>Añadir Experiencia</span>
+        <span>{{ $t('agencyDashboard.addExperienceButton') }}</span>
       </button>
     </header>
 
     <div class="stats-grid">
       <div class="stat-card">
         <span class="card-value">{{ stats.totalExperiences }}</span>
-        <span class="card-label">Experiencias Totales</span>
+        <span class="card-label">{{ $t('agencyDashboard.totalExperiencesLabel') }}</span>
       </div>
       <div class="stat-card">
         <span class="card-value text-orange">{{ stats.newQueries }}</span>
-        <span class="card-label">Consultas Nuevas</span>
+        <span class="card-label">{{ $t('agencyDashboard.newQueriesLabel') }}</span>
       </div>
       <div class="stat-card">
         <span class="card-value">{{ stats.totalBookings }}</span>
-        <span class="card-label">Reservas Totales</span>
+        <span class="card-label">{{ $t('agencyDashboard.totalBookingsLabel') }}</span>
       </div>
       <div class="stat-card">
-        <span class="card-value text-green">{{ stats.totalEarnings }}</span>
-        <span class="card-label">Ganancias Totales</span>
+        <span class="card-value text-green">{{ $t('agencyDashboard.currencySymbol') }} {{ stats.totalEarnings.replace('S/ ', '') }}</span>
+        <span class="card-label">{{ $t('agencyDashboard.totalEarningsLabel') }}</span>
       </div>
     </div>
 
     <div class="content-grid">
       <div class="content-section">
         <div class="section-header">
-          <h2>Últimas Reseñas</h2>
-          <router-link :to="{name: 'AgencyProfile'}" class="view-all-link">Ver todas</router-link>
+          <h2>{{ $t('agencyDashboard.latestReviewsTitle') }}</h2>
+          <router-link :to="{name: 'AgencyProfile'}" class="view-all-link">{{ $t('agencyDashboard.viewAll') }}</router-link>
         </div>
         <div class="review-list">
           <div v-for="review in latestReviews" :key="review.id" class="review-item">
@@ -108,8 +110,8 @@ const navigateTo = (routeName) => {
 
       <div class="content-section">
         <div class="section-header">
-          <h2>Últimas Reservas</h2>
-          <router-link :to="{name: 'Reservations'}" class="view-all-link">Ver todas</router-link>
+          <h2>{{ $t('agencyDashboard.latestBookingsTitle') }}</h2>
+          <router-link :to="{name: 'Reservations'}" class="view-all-link">{{ $t('agencyDashboard.viewAll') }}</router-link>
         </div>
         <div class="booking-list">
           <div v-for="booking in latestBookings" :key="booking.id" class="booking-item">
@@ -117,14 +119,14 @@ const navigateTo = (routeName) => {
               <span class="booking-name">{{ booking.name }}</span>
               <span class="booking-experience">{{ booking.experience }}</span>
             </div>
-            <span class="booking-amount">S/ {{ booking.amount }}</span>
+            <span class="booking-amount">{{ $t('agencyDashboard.currencySymbol') }} {{ booking.amount.toFixed(2) }}</span>
           </div>
         </div>
       </div>
     </div>
   </div>
   <div v-else class="loading-state">
-    Cargando panel de control...
+    {{ $t('agencyDashboard.loadingDashboard') }}
   </div>
 </template>
 

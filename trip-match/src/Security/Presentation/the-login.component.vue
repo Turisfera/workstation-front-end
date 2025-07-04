@@ -1,41 +1,41 @@
 <template>
   <div class="login-container">
     <div class="login-box">
-      <h2>Hello!</h2>
-      <p class="subtitle">Sign in to your account</p>
+      <h2>{{ $t('login.title') }}</h2>
+      <p class="subtitle">{{ $t('login.subtitle') }}</p>
 
       <form @submit.prevent="login">
-        <label for="email">Email</label>
+        <label for="email">{{ $t('login.emailLabel') }}</label>
         <pv-input-text
             id="email"
             v-model="email"
             type="email"
             class="input"
-            placeholder="example@email.com"
+            :placeholder="$t('login.emailPlaceholder')"
             required
         />
 
-        <label for="password">Password</label>
+        <label for="password">{{ $t('login.passwordLabel') }}</label>
         <pv-input-text
             id="password"
             v-model="password"
             type="password"
             class="input"
-            placeholder="••••••••"
+            :placeholder="$t('login.passwordPlaceholder')"
             required
         />
 
-        <div class="forgot"><a href="#">Forgot your password?</a></div>
+        <div class="forgot"><a href="#">{{ $t('login.forgotPassword') }}</a></div>
         <pv-button
             class="login-button"
             type="submit"
             style="background-color: #047e77; color: white; border: none"
         >
-          Login
+          {{ $t('login.loginButton') }}
         </pv-button>
       </form>
 
-      <div class="divider"><span>Or</span></div>
+      <div class="divider"><span>{{ $t('login.orDivider') }}</span></div>
 
       <div class="social-icons">
         <button class="icon-btn"><i class="pi pi-google" /></button>
@@ -44,8 +44,8 @@
       </div>
 
       <p class="create">
-        New here?
-        <RouterLink to="/register">Create an account</RouterLink>
+        {{ $t('login.newHere') }}
+        <RouterLink to="/register">{{ $t('login.createAccountLink') }}</RouterLink>
       </p>
     </div>
 
@@ -53,7 +53,7 @@
 
 
     <div class="traveler-img-wrapper">
-      <img src="/Login-TripMatch.png" alt="Traveler Image" />
+      <img src="/Login-TripMatch.png" :alt="$t('login.travelerImageAlt')" />
     </div>
   </div>
 </template>
@@ -62,11 +62,13 @@
 import { ref, onMounted } from 'vue'
 import { useRouter, RouterLink } from 'vue-router'
 import { UserService } from '@/Security/Application/user.service.js'
+import { useI18n } from 'vue-i18n'; // Importado para internacionalización
 
 const email       = ref('')
 const password    = ref('')
 const userService = new UserService()
 const router      = useRouter()
+const { t } = useI18n(); // Inicializa la función de traducción
 
 onMounted(() => {
   const stored = localStorage.getItem('email')
@@ -94,7 +96,7 @@ async function login() {
       }
     }
   } catch (err) {
-    alert('Error de autenticación: revisa tus credenciales.')
+    alert(t('error.authError'))
     console.error(err)
   }
 }
@@ -219,6 +221,4 @@ label {
   object-fit: contain;
   background-color: transparent;
 }
-
-
 </style>

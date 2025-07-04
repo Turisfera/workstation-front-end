@@ -4,9 +4,11 @@ import {ExperiencesApiService} from "@/Experience/Application/experiences-api.se
 import {CategoryApiService} from "@/Experience/Application/category-api.service.js";
 import router from "@/router.js";
 import {useRoute} from "vue-router";
+import { useI18n } from 'vue-i18n';
 
 const experiencesApiService = new ExperiencesApiService()
 const categoryApiService = new CategoryApiService()
+const { t } = useI18n();
 
 const title = ref("")
 const description = ref("")
@@ -62,7 +64,7 @@ onMounted(async () => {
     }));
 
     images.value = response.data.images.map(url => ({
-      name: "Imagen existente",
+      name: t('create-experience-form.existingImageName'),
       url
     }));
     includes.value = response.data.includes || [];
@@ -73,7 +75,7 @@ onMounted(async () => {
 const addImageByUrl = () => {
   if (imageUrl.value.trim() !== "") {
     images.value.push({
-      name: "Imagen externa",
+      name: t('create-experience-form.externalImageName'),
       url: imageUrl.value.trim()
     })
     imageUrl.value = ""
@@ -91,11 +93,10 @@ const addIncludeItem = () => {
 const removeIncludeItem = (index) => {
   includes.value.splice(index, 1);
 };
-
 const frecuencias = [
-  { label: 'Lunes a Viernes', value: 'Lunes a Viernes' },
-  { label: 'Fines de Semana', value: 'Fines de Semana' },
-  { label: 'Todos los días', value: 'Todos los días' }
+  { label: t('create-experience-form.frequenciesOptions.weekdays'), value: 'Lunes a Viernes' },
+  { label: t('create-experience-form.frequenciesOptions.weekends'), value: 'Fines de Semana' },
+  { label: t('create-experience-form.frequenciesOptions.everyDay'), value: 'Todos los días' }
 ];
 
 const horariosDisponibles = [
@@ -141,13 +142,13 @@ const SaveExperience = async () => {
   if (id.value !== '') {
     const { status } = await experiencesApiService.updateExperience(id.value, experience);
     if (status === 200) {
-      alert("Article updated successfully.");
+      alert(t('error.articleUpdateSuccess'));
       router.push({ name: 'ExperienceList' });
     }
   } else {
     const { status } = await experiencesApiService.createExperience(experience);
     if (status === 201) {
-      alert("Experience created successfully.")
+      alert(t('error.experienceCreateSuccess'))
       router.push({ name: 'ExperienceList' });
     }
   }
@@ -229,16 +230,16 @@ const SaveExperience = async () => {
           </div>
 
           <div class="field-group">
-            <label for="imageUrl">Imagen por URL</label>
+            <label for="imageUrl">{{ $t('create-experience-form.imageUrlLabel') }}</label>
             <input v-model="imageUrl" id="imageUrl" type="text" :placeholder="$t('create-experience-form.img')" class="input mt-2" />
             <button type="button" @click="addImageByUrl" class="button-add-image">{{ $t("create-experience-form.img-button") }}</button>
           </div>
 
           <div class="field-group">
-            <label>Imágenes agregadas</label>
+            <label>{{ $t('create-experience-form.addedImagesLabel') }}</label>
             <div class="mt-2 grid grid-cols-3 gap-2">
               <div v-for="(img, index) in images" :key="index" class="border p-1 rounded">
-                <img :src="img.url || img.objectUrl" alt="Imagen" class="w-full h-32 object-cover rounded" width="40px" height="40px" />
+                <img :src="img.url || img.objectUrl" :alt="$t('create-experience-form.imageAltText')" class="w-full h-32 object-cover rounded" width="40px" height="40px" />
                 <p class="text-xs mt-1 break-all">{{ img.name }}</p>
               </div>
             </div>
@@ -314,11 +315,6 @@ const SaveExperience = async () => {
   display: flex;
   flex-direction: column;
   gap: 16px;
-}
-
-.field-group {
-  display: flex;
-  flex-direction: column;
 }
 
 .field-group label {

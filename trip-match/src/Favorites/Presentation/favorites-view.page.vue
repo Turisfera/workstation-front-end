@@ -4,10 +4,15 @@ import { FavoritesService } from '@/Favorites/Application/favorites.service.js';
 import { ExperiencesApiService } from '@/Experience/Application/experiences-api.service.js';
 import { ExperienceAssembler } from '@/Experience/Application/experience.assembler.js';
 import ExperienceCardUser from '@/Experience/Presentation/experience-card-user.component.vue';
+import { useI18n } from 'vue-i18n';
+import { useRouter } from 'vue-router';
+
 const favoritesService = new FavoritesService();
 const experiencesApi = new ExperiencesApiService();
 const favoriteExperiences = ref([]);
 const isLoading = ref(true);
+const { t } = useI18n();
+const router = useRouter();
 
 onMounted(async () => {
   try {
@@ -22,7 +27,7 @@ onMounted(async () => {
     favoriteExperiences.value = favoriteData.map(data => ExperienceAssembler.toEntityFromResource(data));
 
   } catch (error) {
-    console.error("Error al cargar las experiencias favoritas:", error);
+    console.error(t('error.fetchFavoritesError'), error);
   } finally {
     isLoading.value = false;
   }
@@ -32,18 +37,18 @@ onMounted(async () => {
 <template>
   <div class="favorites-view">
     <header class="view-header">
-      <h1>Mis Experiencias Favoritas</h1>
-      <p>Aquí encontrarás todas las experiencias que has guardado.</p>
+      <h1>{{ $t('favoritesView.title') }}</h1>
+      <p>{{ $t('favoritesView.subtitle') }}</p>
     </header>
 
     <div v-if="isLoading" class="loading-state">
-      Cargando tus favoritos...
+      {{ $t('favoritesView.loadingState') }}
     </div>
 
     <div v-else-if="favoriteExperiences.length === 0" class="empty-state">
-      <h2>Aún no tienes favoritos</h2>
-      <p>Explora las experiencias y presiona el corazón para guardarlas aquí.</p>
-      <router-link to="/" class="explore-button">Explorar experiencias</router-link>
+      <h2>{{ $t('favoritesView.emptyStateTitle') }}</h2>
+      <p>{{ $t('favoritesView.emptyStateSubtitle') }}</p>
+      <router-link to="/" class="explore-button">{{ $t('favoritesView.exploreButton') }}</router-link>
     </div>
 
     <div v-else class="favorites-grid">

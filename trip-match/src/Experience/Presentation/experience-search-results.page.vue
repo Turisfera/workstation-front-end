@@ -6,10 +6,12 @@ import { ExperiencesApiService } from '@/Experience/Application/experiences-api.
 import { ExperienceAssembler } from '@/Experience/Application/experience.assembler.js'
 import { CategoryApiService } from '@/Experience/Application/category-api.service.js'
 import { CategoryAssembler } from '@/Experience/Application/category.assembler.js'
+import { useI18n } from 'vue-i18n';
 
 const route = useRoute()
 const experiencesApiService = new ExperiencesApiService()
 const categoryApiService = new CategoryApiService()
+const { t } = useI18n();
 
 const experiences = ref([])
 const filteredExperiences = ref([])
@@ -36,7 +38,7 @@ onMounted(async () => {
     mapUrl.value = getMapUrl(destination.value);
     filterExperiences();
   } catch (error) {
-    console.error("Error al cargar los datos de búsqueda:", error);
+    console.error(t('error.loadSearchResultsError'), error);
   }
 });
 
@@ -50,7 +52,7 @@ watch([destination, day, experienceType, budget], () => {
 
 function getMapUrl(dest) {
   if (!dest) return '';
-  return `https://maps.google.com/maps?q=${encodeURIComponent(dest)},+Peru&output=embed`;
+  return `https://maps.google.com/maps?q=$${encodeURIComponent(dest)},+${t('searchResults.mapDefaultCountry')}&output=embed`;
 }
 
 const filterExperiences = () => {
@@ -69,25 +71,25 @@ const filterExperiences = () => {
     <div class="results-column">
       <div class="filters-summary">
         <div class="filter-item">
-          <label class="filter-item-text">Destino</label>
-          <input v-model="destination" class="filter-input" type="text" placeholder="Ej. Cusco" />
+          <label class="filter-item-text">{{ $t('searchResults.filterDestinationLabel') }}</label>
+          <input v-model="destination" class="filter-input" type="text" :placeholder="$t('searchResults.filterDestinationPlaceholder')" />
         </div>
         <div class="filter-item">
-          <label class="filter-item-text">Día</label>
-          <input v-model="day" class="filter-input" type="text" placeholder="Ej. Lunes" />
+          <label class="filter-item-text">{{ $t('searchResults.filterDayLabel') }}</label>
+          <input v-model="day" class="filter-input" type="text" :placeholder="$t('searchResults.filterDayPlaceholder')" />
         </div>
         <div class="filter-item">
-          <label class="filter-item-text">Presupuesto</label>
-          <input v-model="budget" class="filter-input" type="number" placeholder="Máx. S/ 100" />
+          <label class="filter-item-text">{{ $t('searchResults.filterBudgetLabel') }}</label>
+          <input v-model="budget" class="filter-input" type="number" :placeholder="$t('searchResults.filterBudgetPlaceholder')" />
         </div>
         <div class="filter-item">
-          <label class="filter-item-text">Tipo de experiencia</label>
-          <input v-model="experienceType" class="filter-input" type="text" placeholder="Ej. Aventura" />
+          <label class="filter-item-text">{{ $t('searchResults.filterExperienceTypeLabel') }}</label>
+          <input v-model="experienceType" class="filter-input" type="text" :placeholder="$t('searchResults.filterExperienceTypePlaceholder')" />
         </div>
       </div>
 
       <div v-if="filteredExperiences.length === 0" class="no-results">
-        <p>No se encontraron experiencias con estos criterios.</p>
+        <p>{{ $t('searchResults.noResultsMessage') }}</p>
       </div>
 
       <div class="result-list">

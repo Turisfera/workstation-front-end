@@ -6,6 +6,9 @@ import Avatar from 'primevue/avatar';
 import Button from 'primevue/button';
 import Dialog from 'primevue/dialog';
 import Textarea from 'primevue/textarea';
+import { useI18n } from 'vue-i18n';
+
+const { t } = useI18n();
 
 const queryApiService = new QueryApiService();
 
@@ -23,7 +26,7 @@ const fetchQueries = async () => {
     const response = await queryApiService.getAllQueries();
     allQueries.value = QueryAssembler.toEntitiesFromResponse(response);
   } catch (error) {
-    console.error('Error al obtener las consultas:', error);
+    console.error(t('error.fetchQueries'), error);
   }
 };
 
@@ -45,10 +48,10 @@ const paginatedQueries = computed(() => {
 
 const paginationText = computed(() => {
   const total = filteredQueries.value.length;
-  if (total === 0) return '0 de 0';
+  if (total === 0) return t('queryView.pagination.no_entries');
   const start = (currentPage.value - 1) * perPage + 1;
   const end = Math.min(start + perPage - 1, total);
-  return `${start} - ${end} de ${total}`;
+  return t('queryView.pagination.display_range', { start: start, end: end, total: total });
 });
 
 const setAnsweredFilter = answered => {
@@ -84,7 +87,7 @@ const submitResponse = async () => {
       await fetchQueries();
       closeModal();
     } catch (e) {
-      console.error('Error al enviar la respuesta:', e);
+      console.error(t('error.submitResponse'), e);
     }
   }
 };
@@ -99,9 +102,9 @@ onMounted(fetchQueries);
 <template>
   <div class="query-view">
     <div class="header">
-      <h2 class="query-view_title">Bandeja de Consultas</h2>
+      <h2 class="query-view_title">{{ $t('queryView.title') }}</h2>
       <p class="query-view_subtitle">
-        Gestiona las preguntas de los viajeros y responde a tiempo para mejorar tu reputación.
+        {{ $t('queryView.subtitle') }}
       </p>
     </div>
 
@@ -111,7 +114,7 @@ onMounted(fetchQueries);
         <input
             type="text"
             v-model="searchTerm"
-            placeholder="Buscar por nombre del viajero o experiencia"
+            :placeholder="$t('queryView.searchPlaceholder')"
             class="search-input"
         />
       </div>
@@ -123,7 +126,7 @@ onMounted(fetchQueries);
             @click="setAnsweredFilter(false)"
         >
           <i class="pi pi-inbox"></i>
-          <span>Sin responder</span>
+          <span>{{ $t('queryView.filterNotAnswered') }}</span>
         </button>
         <button
             class="query-view_filter-button"
@@ -131,7 +134,7 @@ onMounted(fetchQueries);
             @click="setAnsweredFilter(true)"
         >
           <i class="pi pi-check-circle"></i>
-          <span>Respondidas</span>
+          <span>{{ $t('queryView.filterAnswered') }}</span>
         </button>
       </div>
     </div>
@@ -140,16 +143,16 @@ onMounted(fetchQueries);
       <table class="query-view_table">
         <thead>
         <tr>
-          <th>Usuario</th>
-          <th>Experiencia</th>
-          <th>Fecha</th>
-          <th>Consulta</th>
-          <th class="text-center">Acción</th>
+          <th>{{ $t('queryView.tableHeader.user') }}</th>
+          <th>{{ $t('queryView.tableHeader.experience') }}</th>
+          <th>{{ $t('queryView.tableHeader.date') }}</th>
+          <th>{{ $t('queryView.tableHeader.query') }}</th>
+          <th class="text-center">{{ $t('queryView.tableHeader.action') }}</th>
         </tr>
         </thead>
         <tbody>
         <tr v-if="paginatedQueries.length === 0">
-          <td colspan="5" class="text-center py-4">No hay consultas en esta categoría.</td>
+          <td colspan="5" class="text-center py-4">{{ $t('queryView.noQueriesInCategory') }}</td>
         </tr>
         <tr v-for="q in paginatedQueries" :key="q.id">
           <td class="query-view_user-cell">
@@ -174,10 +177,10 @@ onMounted(fetchQueries);
           <td>{{ q.date }}</td>
           <td class="query-view_question">{{ q.question }}</td>
           <td class="text-center">
-            <Button v-if="!q.isAnswered" label="Responder" @click="openModal(q)" />
+            <Button v-if="!q.isAnswered" :label="$t('queryView.buttonAnswer')" @click="openModal(q)" />
             <Button
                 v-else
-                label="Ver respuesta"
+                :label="$t('queryView.buttonViewAnswer')"
                 severity="secondary"
                 outlined
                 @click="openModal(q)"
@@ -195,21 +198,21 @@ onMounted(fetchQueries);
     <Dialog
         v-model:visible="showModal"
         modal
-        :header="modalQuery && modalQuery.isAnswered ? 'Respuesta Enviada' : 'Añadir Respuesta'"
+        :header="modalQuery && modalQuery.isAnswered ? $t('queryView.modalHeaderAnswered') : $t('queryView.modalHeaderAddAnswer')"
         :style="{ width: '35rem' }"
     >
       <p v-if="modalQuery && modalQuery.isAnswered" class="query-view_response-text">
         {{ modalQuery.answer }}
       </p>
       <div v-else class="flex flex-col gap-3">
-        <p class="query-view_modal-hint">(máx. 200 caracteres)</p>
+        <p class="query-view_modal-hint">{{ $t('queryView.modalHint') }}</p>
         <Textarea v-model="modalResponse" rows="5" maxlength="200" autoResize />
       </div>
       <template #footer>
-        <Button label="Cancelar" severity="secondary" @click="closeModal" />
+        <Button :label="$t('queryView.buttonCancel')" severity="secondary" @click="closeModal" />
         <Button
             v-if="modalQuery && !modalQuery.isAnswered"
-            label="Enviar Respuesta"
+            :label="$t('queryView.buttonSendAnswer')"
             @click="submitResponse"
         />
       </template>

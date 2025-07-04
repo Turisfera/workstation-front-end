@@ -6,31 +6,34 @@ import { AgenciesApiService } from '@/Agency/Application/agencies-api.service.js
 import Button from 'primevue/button';
 import Avatar from 'primevue/avatar';
 import Menu from 'primevue/menu';
+
 const router = useRouter();
 const route = useRoute();
 const { t, locale } = useI18n();
 const agenciesApi = new AgenciesApiService();
+
 const userName = ref('');
 const userAvatar = ref('');
 const langMenu = ref();
 const profileMenu = ref();
 const profileMenuItems = ref([]);
+
 onMounted(() => {
   const isAgency = localStorage.getItem('isAgency') === 'true';
   if (isAgency) {
     loadAgencyData();
     profileMenuItems.value = [
-      { label: 'Perfil de Agencia', icon: 'pi pi-building', command: () => router.push({ name: 'AgencyProfile' }) },
+      { label: t('header.agencyProfileMenu'), icon: 'pi pi-building', command: () => router.push({ name: 'AgencyProfile' }) },
       { separator: true },
-      { label: 'Cerrar Sesión', icon: 'pi pi-sign-out', command: () => logout() }
+      { label: t('header.logoutMenu'), icon: 'pi pi-sign-out', command: () => logout() }
     ];
   } else {
     loadTouristData();
     profileMenuItems.value = [
-      { label: 'Mi Perfil', icon: 'pi pi-user', command: () => router.push({ name: 'UserProfile' }) },
-      { label: 'Mis Favoritos', icon: 'pi pi-heart', command: () => router.push({ name: 'Favorites' }) },
+      { label: t('header.myProfileMenu'), icon: 'pi pi-user', command: () => router.push({ name: 'UserProfile' }) },
+      { label: t('header.myFavoritesMenu'), icon: 'pi pi-heart', command: () => router.push({ name: 'Favorites' }) },
       { separator: true },
-      { label: 'Cerrar Sesión', icon: 'pi pi-sign-out', command: () => logout() }
+      { label: t('header.logoutMenu'), icon: 'pi pi-sign-out', command: () => logout() }
     ];
   }
 });
@@ -41,27 +44,37 @@ async function loadAgencyData() {
     userName.value = response.data.name;
     userAvatar.value = response.data.avatarUrl;
   } catch (error) {
-    console.error("Header: No se pudo cargar el perfil de la agencia.", error);
+    console.error(t('error.agencyProfileLoadError'), error);
   }
 }
 
 function loadTouristData() {
-  userName.value = localStorage.getItem('name') || 'Viajero';
+  userName.value = localStorage.getItem('name') || t('header.defaultTouristName');
   userAvatar.value = localStorage.getItem('avatar') || '';
 }
+
 const titleKeyMap = {
-  AgencyHome: 'home', TouristHome: 'home', ExperienceList: 'experienceManager',
-  Reservations: 'reservations', Queries: 'queries', AgencyProfile: 'agencyProfile',
-  Favorites: 'favorites', Itineraries: 'itineraries', UserProfile: 'userProfile'
+  AgencyHome: 'home',
+  TouristHome: 'home',
+  ExperienceList: 'experienceManager',
+  Reservations: 'reservations',
+  Queries: 'queries',
+  AgencyProfile: 'agencyProfile',
+  Favorites: 'favorites',
+  Itineraries: 'itineraries',
+  UserProfile: 'userProfile'
 };
+
 const pageTitle = computed(() => {
-  const key = titleKeyMap[route.name] || 'home';
-  return t(`sidevar.${key}`);
+  const key = titleKeyMap[route.name];
+  return key ? t(`sidevar.${key}`) : t('header.defaultPageTitle');
 });
+
 const langMenuItems = ref([
-  { label: 'English', command: () => { locale.value = 'en' } },
-  { label: 'Español', command: () => { locale.value = 'es' } }
+  { label: t('header.englishLang'), command: () => { locale.value = 'en' } },
+  { label: t('header.spanishLang'), command: () => { locale.value = 'es' } }
 ]);
+
 const toggleLangMenu = (event) => { langMenu.value.toggle(event); };
 const toggleProfileMenu = (event) => { profileMenu.value.toggle(event); };
 
@@ -76,7 +89,7 @@ const logout = () => {
     <h2 class="page-title">{{ pageTitle }}</h2>
 
     <div class="right-section">
-      <Button icon="pi pi-globe" text rounded aria-label="Cambiar idioma" @click="toggleLangMenu" />
+      <Button icon="pi pi-globe" text rounded :aria-label="$t('header.languageChangeAriaLabel')" @click="toggleLangMenu" />
       <Menu ref="langMenu" :model="langMenuItems" :popup="true" />
 
       <div class="separator"></div>
@@ -84,9 +97,9 @@ const logout = () => {
       <div class="profile-section" @click="toggleProfileMenu">
         <span class="profile-name">{{ userName }}</span>
         <img
-          :src="userAvatar"
-          alt="Avatar viajero"
-          style="width:48px; height:48px; border-radius:50%; object-fit:cover;"
+            :src="userAvatar"
+            :alt="$t('header.travelerAvatarAlt')"
+            style="width:48px; height:48px; border-radius:50%; object-fit:cover;"
         />
       </div>
       <Menu ref="profileMenu" :model="profileMenuItems" :popup="true" />

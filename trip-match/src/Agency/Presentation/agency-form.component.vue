@@ -23,7 +23,7 @@
           id="avatar"
           v-model="form.avatarUrl"
           class="input-text full-width"
-          placeholder="https://..."
+          :placeholder="t('createAgency.placeholder.avatarUrl')"
       />
     </div>
     <div class="field">
@@ -32,7 +32,7 @@
           id="phone"
           v-model="form.contact.phone"
           class="input-text full-width"
-          placeholder="+51 987 654 321"
+          :placeholder="t('createAgency.placeholder.phone')"
       />
     </div>
 
@@ -42,7 +42,7 @@
           id="email"
           v-model="form.contact.email"
           class="input-text full-width"
-          placeholder="contacto@andesexplorer.pe"
+          :placeholder="t('createAgency.placeholder.email')"
       />
     </div>
     <div class="field">
@@ -67,16 +67,16 @@
           id="whatsapp"
           v-model="form.socialLinks.whatsapp"
           class="input-text full-width"
-          placeholder="https://wa.me/..."
+          :placeholder="t('createAgency.placeholder.whatsapp')"
       />
     </div>
     <div class="form-button-group">
-    <button class="form-button cancel" @click="$emit('cancel')">
-      {{ t('experience.cancel') || 'Cancelar' }}
-    </button>
-    <button class="form-button save" @click="onSave">
-     {{ t('experience.save') || 'Guardar' }}
-    </button>
+      <button class="form-button cancel" @click="$emit('cancel')">
+        {{ t('common.cancel') }}
+      </button>
+      <button class="form-button save" @click="onSave">
+        {{ t('common.save') }}
+      </button>
     </div>
   </div>
 </template>
@@ -85,7 +85,6 @@
 import { defineProps, defineEmits, reactive } from 'vue'
 import { useI18n } from 'vue-i18n'
 import InputText  from 'primevue/inputtext'
-import Button     from 'primevue/button'
 import { AgencyAssembler } from '@/Agency/Application/agency.assembler.js'
 
 const props = defineProps({ agency: Object })

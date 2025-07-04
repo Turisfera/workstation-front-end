@@ -1,8 +1,10 @@
 <script setup>
-import {defineProps, onBeforeMount, reactive, ref} from "vue";
+import {defineProps} from "vue";
 import router from "@/router.js";
+import { useI18n } from 'vue-i18n';
 
 const props = defineProps({ experience: Object, categoryDescription: String, required: true });
+const { t } = useI18n();
 
 const editArticle = (selected) => {
   router.push({name: "ExperienceEdit", params: {id: selected.id}});
@@ -17,17 +19,17 @@ const goToDeleteExperience = (id) => {
 <template>
   <div class="experience-card">
     <div class="experience-header">
-      <img :src="experience.images[0]" alt="Imagen experiencia" class="experience-img" />
+      <img :src="experience.images[0]" :alt="$t('experienceCard.imageAlt')" class="experience-img" />
       <div class="experience-info">
         <h2 class="experience-title">{{ experience.title }}</h2>
         <div class="experience-rating">
-          <span class="stars">★★★★★</span><span class="score">5</span>
+          <span class="stars">{{ $t('experienceCard.stars') }}</span><span class="score">{{ experience.rating || '5' }}</span>
         </div>
         <p class="experience-details">
-          S/{{ experience.price }} · {{ experience.duration }} h · {{ experience.frequencies.value}} · {{ categoryDescription}}
+          {{ $t('experienceCard.pricePrefix') }}{{ experience.price }} {{ $t('experienceCard.separator') }} {{ experience.duration }}{{ $t('experienceCard.durationUnit') }} {{ $t('experienceCard.separator') }} {{ experience.frequencies.value}} {{ $t('experienceCard.separator') }} {{ categoryDescription}}
         </p>
         <p class="experience-schedule">
-          {{ experience.schedules.join(' | ') }}
+          {{ experience.schedules.join($t('experienceCard.scheduleSeparator')) }}
         </p>
       </div>
     </div>

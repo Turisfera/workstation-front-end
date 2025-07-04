@@ -4,7 +4,8 @@ import ReservationList from "@/Reservations/Presentation/reservations-list.compo
 import IconField from 'primevue/iconfield';
 import InputIcon from 'primevue/inputicon';
 import InputText from 'primevue/inputtext';
-
+import { useI18n } from 'vue-i18n';
+const { t } = useI18n();
 const allReservations = ref([
   {
     id: 1,
@@ -62,7 +63,7 @@ const totalRevenue = computed(() => {
         </IconField>
 
         <div class="revenue-display">
-          {{ $t("reservation-view.revenues") }}: S/ {{ totalRevenue.toFixed(2) }}
+          {{ $t("reservation-view.revenues") }}: {{ $t("reservation-view.currencySymbol") }} {{ totalRevenue.toFixed(2) }}
         </div>
       </div>
     </div>
@@ -70,7 +71,7 @@ const totalRevenue = computed(() => {
     <ReservationList :reservations="filteredReservations" />
 
     <div v-if="filteredReservations.length === 0 && searchTerm" class="no-results">
-      <p>No se encontraron reservas con el término "{{ searchTerm }}"</p>
+      <p>{{ $t('reservation-view.noResults', { searchTerm: searchTerm }) }}</p>
     </div>
   </div>
 </template>
