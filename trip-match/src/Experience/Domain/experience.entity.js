@@ -1,5 +1,23 @@
 export class Experience {
-    constructor({ id = "", title = "", description = "", location = "", duration = 0, price = 0.0 , frequencies = "", schedules = [], images = [], includes = [], categoryId = "", rating = 0 }) {
+    constructor({
+                    id = 0, // Id es int en el backend
+                    title = "",
+                    description = "",
+                    location = "",
+                    duration = 0,
+                    price = 0.0,
+                    frequencies = "",
+                    schedule = [],
+                    experienceImages = [],
+                    includes = [],
+                    categoryId = 0,
+                    agencyUserId = "",
+                    isActive = true,
+                    createdDate = null,
+                    modifiedDate = null,
+                    category = null,
+                    agencia = null
+                }) {
         this.id = id;
         this.title = title;
         this.description = description;
@@ -7,10 +25,15 @@ export class Experience {
         this.duration = duration;
         this.price = price;
         this.frequencies = frequencies;
-        this.schedules = schedules;
-        this.images = images;
+        this.schedule = schedule;
+        this.experienceImages = experienceImages;
         this.includes = includes;
         this.categoryId = categoryId;
-        this.rating = rating;
+        this.agencyUserId = agencyUserId;
+        this.isActive = isActive;
+        this.createdDate = createdDate;
+        this.modifiedDate = modifiedDate;
+        this.category = category;
+        this.agencia = agencia;
     }
 }

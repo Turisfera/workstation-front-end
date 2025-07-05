@@ -1,6 +1,6 @@
 <template>
-  <div v-if="isLoading" class="loading-container">
-    <p>{{ $t('experienceDetail.loadingDetails') }}</p>
+  <Toast /> <div v-if="isLoading" class="loading-container">
+  <p>{{ $t('experienceDetail.loadingDetails') }}</p>
   </div>
 
   <div v-else-if="experience" class="detail-container">
@@ -12,9 +12,9 @@
         </div>
       </div>
 
-      <Galleria :value="experience.images" :numVisible="5" containerStyle="max-width: 100%" :showThumbnails="false" :showIndicators="true" :circular="true" :autoPlay="true" :transitionInterval="3000">
+      <Galleria :value="experience.experienceImages" :numVisible="5" containerStyle="max-width: 100%" :showThumbnails="false" :showIndicators="true" :circular="true" :autoPlay="true" :transitionInterval="3000">
         <template #item="slotProps">
-          <img :src="slotProps.item" :alt="experience.title" style="width: 100%; display: block; border-radius: 12px;" />
+          <img :src="slotProps.item.url" :alt="experience.title" style="width: 100%; display: block; border-radius: 12px;" />
         </template>
       </Galleria>
 
@@ -27,14 +27,14 @@
         <h2>{{ $t('experienceDetail.includesTitle') }}</h2>
         <ul>
           <li v-for="(item, index) in experience.includes" :key="index">
-            <i class="pi pi-check-circle" style="color: #2c8a8a;"></i> {{ item }}
+            <i class="pi pi-check-circle" style="color: #2c8a8a;"></i> {{ item.description }}
           </li>
         </ul>
       </div>
       <div class="section">
         <h2>{{ $t('experienceDetail.schedulesTitle') }}</h2>
         <p><strong>{{ $t('experienceDetail.frequencyLabel') }}</strong> {{ experience.frequencies }}</p>
-        <p><strong>{{ $t('experienceDetail.availableSchedulesLabel') }}</strong> {{ experience.schedules.join(', ') }}</p>
+        <p><strong>{{ $t('experienceDetail.availableSchedulesLabel') }}</strong> {{ experience.schedule.map(s => s.time).join(', ') }}</p>
       </div>
 
     </div>
@@ -45,10 +45,19 @@
         <div class="booking-form">
           <div class="form-group">
             <label>{{ $t('experienceDetail.dateLabel') }}</label>
-            <Calendar v-model="selectedDate" :placeholder="$t('experienceDetail.datePlaceholder')" dateFormat="dd/mm/yy" class="w-full" />
+            <Calendar
+                v-model="selectedDate"
+                :placeholder="$t('experienceDetail.datePlaceholder')"
+                dateFormat="dd/mm/yy"
+                class="w-full"
+                :disabledDays="disabledDays" :minDate="new Date()"
+                selectionMode="single"
+                touchUI
+            />
           </div>
           <div class="form-group">
-            <label>{{ $t('experienceDetail.scheduleLabel') }}</label> <Dropdown v-model="selectedSchedule" :options="experience.schedules" :placeholder="$t('experienceDetail.schedulePlaceholder')" class="w-full" />
+            <label>{{ $t('experienceDetail.scheduleLabel') }}</label>
+            <Dropdown v-model="selectedSchedule" :options="availableSchedules" :placeholder="$t('experienceDetail.schedulePlaceholder')" class="w-full" />
           </div>
           <div class="form-group">
             <label>{{ $t('experienceDetail.numberOfPeopleLabel') }}</label>
@@ -72,14 +81,17 @@
 </template>
 
 <script setup>
-import { ref, onMounted, computed } from 'vue';
+import {ref, onMounted, computed, watch} from 'vue';
 import { ExperiencesApiService } from '@/Experience/Application/experiences-api.service.js';
 import Galleria from 'primevue/galleria';
 import Calendar from 'primevue/calendar';
 import InputNumber from 'primevue/inputnumber';
 import Button from 'primevue/button';
-import Dropdown from 'primevue/dropdown'; // Importado para el selector de horarios
+import Dropdown from 'primevue/dropdown';
 import { useI18n } from 'vue-i18n';
+import {ExperienceAssembler} from "@/Experience/Application/experience.assembler.js";
+import {BookingApiService} from "@/Bookings/Application/booking-api.service.js";
+import { useToast } from "primevue/usetoast";
 
 const props = defineProps({
   id: {
@@ -93,8 +105,14 @@ const experience = ref(null);
 const isLoading = ref(true);
 const selectedDate = ref(null);
 const numberOfPeople = ref(1);
-const selectedSchedule = ref(null); // Nuevo ref para el horario seleccionado
+const selectedSchedule = ref(null);
 const { t } = useI18n();
+const toast = useToast();
+const bookingApiService = new BookingApiService();
+
+const disabledDates = ref([]);
+const disabledDays = ref([]);
+const availableSchedules = ref([]);
 
 const totalPrice = computed(() => {
   if (experience.value) {
@@ -103,11 +121,49 @@ const totalPrice = computed(() => {
   return 0;
 });
 
+
+const setDisabledDaysOfWeek = (frequencies) => {
+  const normalizedFrequencies = frequencies ? frequencies.toLowerCase() : '';
+
+  switch (normalizedFrequencies) {
+    case 'weekdays':
+      disabledDays.value = [0, 6]; // Domingo y Sábado
+      break;
+    case 'weekends':
+      disabledDays.value = [1, 2, 3, 4, 5]; // Lunes a Viernes
+      break;
+    case 'daily':
+      disabledDays.value = []; // Todos los días
+      break;
+    default:
+      console.warn(`Frecuencia de experiencia desconocida o no mapeada: "${frequencies}". Se deshabilitarán todos los días por precaución.`);
+      disabledDays.value = [0, 1, 2, 3, 4, 5, 6];
+      break;
+  }
+};
+
+
 onMounted(async () => {
   try {
-    const response = await experienceService.getById(props.id);
+    const response = await experienceService.getExperienceById(Number(props.id));
+
     if (response.data) {
-      experience.value = response.data;
+      experience.value = ExperienceAssembler.toEntityFromResource(response.data);
+      console.log("Frecuencias de la experiencia:", experience.value.frequencies);
+
+      if (experience.value.schedule && Array.isArray(experience.value.schedule)) {
+        availableSchedules.value = experience.value.schedule.map(s => s.time);
+      } else {
+        availableSchedules.value = [];
+        console.warn("La propiedad 'schedule' de la experiencia no es un array o es nula.");
+      }
+
+      if (experience.value.frequencies) {
+        setDisabledDaysOfWeek(experience.value.frequencies);
+      } else {
+        console.warn("La propiedad 'frequencies' de la experiencia es nula o vacía. Deshabilitando todos los días por precaución.");
+        setDisabledDaysOfWeek("none");
+      }
     }
   } catch (error) {
     console.error(t('error.loadExperienceError'), error);
@@ -117,31 +173,91 @@ onMounted(async () => {
   }
 });
 
-const handleBooking = () => {
+watch(selectedDate, (newDate) => {
+  selectedSchedule.value = null;
+});
+
+const handleBooking = async () => {
   if (!selectedDate.value) {
-    alert(t('error.selectDateAlert'));
+    toast.add({ severity: 'warn', summary: t('common.warning'), detail: t('error.selectDateAlert'), life: 3000 });
     return;
   }
-  if (!selectedSchedule.value) { // Validación de horario
-    alert(t('error.selectScheduleAlert')); // Nueva clave de traducción
+  if (!selectedSchedule.value) {
+    toast.add({ severity: 'warn', summary: t('common.warning'), detail: t('error.selectScheduleAlert'), life: 3000 });
     return;
   }
 
-  const bookingDetails = {
+  // Frontend validation for frequency
+  const dayOfWeekSelected = selectedDate.value.getDay();
+  const frequencies = experience.value.frequencies.toLowerCase();
+  let isValidFrequencySelection = false;
+
+  switch (frequencies) {
+    case 'weekdays':
+      isValidFrequencySelection = (dayOfWeekSelected >= 1 && dayOfWeekSelected <= 5);
+      break;
+    case 'weekends':
+      isValidFrequencySelection = (dayOfWeekSelected === 0 || dayOfWeekSelected === 6);
+      break;
+    case 'daily':
+      isValidFrequencySelection = true;
+      break;
+    default:
+      isValidFrequencySelection = false;
+      break;
+  }
+
+  if (!isValidFrequencySelection) {
+    toast.add({ severity: 'error', summary: t('common.error'), detail: t('error.invalidDateFrequencyAlert'), life: 5000 });
+    return;
+  }
+
+  const token = localStorage.getItem('token');
+  if (!token) {
+    toast.add({ severity: 'error', summary: t('common.error'), detail: t('error.userNotLoggedIn'), life: 5000 });
+    console.error("No authentication token found. User must be logged in to make a booking.");
+    return;
+  }
+
+  const bookingData = {
     experienceId: experience.value.id,
-    experienceTitle: experience.value.title,
-    date: selectedDate.value.toLocaleDateString('es-ES'),
-    people: numberOfPeople.value,
-    schedule: selectedSchedule.value, // Incluye el horario seleccionado
-    total: totalPrice.value
+    bookingDate: selectedDate.value.toISOString(),
+    numberOfPeople: numberOfPeople.value,
+    time: selectedSchedule.value
   };
 
-  console.log('Datos de la reserva:', bookingDetails);
-  alert(t('error.bookingSuccessAlertWithSchedule', { // Nueva clave de traducción con horario
-    people: bookingDetails.people,
-    date: bookingDetails.date,
-    schedule: bookingDetails.schedule
-  }));
+  console.log("Booking data sent:", bookingData); // Para depuración
+
+  try {
+    const response = await bookingApiService.createBooking(bookingData);
+
+    if (response.status >= 200 && response.status < 300) {
+      toast.add({ severity: 'success', summary: t('common.success'), detail: t('booking.success'), life: 3000 });
+
+    } else {
+      console.error('Error en la respuesta no-2xx del backend:', response.status, response.data);
+      toast.add({ severity: 'error', summary: t('common.error'), detail: t('error.networkOrServerIssue'), life: 7000 });
+    }
+  } catch (error) {
+    toast.add({ severity: 'error', summary: t('common.error'), detail: t('error.networkOrServerIssue'), life: 7000 });
+    console.error('Error de red o del servidor al crear reserva:', error);
+
+    if (error.response && error.response.data) {
+      console.error("Detalles de error del backend (catch):", error.response.data);
+      const errorData = error.response.data;
+      let detailMessage = t('error.bookingFailedDefault');
+
+      if (errorData.message) {
+        detailMessage = errorData.message;
+      } else if (errorData.errors) {
+        const validationErrors = Object.values(errorData.errors).flat().map(e => e.message || e);
+        detailMessage = t('error.validationFailed') + ": " + validationErrors.join('; ');
+      } else if (errorData.detail) {
+        detailMessage = errorData.detail;
+      }
+      toast.add({ severity: 'error', summary: t('common.error'), detail: detailMessage, life: 7000 });
+    }
+  }
 };
 </script>
 
@@ -173,12 +289,7 @@ const handleBooking = () => {
 .info-column .meta-info .pi {
   margin-right: 0.5rem;
 }
-/* Estilo de rating eliminado
-.info-column .rating {
-  font-weight: 600;
-  color: #e8a900;
-}
-*/
+
 .section {
   margin-top: 2rem;
   border-top: 1px solid #eee;

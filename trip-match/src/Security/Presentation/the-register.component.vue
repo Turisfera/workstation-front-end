@@ -24,6 +24,16 @@
             required
         />
 
+        <label for="number">{{ $t('register.numberLabel') }}</label>
+        <pv-input-text
+            id="number"
+            v-model="number"
+            type="tel"
+            class="input"
+            :placeholder="$t('register.numberPlaceholder')"
+            required
+        />
+
         <label for="password">{{ $t('register.passwordLabel') }}</label>
         <pv-input-text
             id="password"
@@ -90,6 +100,7 @@ const password        = ref('')
 const confirmPassword = ref('')
 const isAgency        = ref(false)
 const error           = ref('')
+const number = ref('')
 
 const userService = new UserService()
 const router      = useRouter()
@@ -116,11 +127,14 @@ async function onRegister() {
       name:            name.value,
       email:           email.value,
       password:        password.value,
+      number:   number.value,
       isAgency:        isAgency.value
     })
-    if (resp.status === 201) {
+    if (resp.status === 201 || resp.status === 200) {
       alert(t('register.accountCreatedSuccess'))
       router.push('/login')
+    } else {
+      error.value = t('error.accountCreationFailure')
     }
   } catch (err) {
     console.error(err)
@@ -130,6 +144,7 @@ async function onRegister() {
 </script>
 
 <style scoped>
+/* Estilos sin cambios */
 .login-container {
   display: flex;
   height: 100vh;

@@ -1,27 +1,82 @@
 import axios from "axios";
+const EXPERIENCE_API_URL = import.meta.env.VITE_EXPERIENCE_API_URL || 'http://localhost:5000/api/v1/Experience';
+
+const http = axios.create({
+    baseURL: EXPERIENCE_API_URL,
+    headers: {
+        Authorization: `Bearer ${localStorage.getItem('token')}`,
+        'Content-Type': 'application/json'
+    }
+});
 
 export class ExperiencesApiService {
-    async getExperiences(){
-        var response= await axios.get(`https://681e93bfc1c291fa66347465.mockapi.io/experience`)
-        return response;
+
+    async getExperienceById(id) {
+        try {
+            const response = await http.get(`/${id}`);
+            return response;
+        } catch (error) {
+            console.error(`Error fetching experience with ID ${id}:`, error);
+            throw error;
+        }
     }
 
-    async getById(id){
-        var response= await axios.get(`https://681e93bfc1c291fa66347465.mockapi.io/experience/${id}`)
-        return response;
+    async createExperience(experienceData) {
+        try {
+            const response = await http.post('/', experienceData);
+            return response;
+        } catch (error) {
+            console.error("Error creating experience:", error);
+            throw error;
+        }
     }
 
-    async createExperience(experience){
-        var response= await axios.post(`https://681e93bfc1c291fa66347465.mockapi.io/experience`, experience)
-        return response;
+    async updateExperience(id, experienceData) {
+        try {
+            const response = await http.put(`/${id}`, experienceData);
+            return response;
+        } catch (error) {
+            console.error(`Error updating experience with ID ${id}:`, error);
+            throw error;
+        }
     }
 
-    async deleteExperience(id){
-        return await axios.delete(`https://681e93bfc1c291fa66347465.mockapi.io/experience/${id}`)
+    async deleteExperience(id) {
+        try {
+            const response = await http.delete(`/${id}`);
+            return response;
+        } catch (error) {
+            console.error(`Error deleting experience with ID ${id}:`, error);
+            throw error;
+        }
     }
 
-    async updateExperience(id, article) {
-        var response = await axios.put(`https://681e93bfc1c291fa66347465.mockapi.io/experience/${id}`, article)
-        return response;
+    async getExperiencesByAgencyId(agencyUserId) {
+        try {
+            const response = await http.get(`/agency/${agencyUserId}`);
+            return response;
+        } catch (error) {
+            console.error(`Error fetching experiences for agency ${agencyUserId}:`, error);
+            throw error;
+        }
+    }
+
+    async getExperiencesByCategoryId(categoryId) {
+        try {
+            const response = await http.get(`/category/${categoryId}`);
+            return response;
+        } catch (error) {
+            console.error(`Error fetching experiences for category ${categoryId}:`, error);
+            throw error;
+        }
+    }
+    async getAllExperiences() {
+        try {
+            const response = await http.get(`/`);
+            return response;
+        } catch (error) {
+            console.error("Error fetching all experiences:", error);
+            throw error;
+        }
     }
 }

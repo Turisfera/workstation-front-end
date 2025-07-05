@@ -19,14 +19,14 @@ const goToDeleteExperience = (id) => {
 <template>
   <div class="experience-card">
     <div class="experience-header">
-      <img :src="experience.images[0]" :alt="$t('experienceCard.imageAlt')" class="experience-img" />
+      <img :src="experience.experienceImages && experience.experienceImages.length > 0 ? experience.experienceImages[0].url : '/path/to/default-image.jpg'" :alt="$t('experienceCard.imageAlt')" class="experience-img" />
       <div class="experience-info">
         <h2 class="experience-title">{{ experience.title }}</h2>
         <p class="experience-details">
-          {{ $t('experienceCard.pricePrefix') }}{{ experience.price }} {{ $t('experienceCard.separator') }} {{ experience.duration }}{{ $t('experienceCard.durationUnit') }} {{ $t('experienceCard.separator') }} {{ experience.frequencies.value}} {{ $t('experienceCard.separator') }} {{ categoryDescription}}
+          {{ $t('experienceCard.pricePrefix') }}{{ experience.price }} {{ $t('experienceCard.separator') }} {{ experience.duration }}{{ $t('experienceCard.durationUnit') }} {{ $t('experienceCard.separator') }} {{ experience.frequencies}} {{ $t('experienceCard.separator') }} {{ categoryDescription}}
         </p>
         <p class="experience-schedule">
-          {{ experience.schedules.join($t('experienceCard.scheduleSeparator')) }}
+          {{ experience.schedule.map(s => s.time).join($t('experienceCard.scheduleSeparator')) }}
         </p>
       </div>
     </div>

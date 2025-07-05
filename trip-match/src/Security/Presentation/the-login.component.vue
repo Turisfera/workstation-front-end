@@ -49,9 +49,6 @@
       </p>
     </div>
 
-
-
-
     <div class="traveler-img-wrapper">
       <img src="/Login-TripMatch.png" :alt="$t('login.travelerImageAlt')" />
     </div>
@@ -62,13 +59,13 @@
 import { ref, onMounted } from 'vue'
 import { useRouter, RouterLink } from 'vue-router'
 import { UserService } from '@/Security/Application/user.service.js'
-import { useI18n } from 'vue-i18n'; // Importado para internacionalización
+import { useI18n } from 'vue-i18n';
 
 const email       = ref('')
 const password    = ref('')
 const userService = new UserService()
 const router      = useRouter()
-const { t } = useI18n(); // Inicializa la función de traducción
+const { t } = useI18n();
 
 onMounted(() => {
   const stored = localStorage.getItem('email')
@@ -77,32 +74,66 @@ onMounted(() => {
 
 async function login() {
   try {
-    const { status, data } = await userService.login({
-      email:    email.value,
+    const response = await userService.login({
+      email: email.value,
       password: password.value
     })
 
-    if (status === 200) {
-      localStorage.setItem('token',     data.accessToken)
-      localStorage.setItem('email',     data.email)
-      localStorage.setItem('name',      data.name)
-      localStorage.setItem('avatar',    data.avatar)
-      localStorage.setItem('isAgency',  data.isAgency)
+    if (response.status === 200) {
+      console.log('Token antes de getAgencyProfile:', localStorage.getItem('token'));
+      const { accessToken, email: userEmail, rol, userId } = response.data;
 
-      if (data.isAgency) {
-        router.push('/agency/home')
+      localStorage.setItem('token', accessToken);
+      localStorage.setItem('email', userEmail);
+      localStorage.setItem('rol', rol);
+      localStorage.setItem('userId', userId);
+      console.log('userId que se usará:', userId);
+
+      if (rol === 'agencia') {
+        const agencyResponse = await userService.getAgencyProfile(userId);
+
+        if (agencyResponse && agencyResponse.agencyName) {
+          localStorage.setItem('name', agencyResponse.agencyName);
+          localStorage.setItem('avatar', agencyResponse.avatarUrl || '');
+          router.push('/agency/home');
+        } else {
+
+          throw new Error(t('error.agencyProfileLoadError'));
+        }
+      } else if (rol === 'turista') {
+        console.log('Token antes de getTouristProfile:', localStorage.getItem('token'));
+        const touristResponse = await userService.getTouristProfile(userId);
+
+        const userProfileResponse = await userService.getUserProfile(userId)
+
+        if (touristResponse && userProfileResponse && userProfileResponse.firstName) {
+          const firstName = userProfileResponse.firstName;
+          const lastName = userProfileResponse.lastName;
+          const avatarUrl = touristResponse.avatarUrl;
+
+          localStorage.setItem('name', `${firstName} ${lastName}`);
+          localStorage.setItem('avatar', avatarUrl || '');
+          router.push('/');
+        } else {
+          throw new Error(t('error.touristProfileLoadError'));
+        }
       } else {
-        router.push('/')
+        alert(t('error.invalidRole'));
       }
+
+      alert(t('login.successMessage'));
+    } else {
+      alert(t('error.loginFailed'));
     }
   } catch (err) {
-    alert(t('error.authError'))
-    console.error(err)
+    console.error('Login Error:', err);
+    alert(err.message || t('error.authError'));
   }
 }
 </script>
 
 <style scoped>
+/* Estilos sin cambios */
 .login-container {
   display: flex;
   height: 100vh;

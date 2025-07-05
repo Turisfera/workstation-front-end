@@ -9,45 +9,76 @@ import Button from 'primevue/button';
 import ConfirmDialog from 'primevue/confirmdialog';
 import Toast from 'primevue/toast';
 import { useI18n } from 'vue-i18n';
+import { BookingApiService } from '@/Bookings/Application/booking-api.service.js';
+import { BookingAssembler } from '@/Bookings/Application/booking.assembler.js';
 
 const router = useRouter();
 const confirm = useConfirm();
 const toast = useToast();
 const { t } = useI18n();
 
+const bookingApiService = new BookingApiService();
+
 const allReservations = ref([]);
 const selectedDate = ref(null);
 const highlightedDateSet = ref(new Set());
+const isLoading = ref(true);
 
-const setupMockData = () => {
-  const today = new Date();
-  const mockData = [
-    { id: 101, bookingDate: new Date(), experience: { id: 'exp1', title: 'Trekking a la Montaña', description: 'Una increíble aventura en los Andes.', price: 120, duration: 8, rating: 4.8, images: ['https://placehold.co/600x400/318C8B/white?text=Trekking'], schedules: ['08:00'] } },
-    { id: 102, bookingDate: new Date(today.getFullYear(), today.getMonth(), today.getDate() + 3), experience: { id: 'exp2', title: 'City Tour Histórico', description: 'Recorre el centro histórico y sus maravillas.', price: 80, duration: 4, rating: 4.5, images: ['https://placehold.co/600x400/6E58AA/white?text=City+Tour'], schedules: ['10:00'] } },
-    { id: 103, bookingDate: new Date(today.getFullYear(), today.getMonth(), today.getDate() + 3), experience: { id: 'exp3', title: 'Clase de Cocina Peruana', description: 'Aprende a preparar lomo saltado y ceviche.', price: 150, duration: 3, rating: 4.9, images: ['https://placehold.co/600x400/d35400/white?text=Cocina'], schedules: ['18:00'] } },
-    { id: 104, bookingDate: new Date(today.getFullYear(), today.getMonth(), today.getDate() + 8), experience: { id: 'exp4', title: 'Paseo en Bote', description: 'Navega por las islas y observa la fauna.', price: 100, duration: 5, rating: 4.6, images: ['https://placehold.co/600x400/2980b9/white?text=Bote'], schedules: ['09:00'] } },
-  ];
-  allReservations.value = mockData;
-  highlightedDateSet.value = new Set(
-      mockData.map(res => {
-        const d = res.bookingDate;
-        return `${d.getFullYear()}-${d.getMonth()}-${d.getDate()}`;
-      })
-  );
+const fetchBookings = async () => {
+  isLoading.value = true;
+  const touristId = localStorage.getItem('userId');
+
+  if (!touristId) {
+    console.error("No Tourist ID found in localStorage. User must be logged in to view itineraries.");
+    toast.add({ severity: 'error', summary: t('common.error'), detail: t('error.userNotLoggedInBooking'), life: 5000 });
+    isLoading.value = false;
+    return;
+  }
+
+  try {
+    const response = await bookingApiService.getBookingsByTourist(touristId);
+
+    if (response && response.data) {
+
+      allReservations.value = BookingAssembler.toEntitiesFromResponse(response);
+      console.log("Reservas cargadas y mapeadas:", allReservations.value);
+
+
+      highlightedDateSet.value = new Set(
+          allReservations.value.map(res => {
+
+            const d = res.bookingDate instanceof Date ? res.bookingDate : new Date(res.bookingDate);
+            return `${d.getFullYear()}-${d.getMonth()}-${d.getDate()}`;
+          })
+      );
+      console.log("Reservas cargadas:", allReservations.value);
+    } else {
+      console.warn("API de reservas no devolvió datos válidos:", response);
+      allReservations.value = [];
+    }
+  } catch (error) {
+    console.error("Error al cargar las reservas:", error);
+    toast.add({ severity: 'error', summary: t('common.error'), detail: t('error.loadBookingsError'), life: 5000 });
+    allReservations.value = [];
+  } finally {
+    isLoading.value = false;
+  }
 };
 
 onMounted(() => {
-  setupMockData();
+  fetchBookings();
 });
 
 const reservationsForSelectedDate = computed(() => {
   if (!selectedDate.value) return [];
   const selectedKey = `${selectedDate.value.getFullYear()}-${selectedDate.value.getMonth()}-${selectedDate.value.getDate()}`;
   return allReservations.value.filter(res => {
-    const resKey = `${res.bookingDate.getFullYear()}-${res.bookingDate.getMonth()}-${res.bookingDate.getDate()}`;
+    const resDate = res.bookingDate instanceof Date ? res.bookingDate : new Date(res.bookingDate);
+    const resKey = `${resDate.getFullYear()}-${resDate.getMonth()}-${resDate.getDate()}`;
     return resKey === selectedKey;
   });
 });
+
 const isDayHighlighted = (date) => {
   const key = `${date.year}-${date.month}-${date.day}`;
   return highlightedDateSet.value.has(key);
@@ -62,10 +93,18 @@ const handleCancelReservation = (reservationId) => {
     acceptLabel: t('itineraryView.confirmDialog.acceptLabel'),
     rejectClass: 'p-button-secondary p-button-outlined',
     acceptClass: 'p-button-danger',
-    accept: () => {
-      allReservations.value = allReservations.value.filter(res => res.id !== reservationId);
-      setupMockData();
-      toast.add({ severity: 'success', summary: t('itineraryView.toast.cancelSuccessSummary'), detail: t('itineraryView.toast.cancelSuccessDetail'), life: 3000 });
+    accept: async () => {
+      try {
+        await bookingApiService.deleteBooking(reservationId);
+        toast.add({ severity: 'success', summary: t('itineraryView.toast.cancelSuccessSummary'), detail: t('itineraryView.toast.cancelSuccessDetail'), life: 3000 });
+        await fetchBookings();
+        if (reservationsForSelectedDate.value.length === 0) {
+          selectedDate.value = null;
+        }
+      } catch (error) {
+        console.error("Error al cancelar la reserva:", error);
+        toast.add({ severity: 'error', summary: t('itineraryView.toast.cancelErrorSummary'), detail: t('itineraryView.toast.cancelErrorDetail'), life: 5000 });
+      }
     },
     reject: () => {
       toast.add({ severity: 'info', summary: t('itineraryView.toast.cancelAbortSummary'), detail: t('itineraryView.toast.cancelAbortDetail'), life: 3000 });
@@ -86,7 +125,11 @@ const handleCancelReservation = (reservationId) => {
 
     <div class="content-layout">
       <div class="reservations-details">
-        <div v-if="!selectedDate" class="placeholder">
+        <div v-if="isLoading" class="placeholder">
+          <i class="pi pi-spin pi-spinner"></i>
+          <span>{{ $t('itineraryView.loadingReservations') }}</span>
+        </div>
+        <div v-else-if="!selectedDate" class="placeholder">
           <i class="pi pi-calendar-plus"></i>
           <span>{{ $t('itineraryView.placeholderSelectDay') }}</span>
         </div>

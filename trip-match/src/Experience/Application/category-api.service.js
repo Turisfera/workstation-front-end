@@ -1,13 +1,41 @@
 import axios from "axios";
 
+const API_BASE_URL = import.meta.env.VITE_BACKEND_API_URL || 'http://localhost:5000/api/v1';
+
+const http = axios.create({
+    baseURL: API_BASE_URL,
+    headers: {
+        'Content-Type': 'application/json'
+    }
+});
+
+http.interceptors.request.use(config => {
+    const token = localStorage.getItem('token');
+    if (token) {
+        config.headers.Authorization = `Bearer ${token}`;
+    }
+    return config;
+}, error => {
+    return Promise.reject(error);
+});
+
 export class CategoryApiService {
     async getCategory(){
-        var response= await axios.get(`https://681e93bfc1c291fa66347465.mockapi.io/category`);
-        return response;
+        try {
+            var response = await http.get(`/Category`);
+            return response;
+        } catch (error) {
+            console.error("Error fetching categories from backend:", error);
+            throw error;
+        }
     }
     async getCategoryById(categoryId){
-        var response= await axios.get(`https://681e93bfc1c291fa66347465.mockapi.io/category/${categoryId}`);
-        return response;
+        try {
+            var response = await http.get(`/Category/${categoryId}`);
+            return response;
+        } catch (error) {
+            console.error(`Error fetching category with ID ${categoryId} from backend:`, error);
+            throw error;
+        }
     }
-
 }

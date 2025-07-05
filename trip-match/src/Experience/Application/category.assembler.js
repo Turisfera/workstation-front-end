@@ -1,21 +1,18 @@
 import {Category} from "@/Experience/Domain/category.entity.js"
 
 export class CategoryAssembler {
-
     static toEntitiesFromResponse(response) {
-        console.log(response)
         if (response.status !== 200) {
-            console.error(`${response.status},  ${response.code}, ${response.message}`);
+            console.error(`Error en la respuesta de categorías: ${response.status}, ${response.code || 'N/A'}, ${response.message || 'N/A'}`);
             return [];
         }
         const categoryResponse = response.data;
-        return categoryResponse.map((category) => {
-            return this.toEntityFromResource(category);
+        if (!Array.isArray(categoryResponse)) {
+            console.error("La respuesta de la API de categorías no es un array válido:", categoryResponse);
+            return [];
+        }
+        return categoryResponse.map((resource) => {
+            return new Category(resource);
         });
-    }
-
-    static toEntityFromResource(resource) {
-        let category = new Category(resource);
-        return category;
     }
 }

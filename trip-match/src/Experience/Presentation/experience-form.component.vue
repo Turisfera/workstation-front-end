@@ -5,10 +5,12 @@ import {CategoryApiService} from "@/Experience/Application/category-api.service.
 import router from "@/router.js";
 import {useRoute} from "vue-router";
 import { useI18n } from 'vue-i18n';
+import {useToast} from "primevue/usetoast";
 
 const experiencesApiService = new ExperiencesApiService()
 const categoryApiService = new CategoryApiService()
 const { t } = useI18n();
+const toast = useToast();
 
 const title = ref("")
 const description = ref("")
@@ -24,10 +26,11 @@ const categories = ref([])
 
 const formInvalid = ref(false)
 const routes = useRoute();
-const id = ref(routes.params.id || '')
+const id = ref(routes.params.id || '');
 
 const includes = ref([]);
 const newIncludeItem = ref("");
+
 
 defineProps({
   existingArticle: {
@@ -40,37 +43,60 @@ defineProps({
       price: 0.0,
       frequencies: "",
       schedules: [],
-      images: []
+      images: [],
+      includes: [],
+      categoryId: null
     })
   }
 });
 
 onMounted(async () => {
-  const categoryResponse = await categoryApiService.getCategory();
-  categories.value = categoryResponse.data;
+  try {
+    const categoryResponse = await categoryApiService.getCategory();
+    if (categoryResponse && categoryResponse.data && Array.isArray(categoryResponse.data)) {
+      categories.value = categoryResponse.data.map(cat => ({ id: cat.id, description: cat.name }));
+    } else {
+      console.warn("API de categorías no devolvió un array válido:", categoryResponse);
+      toast.add({severity:'warn', summary: t('common.warning'), detail: t('create-experience-form.loadCategoriesError'), life: 3000});
+    }
 
-  if (id.value !== '') {
-    const response = await experiencesApiService.getById(id.value);
 
-    title.value = response.data.title;
-    description.value = response.data.description;
-    location.value = response.data.location;
-    duration.value = response.data.duration;
-    price.value = response.data.price;
-    frequencies.value = response.data.frequencies;
-    schedules.value = (response.data.schedules || []).map(s => ({
-      label: s,
-      value: s
-    }));
+    if (id.value !== '') {
+      const response = await experiencesApiService.getExperienceById(id.value);
+      const experienceData = response.data;
 
-    images.value = response.data.images.map(url => ({
-      name: t('create-experience-form.existingImageName'),
-      url
-    }));
-    includes.value = response.data.includes || [];
-    category.value = response.data.categoryId;
+      title.value = experienceData.title;
+      description.value = experienceData.description;
+      location.value = experienceData.location;
+      duration.value = experienceData.duration;
+      price.value = experienceData.price;
+
+      frequencies.value = frecuencias.find(f => f.value === experienceData.frequencies) || "";
+      if (!frequencies.value && experienceData.frequencies) {
+        console.warn(`Frecuencia "${experienceData.frequencies}" del backend no encontrada en opciones locales.`)
+      }
+
+
+      schedules.value = (experienceData.schedules || []).map(s => ({
+        label: s.time,
+        value: s.time
+      }));
+
+      images.value = (experienceData.experienceImages || []).map(img => ({
+        name: t('create-experience-form.existingImageName'),
+        url: img.url
+      }));
+
+      includes.value = (experienceData.includes || []).map(inc => inc.description);
+
+
+      category.value = experienceData.categoryId;
+    }
+  } catch (error) {
+    console.error("Error loading data (categories or experience):", error);
+    toast.add({severity:'error', summary: t('common.error'), detail: t('create-experience-form.loadDataError'), life: 3000});
   }
-})
+});
 
 const addImageByUrl = () => {
   if (imageUrl.value.trim() !== "") {
@@ -93,10 +119,11 @@ const addIncludeItem = () => {
 const removeIncludeItem = (index) => {
   includes.value.splice(index, 1);
 };
+
 const frecuencias = [
-  { label: t('create-experience-form.frequenciesOptions.weekdays'), value: 'Lunes a Viernes' },
-  { label: t('create-experience-form.frequenciesOptions.weekends'), value: 'Fines de Semana' },
-  { label: t('create-experience-form.frequenciesOptions.everyDay'), value: 'Todos los días' }
+  { label: t('create-experience-form.frequenciesOptions.weekdays'), value: 'weekdays' },
+  { label: t('create-experience-form.frequenciesOptions.weekends'), value: 'weekends' },
+  { label: t('create-experience-form.frequenciesOptions.everyDay'), value: 'daily' }
 ];
 
 const horariosDisponibles = [
@@ -113,44 +140,70 @@ const horariosDisponibles = [
   { label: '18:00', value: '18:00' },
   { label: '19:00', value: '19:00' },
   { label: '20:00', value: '20:00' },
-]
+];
 
 const close = async () => {
   await router.replace({ name: 'ExperienceList' });
 }
 
 const SaveExperience = async () => {
-  if (!title.value || !description.value || !location.value || !duration.value || !price.value || !frequencies.value || schedules.value.length === 0 || images.value.length === 0 || !category.value) {
-    formInvalid.value = true
-    return
-  }
-  formInvalid.value = false
 
-  const experience = {
+  if (!title.value || !description.value || !location.value || duration.value === null || duration.value <= 0 ||
+      price.value === null || price.value < 0 || !frequencies.value || schedules.value.length === 0 ||
+      images.value.length === 0 || !category.value || !includes.value.length) {
+    formInvalid.value = true;
+    toast.add({severity:'warn', summary: t('common.warning'), detail: t('create-experience-form.alert'), life: 3000});
+    return;
+  }
+  formInvalid.value = false;
+
+  const agencyUserId = localStorage.getItem('userId');
+  if (!agencyUserId) {
+    console.error("No agencyUserId found in localStorage. User must be an agency to create/edit experiences.");
+    toast.add({severity:'error', summary: t('common.error'), detail: t('create-experience-form.agencyUserError'), life: 5000});
+    return;
+  }
+
+  const experiencePayload = {
     title: title.value,
     description: description.value,
     location: location.value,
-    duration: duration.value,
-    price: price.value,
-    frequencies: frequencies.value,
-    schedules: schedules.value.map(s => s.value || s),
-    images: images.value.map(img => img.url || img.objectUrl),
-    includes: includes.value,
-    categoryId: category.value
-  }
+    duration: parseInt(duration.value),
+    price: parseFloat(price.value),
+    frequencies: frequencies.value.value,
+    schedules: schedules.value.map(s => ({ time: s.value })),
+    experienceImages: images.value.map(img => ({ url: img.url })),
+    includes: includes.value.map(item => ({ description: item })),
+    categoryId: parseInt(category.value),
+    agencyUserId: agencyUserId
+  };
 
-  if (id.value !== '') {
-    const { status } = await experiencesApiService.updateExperience(id.value, experience);
-    if (status === 200) {
-      alert(t('error.articleUpdateSuccess'));
-      router.push({ name: 'ExperienceList' });
+  console.log("Payload enviado:", JSON.stringify(experiencePayload, null, 2));
+  console.log("Tipo de agencyUserId:", typeof agencyUserId, "Valor:", agencyUserId);
+  try {
+    let response;
+    if (id.value !== '') {
+      experiencePayload.id = parseInt(id.value);
+      response = await experiencesApiService.updateExperience(experiencePayload.id, experiencePayload);
+      if (response.status === 200) {
+        toast.add({severity:'success', summary: t('common.success'), detail: t('create-experience-form.experienceUpdateSuccess'), life: 3000});
+        await router.push({ name: 'ExperienceList' });
+      } else {
+        throw new Error(t('create-experience-form.updateFailed'));
+      }
+    } else {
+      response = await experiencesApiService.createExperience(experiencePayload);
+      if (response.status === 201) {
+        toast.add({severity:'success', summary: t('common.success'), detail: t('create-experience-form.experienceCreateSuccess'), life: 3000});
+        await router.push({ name: 'ExperienceList' });
+      } else {
+        throw new Error(t('create-experience-form.createFailed'));
+      }
     }
-  } else {
-    const { status } = await experiencesApiService.createExperience(experience);
-    if (status === 201) {
-      alert(t('error.experienceCreateSuccess'))
-      router.push({ name: 'ExperienceList' });
-    }
+  } catch (error) {
+    console.error("Error saving experience:", error);
+    const errorMessage = error.response?.data?.message || error.message || t('common.unknownError');
+    toast.add({severity:'error', summary: t('common.error'), detail: errorMessage, life: 5000});
   }
 }
 </script>

@@ -1,5 +1,5 @@
 <script setup>
-import ReservationListItem from '@/Reservations/Presentation/reservations-list-item.component.vue';
+import ReservationListItem from '@/Bookings/Presentation/reservations-list-item.component.vue';
 
 defineProps({
   reservations: {

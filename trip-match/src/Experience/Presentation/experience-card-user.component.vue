@@ -1,5 +1,5 @@
 <script setup>
-import { ref, computed } from "vue"; // 'computed' ya no es necesario para displayRating
+import { ref, computed } from "vue";
 import { useRouter } from "vue-router";
 import { FavoritesService } from '@/Favorites/Application/favorites.service.js';
 import { useI18n } from 'vue-i18n';
@@ -10,13 +10,6 @@ const favoritesService = new FavoritesService();
 const isFavorite = ref(favoritesService.isFavorite(props.experience.id));
 const { t } = useI18n();
 
-// 'displayRating' ya no es necesario porque el rating visual se elimina del template
-/*
-const displayRating = computed(() => {
-  const rating = Number(props.experience.rating) || 0;
-  return Math.max(0, Math.min(5, rating));
-});
-*/
 
 const toggleFavorite = () => {
   if (isFavorite.value) {
@@ -33,14 +26,14 @@ const goToDetails = () => { router.push({ name: 'ExperienceDetail', params: { id
 <template>
   <div class="experience-card">
     <div class="experience-header">
-      <img :src="experience.images[0]" :alt="$t('experienceCardUser.imageAlt')" class="experience-img" />
+      <img :src="experience.experienceImages && experience.experienceImages.length > 0 ? experience.experienceImages[0].url : '/path/to/default-image.jpg'" :alt="$t('experienceCardUser.imageAlt')" class="experience-img" />
       <div class="experience-info">
         <h2 class="experience-title">{{ experience.title }}</h2>
         <p class="experience-details">
           {{ $t('experienceCardUser.currencyPrefix') }} {{ experience.price }} {{ $t('experienceCardUser.detailsSeparator') }} {{ experience.duration }}{{ $t('experienceCardUser.durationUnit') }} {{ $t('experienceCardUser.detailsSeparator') }} {{ categoryDescription }}
         </p>
         <p class="experience-schedule">
-          {{ $t('experienceCardUser.schedulesPrefix') }}{{ experience.schedules.join($t('experienceCardUser.scheduleItemSeparator')) }}
+          {{ $t('experienceCardUser.schedulesPrefix') }}{{ experience.schedule.map(s => s.time).join($t('experienceCardUser.scheduleItemSeparator')) }}
         </p>
         <p class="experience-description">{{ experience.description }}</p>
         <div class="experience-footer">
@@ -73,11 +66,7 @@ const goToDetails = () => { router.push({ name: 'ExperienceDetail', params: { id
 .experience-img { width: 120px; height: 120px; border-radius: 8px; object-fit: cover; }
 .experience-info { flex: 1; }
 .experience-title { font-weight: 600; font-size: 1.1rem; margin: 0 0 0.25rem 0; color: #1e293b;}
-/* Estilos de rating eliminados ya que el elemento se ha quitado del template
-.experience-rating { display: flex; align-items: center; font-size: 0.9rem; margin-bottom: 0.5rem; }
-.stars { color: #f59e0b; margin-right: 0.25rem; }
-.score { font-weight: 600; color: #475569; }
-*/
+
 .experience-details, .experience-schedule { font-size: 0.85rem; margin: 2px 0; color: #64748b; }
 .experience-description {
   font-size: 0.9rem;

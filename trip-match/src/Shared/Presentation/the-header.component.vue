@@ -2,15 +2,14 @@
 import { computed, ref, onMounted } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import { useI18n } from 'vue-i18n';
-import { AgenciesApiService } from '@/Agency/Application/agencies-api.service.js';
 import Button from 'primevue/button';
-import Avatar from 'primevue/avatar';
 import Menu from 'primevue/menu';
+import {UserService} from "@/Security/Application/user.service.js";
 
 const router = useRouter();
 const route = useRoute();
 const { t, locale } = useI18n();
-const agenciesApi = new AgenciesApiService();
+const userService = new UserService();
 
 const userName = ref('');
 const userAvatar = ref('');
@@ -19,15 +18,15 @@ const profileMenu = ref();
 const profileMenuItems = ref([]);
 
 onMounted(() => {
-  const isAgency = localStorage.getItem('isAgency') === 'true';
-  if (isAgency) {
+  const rol = localStorage.getItem('rol');
+  if (rol === 'agencia') {
     loadAgencyData();
     profileMenuItems.value = [
       { label: t('header.agencyProfileMenu'), icon: 'pi pi-building', command: () => router.push({ name: 'AgencyProfile' }) },
       { separator: true },
       { label: t('header.logoutMenu'), icon: 'pi pi-sign-out', command: () => logout() }
     ];
-  } else {
+  } else if (rol === 'turista') {
     loadTouristData();
     profileMenuItems.value = [
       { label: t('header.myProfileMenu'), icon: 'pi pi-user', command: () => router.push({ name: 'UserProfile' }) },
@@ -35,22 +34,54 @@ onMounted(() => {
       { separator: true },
       { label: t('header.logoutMenu'), icon: 'pi pi-sign-out', command: () => logout() }
     ];
+  } else {
+    logout();
   }
 });
 
 async function loadAgencyData() {
   try {
-    const response = await agenciesApi.getProfile("1");
-    userName.value = response.data.name;
-    userAvatar.value = response.data.avatarUrl;
+    const userId = localStorage.getItem('userId');
+    if (!userId) {
+      console.error("No userId found in localStorage for agency.");
+      return;
+    }
+    const response = await userService.getAgencyProfile(userId); // <--- ¡CAMBIO AQUÍ! Usa userService
+
+    userName.value = response.agencyName;
+    userAvatar.value = response.avatarUrl;
   } catch (error) {
     console.error(t('error.agencyProfileLoadError'), error);
+    userName.value = t('header.defaultAgencyName');
+    userAvatar.value = '';
   }
 }
 
-function loadTouristData() {
-  userName.value = localStorage.getItem('name') || t('header.defaultTouristName');
-  userAvatar.value = localStorage.getItem('avatar') || '';
+async function loadTouristData() {
+  try {
+    const userId = localStorage.getItem('userId');
+    if (!userId) {
+      console.error("No userId found in localStorage for tourist.");
+      return;
+    }
+    const touristResponse = await userService.getTouristProfile(userId);
+    const userProfileResponse = await userService.getUserProfile(userId);
+
+    if (touristResponse && userProfileResponse) {
+      const firstName = userProfileResponse.firstName;
+      const lastName = userProfileResponse.lastName;
+      const avatarUrl = touristResponse.avatarUrl;
+
+      userName.value = `${firstName} ${lastName}`;
+      userAvatar.value = avatarUrl || '';
+    } else {
+      throw new Error(t('error.touristProfileLoadError'));
+    }
+  } catch (error) {
+    console.error(t('error.touristProfileLoadError'), error);
+    userName.value = t('header.defaultTouristName');
+    userAvatar.value = '';
+  }
 }
 
 const titleKeyMap = {

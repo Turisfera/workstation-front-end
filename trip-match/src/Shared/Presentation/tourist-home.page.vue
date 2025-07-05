@@ -8,9 +8,10 @@ import { ExperienceAssembler } from '@/Experience/Application/experience.assembl
 import { CategoryApiService } from "@/Experience/Application/category-api.service.js";
 import { CategoryAssembler } from "@/Experience/Application/category.assembler.js";
 const router = useRouter();
-const categoryApiService = new CategoryApiService();
-const experiencesApiService = new ExperiencesApiService();
+const categoryApiService = new CategoryApiService(); // Instancia
+const experiencesApiService = new ExperiencesApiService(); // Instancia
 const { t } = useI18n();
+
 const user = ref('');
 const categories = ref([]);
 const categoryMap= ref({});
@@ -25,7 +26,7 @@ onMounted(async () => {
   try {
     user.value = localStorage.getItem('name') || t('home.defaultUser');
     const [experienceResponse, categoryResponse] = await Promise.all([
-      experiencesApiService.getExperiences(),
+      experiencesApiService.getAllExperiences(),
       categoryApiService.getCategory()
     ]);
 

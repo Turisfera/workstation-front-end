@@ -10,10 +10,10 @@ import ExperienceView from '@/Experience/Presentation/experience-view.page.vue';
 import ExperienceForm from '@/Experience/Presentation/experience-form.component.vue';
 import ExperienceDelete from '@/Experience/Presentation/experience-delete.component.vue';
 import AgencyProfilePage from '@/Agency/Presentation/agency-profile.page.vue';
-import ReservationsView from '@/Reservations/Presentation/reservations-view.page.vue';
+import ReservationsView from '@/Bookings/Presentation/reservations-view.page.vue';
 import QueryView from "@/Queries/Presentation/query-view.vue";
 import FavoritesView from '@/Favorites/Presentation/favorites-view.page.vue';
-import ItinerariesView from '@/Itineraries/Presentation/itineraries-view.page.vue';
+import ItinerariesView from '@/Bookings/Presentation/itineraries-view.page.vue';
 import UserProfileView from '@/UserProfile/Presentation/user-profile-view.page.vue';
 
 const routes = [
@@ -73,17 +73,21 @@ const router = createRouter({
 
 router.beforeEach((to, from, next) => {
     const token = localStorage.getItem('token');
-    const isAgency = localStorage.getItem('isAgency') === 'true';
+    const rol = localStorage.getItem('rol');
+
     if (to.meta.requiresAuth && !token) {
         return next('/login');
     }
+
     if (to.meta.role) {
-        const userRole = isAgency ? 'agency' : 'tourist';
-        if (to.meta.role !== userRole) {
-            return next(isAgency ? '/agency/home' : '/');
+        const expectedRole = to.meta.role; // "agency" o "tourist"
+        const userRole = rol === 'agencia' ? 'agency' : 'tourist';
+
+        if (expectedRole !== userRole) {
+            return next(userRole === 'agency' ? '/agency/home' : '/');
         }
     }
+
     next();
 });
-
 export default router;

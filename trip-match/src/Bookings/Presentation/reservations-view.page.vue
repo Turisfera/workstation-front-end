@@ -1,6 +1,6 @@
 <script setup>
 import { ref, computed } from 'vue';
-import ReservationList from "@/Reservations/Presentation/reservations-list.component.vue";
+import ReservationList from "@/Bookings/Presentation/reservations-list.component.vue";
 import IconField from 'primevue/iconfield';
 import InputIcon from 'primevue/inputicon';
 import InputText from 'primevue/inputtext';

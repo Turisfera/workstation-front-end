@@ -1,8 +1,8 @@
 <script setup>
 import { defineProps } from 'vue';
-import { useI18n } from 'vue-i18n'; // Importa useI18n
+import { useI18n } from 'vue-i18n';
 
-const { t } = useI18n(); // Inicializa useI18n
+const { t } = useI18n();
 
 defineProps({
   reservation: {
