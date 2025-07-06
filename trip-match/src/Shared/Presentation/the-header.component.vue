@@ -19,14 +19,14 @@ const profileMenuItems = ref([]);
 
 onMounted(() => {
   const rol = localStorage.getItem('rol');
-  if (rol === 'agencia') {
+  if (rol === 'agency') {
     loadAgencyData();
     profileMenuItems.value = [
       { label: t('header.agencyProfileMenu'), icon: 'pi pi-building', command: () => router.push({ name: 'AgencyProfile' }) },
       { separator: true },
       { label: t('header.logoutMenu'), icon: 'pi pi-sign-out', command: () => logout() }
     ];
-  } else if (rol === 'turista') {
+  } else if (rol === 'tourist') {
     loadTouristData();
     profileMenuItems.value = [
       { label: t('header.myProfileMenu'), icon: 'pi pi-user', command: () => router.push({ name: 'UserProfile' }) },

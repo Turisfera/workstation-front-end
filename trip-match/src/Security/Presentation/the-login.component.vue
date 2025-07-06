@@ -89,7 +89,7 @@ async function login() {
       localStorage.setItem('userId', userId);
       console.log('userId que se usará:', userId);
 
-      if (rol === 'agencia') {
+      if (rol === 'agency') {
         const agencyResponse = await userService.getAgencyProfile(userId);
 
         if (agencyResponse && agencyResponse.agencyName) {
@@ -100,7 +100,7 @@ async function login() {
 
           throw new Error(t('error.agencyProfileLoadError'));
         }
-      } else if (rol === 'turista') {
+      } else if (rol === 'tourist') {
         console.log('Token antes de getTouristProfile:', localStorage.getItem('token'));
         const touristResponse = await userService.getTouristProfile(userId);
 

@@ -36,7 +36,7 @@ export class UserService {
     async register({ name, email, password, number, isAgency }) {
         const [firstName, ...lastNameParts] = name.trim().split(' ');
         const lastName = lastNameParts.join(' ') || 'Apellido';
-        const rol = isAgency ? 'agencia' : 'turista';
+        const rol = isAgency ? 'agency' : 'tourist';
 
         const body = {
             firstName,
@@ -47,7 +47,7 @@ export class UserService {
             rol,
             agencyName: isAgency ? name.trim() : null,
             ruc: isAgency ? "12345678901" : null,
-            avatarUrl: isAgency ? null : (rol === 'turista' ? "https://example.com/default-tourist-avatar.png" : null)
+            avatarUrl: isAgency ? null : (rol === 'tourist' ? "https://example.com/default-tourist-avatar.png" : null)
         };
 
         const resp = await axios.post(`${AUTH_API}/auth/signup`, body);
@@ -55,7 +55,7 @@ export class UserService {
     }
 
     async getAgencyProfile(userId) {
-        const response = await fetch(`${AUTH_API}/agencias/${userId}`, {
+        const response = await fetch(`${AUTH_API}/Agencies/${userId}`, {
             headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
         });
         if (!response.ok) {
@@ -65,7 +65,7 @@ export class UserService {
     }
 
     getTouristProfile(userId) {
-        return fetch(`${AUTH_API}/turistas/${userId}`, {
+        return fetch(`${AUTH_API}/tourists/${userId}`, {
             headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
         }).then(res => res.json());
     }

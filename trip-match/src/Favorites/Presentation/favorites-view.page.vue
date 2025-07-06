@@ -6,6 +6,9 @@ import { ExperienceAssembler } from '@/Experience/Application/experience.assembl
 import ExperienceCardUser from '@/Experience/Presentation/experience-card-user.component.vue';
 import { useI18n } from 'vue-i18n';
 import { useRouter } from 'vue-router';
+import { FavoritesApiService } from '@/Favorites/Application/favorites-api.service.js';
+const favoritesApiService = new FavoritesApiService();
+
 
 const favoritesService = new FavoritesService();
 const experiencesApi = new ExperiencesApiService();
@@ -14,18 +17,14 @@ const isLoading = ref(true);
 const { t } = useI18n();
 const router = useRouter();
 
+
 onMounted(async () => {
   try {
-    const favoriteIds = favoritesService.getFavorites();
-
-    if (favoriteIds.length === 0) {
-      return;
-    }
-    const favoritePromises = favoriteIds.map(id => experiencesApi.getById(id));
-    const responses = await Promise.all(favoritePromises);
-    const favoriteData = responses.map(res => res.data);
-    favoriteExperiences.value = favoriteData.map(data => ExperienceAssembler.toEntityFromResource(data));
-
+    const response = await favoritesApiService.getFavorites();
+    const experiences = response.map(f => f.experience); // la API ya te da el objeto
+    favoriteExperiences.value = experiences.map(data =>
+        ExperienceAssembler.toEntityFromResource(data)
+    );
   } catch (error) {
     console.error(t('error.fetchFavoritesError'), error);
   } finally {
