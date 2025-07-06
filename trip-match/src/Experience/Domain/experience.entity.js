@@ -16,7 +16,7 @@ export class Experience {
                     createdDate = null,
                     modifiedDate = null,
                     category = null,
-                    agencia = null
+                    agency = null
                 }) {
         this.id = id;
         this.title = title;
@@ -34,6 +34,6 @@ export class Experience {
         this.createdDate = createdDate;
         this.modifiedDate = modifiedDate;
         this.category = category;
-        this.agencia = agencia;
+        this.agency = agency;
     }
 }

@@ -1,23 +1,38 @@
 <script setup>
-import { ref, computed } from "vue";
+import {ref, computed, onMounted} from "vue";
 import { useRouter } from "vue-router";
 import { FavoritesService } from '@/Favorites/Application/favorites.service.js';
+import { FavoritesApiService } from '@/Favorites/Application/favorites-api.service.js';
 import { useI18n } from 'vue-i18n';
 
 const props = defineProps({ experience: Object, categoryDescription: String, required: true });
 const router = useRouter();
 const favoritesService = new FavoritesService();
-const isFavorite = ref(favoritesService.isFavorite(props.experience.id));
+const favoritesApiService = new FavoritesApiService();
+const isFavorite = ref(false);
 const { t } = useI18n();
 
 
-const toggleFavorite = () => {
-  if (isFavorite.value) {
-    favoritesService.removeFavorite(props.experience.id);
-  } else {
-    favoritesService.addFavorite(props.experience.id);
+onMounted(async () => {
+  try {
+    const favorites = await favoritesApiService.getFavorites();
+    isFavorite.value = favorites.some(f => f.experienceId === props.experience.id);
+  } catch (error) {
+    console.error('Error checking favorites:', error);
   }
-  isFavorite.value = !isFavorite.value;
+});
+
+const toggleFavorite = async () => {
+  try {
+    if (isFavorite.value) {
+      await favoritesApiService.removeFavorite(props.experience.id);
+    } else {
+      await favoritesApiService.addFavorite(props.experience.id);
+    }
+    isFavorite.value = !isFavorite.value;
+  } catch (error) {
+    console.error('Error toggling favorite:', error);
+  }
 };
 
 const goToDetails = () => { router.push({ name: 'ExperienceDetail', params: { id: props.experience.id } }); };

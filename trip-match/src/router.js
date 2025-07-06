@@ -81,7 +81,7 @@ router.beforeEach((to, from, next) => {
 
     if (to.meta.role) {
         const expectedRole = to.meta.role; // "agency" o "tourist"
-        const userRole = rol === 'agencia' ? 'agency' : 'tourist';
+        const userRole = rol === 'agency' ? 'agency' : 'tourist';
 
         if (expectedRole !== userRole) {
             return next(userRole === 'agency' ? '/agency/home' : '/');
