@@ -1,6 +1,6 @@
 export class Experience {
     constructor({
-                    id = 0, // Id es int en el backend
+                    id = 0,
                     title = "",
                     description = "",
                     location = "",
