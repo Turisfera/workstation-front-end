@@ -1,26 +1,29 @@
-import axios from "axios";
-
-const BASE_URL = import.meta.env.VITE_API_URL;
+import axios from 'axios';
+const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api/v1';
+const http = axios.create({
+    baseURL: API_BASE_URL,
+    headers: {
+        'Content-Type': 'application/json',
+    },
+});
+http.interceptors.request.use(
+    (config) => {
+        const token = localStorage.getItem('token');
+        if (token) {
+            config.headers.Authorization = `Bearer ${token}`;
+        }
+        return config;
+    },
+    (error) => {
+        return Promise.reject(error);
+    }
+);
 
 export class AgenciesApiService {
-    async getProfile(agencyId) {
-        return await axios.get(`${BASE_URL}/agencies/${agencyId}`);
+    getProfile(userId) {
+        return http.get(`/Agencies/${userId}`);
     }
-
-    async createProfile(data) {
-        return await axios.post(`${BASE_URL}/agencies`, data);
-    }
-
-    async updateProfile(agencyId, data) {
-        return await axios.put(`${BASE_URL}/agencies/${agencyId}`, data);
-    }
-
-    async deleteProfile(agencyId) {
-        return await axios.delete(`${BASE_URL}/agencies/${agencyId}`);
-    }
-
-    async getAllAgencies() {
-        return await axios.get(`${BASE_URL}/agencies`);
+    updateProfile(userId, payload) {
+        return http.put(`/Agencies/${userId}`, payload);
     }
 }
-

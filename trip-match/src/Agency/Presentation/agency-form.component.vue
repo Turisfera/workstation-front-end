@@ -8,6 +8,18 @@
           class="input-text full-width"
       />
     </div>
+
+    <!-- NUEVO CAMPO RUC -->
+    <div class="field">
+      <label for="ruc">{{ t('createAgency.ruc', 'RUC') }}</label>
+      <InputText
+          id="ruc"
+          v-model="form.ruc"
+          class="input-text full-width"
+          :placeholder="t('createAgency.placeholder.ruc', 'Ingresa el RUC')"
+      />
+    </div>
+
     <div class="field">
       <label for="description">{{ t('createAgency.description') }}</label>
       <textarea
@@ -35,7 +47,6 @@
           :placeholder="t('createAgency.placeholder.phone')"
       />
     </div>
-
     <div class="field">
       <label for="email">{{ t('createAgency.email') }}</label>
       <InputText
@@ -84,15 +95,29 @@
 <script setup>
 import { defineProps, defineEmits, reactive } from 'vue'
 import { useI18n } from 'vue-i18n'
-import InputText  from 'primevue/inputtext'
+import InputText from 'primevue/inputtext'
 import { AgencyAssembler } from '@/Agency/Application/agency.assembler.js'
-
 const props = defineProps({ agency: Object })
-const emit  = defineEmits(['cancel','saved'])
+const emit = defineEmits(['cancel','saved'])
 const { t } = useI18n()
-const form = reactive({ ...props.agency })
+const form = reactive({
+  name: props.agency?.agencyName || props.agency?.name || '',
+  ruc: props.agency?.ruc || '', // NUEVO: Agregar el campo RUC
+  description: props.agency?.description || '',
+  avatarUrl: props.agency?.avatarUrl || '',
+  contact: {
+    phone: props.agency?.contact?.phone || '',
+    email: props.agency?.contact?.email || ''
+  },
+  socialLinks: {
+    facebook: props.agency?.socialLinks?.facebook || '',
+    instagram: props.agency?.socialLinks?.instagram || '',
+    whatsapp: props.agency?.socialLinks?.whatsapp || ''
+  }
+})
 
 function onSave() {
+  console.log('Form data before assembling:', form) // Para debug
   emit('saved', AgencyAssembler.toRequestPayload(form))
 }
 </script>

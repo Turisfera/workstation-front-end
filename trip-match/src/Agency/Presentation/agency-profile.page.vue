@@ -1,15 +1,24 @@
 <template>
   <div class="agency-profile">
     <div class="header">
-      <h1 class="agency-name">{{ agency.name }}</h1>
+      <h1 class="agency-name">
+        {{ agency.agencyName || t('agencyProfile.noName') }}
+      </h1>
       <button class="add-experience-button" @click="editing = true">
-        {{ t('agencyProfile.edit') }}
+        {{ t('agencyProfile.edit', 'Editar perfil') }}
       </button>
     </div>
 
-    <div class="content-grid">
+    <div v-if="loading" class="loading">
+      {{ t('agencyProfile.loading', 'Cargando') }}…
+    </div>
+
+    <div v-else class="content-grid">
       <div class="main-col">
-        <p class="tax-id"><strong>{{ t('agencyProfile.taxIdLabel') }}</strong> {{ agency.taxId }}</p>
+        <p class="tax-id">
+          <strong>{{ t('agencyProfile.taxIdLabel', 'RUC:') }}</strong>
+          {{ agency.ruc }}
+        </p>
         <p class="description">{{ agency.description }}</p>
 
         <div class="stats">
@@ -19,14 +28,13 @@
               <StarRating :rating="agency.rating" />
             </div>
           </div>
-
           <div class="stat-item">
             <div class="stat-number">{{ agency.reviewCount }}</div>
-            <div class="stat-label">{{ t('agencyProfile.reviews') }}</div>
+            <div class="stat-label">{{ t('agencyProfile.reviews', 'Reseñas') }}</div>
           </div>
           <div class="stat-item">
             <div class="stat-number">{{ agency.reservationCount }}</div>
-            <div class="stat-label">{{ t('agencyProfile.reservations') }}</div>
+            <div class="stat-label">{{ t('agencyProfile.reservations', 'Reservas') }}</div>
           </div>
         </div>
 
@@ -47,13 +55,16 @@
             </div>
           </div>
           <a href="#" class="view-more" @click.prevent="showReviews = true">
-            {{ t('agencyProfile.viewMore') }} &rsaquo;
+            {{ t('agencyProfile.viewMore', 'Ver más') }} ›
           </a>
         </div>
       </div>
-
       <div class="side-col">
-        <img :src="agency.avatarUrl" :alt="t('agencyProfile.agencyLogoAlt')" class="agency-logo" />
+        <img
+            :src="agency.avatarUrl"
+            :alt="t('agencyProfile.agencyLogoAlt', 'Logo de la agencia')"
+            class="agency-logo"
+        />
         <p class="contact">{{ agency.contact.email }}</p>
         <p class="contact">{{ agency.contact.phone }}</p>
         <div class="social-icons">
@@ -70,30 +81,37 @@
       </div>
     </div>
 
-    <Dialog v-model:visible="editing" modal :closable="false" :style="{ width: '600px' }">
+    <Dialog v-model:visible="editing" modal :closable="false" style="width:600px">
       <template #header>
-        <h2 class="dialog-title">{{ t('agencyProfile.editprofile') }}</h2>
+        <h2 class="dialog-title">
+          {{ t('agencyProfile.editprofile', 'Editar perfil') }}
+        </h2>
       </template>
-      <AgencyForm :agency="agency" @cancel="editing = false" @saved="onSaved" />
+      <AgencyForm
+          :agency="agency"
+          @cancel="editing = false"
+          @saved="onSaved"
+      />
     </Dialog>
 
-    <Dialog v-model:visible="showReviews" modal :style="{ width: '600px' }" :closable="true">
+    <Dialog v-model:visible="showReviews" modal style="width:600px">
       <template #header>
-        <h2 class="dialog-title">{{ t('agencyProfile.reviewsTitle') }}</h2>
+        <h2 class="dialog-title">
+          {{ t('agencyProfile.reviewsTitle', 'Reseñas') }}
+        </h2>
       </template>
-
       <div class="review-summary">
         <div class="rating-left">
           <span class="rating-number">{{ agency.rating.toFixed(1) }}</span>
           <StarRating :rating="agency.rating" :showText="true" />
         </div>
         <div class="rating-right">
-          <span class="review-count">{{ agency.reviewCount }} {{ t('agencyProfile.reviews') }}</span>
+          <span class="review-count">
+            {{ agency.reviewCount }} {{ t('agencyProfile.reviews', 'Reseñas') }}
+          </span>
         </div>
       </div>
-
       <hr />
-
       <div class="review-list">
         <div v-for="rev in agency.reviews" :key="rev.id" class="review-item">
           <Avatar :image="rev.avatar" shape="circle" size="large" />
@@ -111,102 +129,157 @@
   </div>
 </template>
 
-
 <script setup>
-import { ref, onBeforeMount } from "vue";
-import { useI18n } from "vue-i18n";
-import Avatar from "primevue/avatar";
-import Dialog from "primevue/dialog";
-import StarRating from "@/Agency/Presentation/StarRating.vue";
-import AgencyForm from "./agency-form.component.vue";
-import { AgenciesApiService } from "@/Agency/Application/agencies-api.service.js";
-import { ReviewsApiService } from "@/Agency/Application/reviews-api.service.js";
+import { ref, onMounted } from 'vue'
+import { useRouter } from 'vue-router'
+import { useI18n } from 'vue-i18n'
 
-const { t } = useI18n();
+import Avatar from 'primevue/avatar'
+import Dialog from 'primevue/dialog'
+import StarRating from '@/Agency/Presentation/StarRating.vue'
+import AgencyForm from './agency-form.component.vue'
+
+import { AgenciesApiService } from '@/Agency/Application/agencies-api.service.js'
+import { ReviewsApiService } from '@/Agency/Application/reviews-api.service.js'
+
+const { t } = useI18n()
+const router = useRouter()
 
 const agency = ref({
-  id: "",
-  name: "",
-  taxId: "",
-  description: "",
+  id: '',
+  agencyName: '',
+  ruc: '',
+  description: '',
+  avatarUrl: '',
+  reservationCount: 0,
   rating: 0,
   reviewCount: 0,
-  reservationCount: 0,
-  avatarUrl: "",
-  contact: { email: "", phone: "" },
-  socialLinks: { facebook: "", instagram: "", whatsapp: "" },
-  reviews: [],
-});
+  contact: { email: '', phone: '' },
+  socialLinks: { facebook: '', instagram: '', whatsapp: '' },
+  reviews: []
+})
 
-const editing = ref(false);
-const showReviews = ref(false);
+const loading = ref(false)
+const editing = ref(false)
+const showReviews = ref(false)
 
-const agencyService = new AgenciesApiService();
-const reviewService = new ReviewsApiService();
+const agencyService = new AgenciesApiService()
+const reviewService = new ReviewsApiService()
 
-onBeforeMount(async () => {
+onMounted(async () => {
+  const agencyId = localStorage.getItem('userId')
+  if (!agencyId) {
+    console.error('No se encontró agencyId en localStorage')
+    return router.push('/login')
+  }
+  await loadAgencyData(agencyId)
+})
+
+async function loadAgencyData(id) {
+  loading.value = true
   try {
-    const resp = await agencyService.getProfile("1");
-    const data = resp.data;
-
-    const reviewsResp = await reviewService.getReviewsByAgencyId(data.id);
-    const reviews = reviewsResp.data.map((review) => ({
-      ...review,
-      rating: Number(review.rating),
-    }));
-
-    const total = reviews.reduce((sum, r) => sum + r.rating, 0);
-    const average = reviews.length ? (total / reviews.length).toFixed(1) : 0;
+    const { data } = await agencyService.getProfile(id)
+    let raw = []
+    try {
+      raw = await reviewService.getReviewsByAgencyId(id)
+    } catch {
+      console.warn('No se pudieron cargar reseñas')
+    }
+    const list = Array.isArray(raw) ? raw : raw.data || []
+    const reviews = list.map(r => ({ ...r, rating: Number(r.rating) }))
+    const total = reviews.reduce((s, r) => s + r.rating, 0)
+    const avg = reviews.length ? total / reviews.length : 0
 
     agency.value = {
       id: data.id,
-      name: data.name,
-      taxId: data.taxId,
+      agencyName: data.agencyName,
+      ruc: data.ruc,
       description: data.description,
-      rating: Number(average),
-      reviewCount: reviews.length,
-      reservationCount: data.reservationCount,
       avatarUrl: data.avatarUrl,
+      reservationCount: data.reservationCount,
+      rating: Number(avg.toFixed(1)),
+      reviewCount: reviews.length,
       contact: {
         email: data.contactEmail,
-        phone: data.contactPhone,
+        phone: data.contactPhone
       },
       socialLinks: {
-        facebook: data.socialLinksFacebook,
-        instagram: data.socialLinksInstagram,
-        whatsapp: data.socialLinksWhatsapp,
+        facebook: data.socialLinkFacebook,
+        instagram: data.socialLinkInstagram,
+        whatsapp: data.socialLinkWhatsapp
       },
-      reviews: reviews,
-    };
-  } catch (error) {
-    console.error(t('error.loadAgencyDataError'), error);
-  }
-});
-
-async function onSaved(updated) {
-  try {
-    const updatedResp = await agencyService.updateProfile(updated.id, updated);
-
-    agency.value = {
-      ...updated,
-      contact: {
-        email: updated.contactEmail,
-        phone: updated.contactPhone,
-      },
-      socialLinks: {
-        facebook: updated.socialLinksFacebook,
-        instagram: updated.socialLinksInstagram,
-        whatsapp: updated.socialLinksWhatsapp,
-      },
-      reviews: agency.value.reviews
-    };
-
-    editing.value = false;
-  } catch (error) {
-    console.error(t('error.saveAgencyChangesError'), error);
+      reviews
+    }
+  } catch (err) {
+    console.error('Error loading agency data:', err)
+    if (err.response?.status === 404) {
+      alert(
+          t(
+              'agencyProfile.notFound',
+              'Aún no tienes un perfil de agencia. ¡Créalo ahora!'
+          )
+      )
+      editing.value = true
+    } else {
+      alert(
+          t(
+              'error.loadAgencyDataError',
+              'Error al cargar datos de la agencia, intenta más tarde.'
+          )
+      )
+    }
+  } finally {
+    loading.value = false
   }
 }
 
+async function onSaved(payload) {
+  console.log('Payload enviado:', payload);
+  const id = localStorage.getItem('userId')
+  if (!id) return
+
+  try {
+    const { data: updated } = await agencyService.updateProfile(id, payload)
+    agency.value = {
+      ...agency.value,
+      agencyName: updated.agencyName,
+      ruc: updated.ruc,
+      description: updated.description,
+      avatarUrl: updated.avatarUrl,
+      contact: {
+        email: updated.contactEmail,
+        phone: updated.contactPhone
+      },
+      socialLinks: {
+        facebook: updated.socialLinkFacebook,
+        instagram: updated.socialLinkInstagram,
+        whatsapp: updated.socialLinkWhatsapp
+      }
+    }
+    if (payload.agencyName) localStorage.setItem('name', payload.agencyName)
+    if (payload.avatarUrl) localStorage.setItem('avatar', payload.avatarUrl)
+
+    alert(t('agencyProfile.updateSuccess','Perfil actualizado exitosamente'))
+    editing.value = false
+  } catch (err) {
+    console.error('Error saving changes:', err)
+    if (err.response?.status === 400) {
+      alert(
+          t(
+              'agencyProfile.invalidData',
+              'Datos inválidos. Por favor, revisa los campos.'
+          )
+      )
+    } else {
+      alert(
+          t(
+              'agencyProfile.updateError',
+              'Error al guardar los cambios. Intenta nuevamente.'
+          )
+      )
+    }
+  }
+}
 </script>
 
 <style scoped>

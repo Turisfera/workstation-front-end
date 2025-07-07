@@ -1,59 +1,62 @@
-import { Agency } from "@/Agency/Domain/agency.entity.js";
 import axios from "axios";
-const BASE_URL = import.meta.env.VITE_API_URL;
+import { Agency } from "@/Agency/Domain/agency.entity.js";
+
+const API_ROOT    = import.meta.env.VITE_API_URL;
+const REVIEW_PATH = `${API_ROOT}/Review/agency`;
 
 export class ReviewsApiService {
     async getReviewsByAgencyId(agencyId) {
-        return await axios.get(`${BASE_URL}/reviews?agencyId=${agencyId}`);
+        const res = await axios.get(`${REVIEW_PATH}/${agencyId}`);
+        return res.data;
     }
 }
+
 export class AgencyAssembler {
     static toEntityFromResource(resource) {
+        const id = resource.id ?? resource.userId;
         return new Agency({
-            id: resource.id,
-            name: resource.name,
-            description: resource.description,
-            avatarUrl: resource.avatarUrl,
-            rating: resource.rating,
-            reviewCount: resource.reviewCount,
-            reservationCount: resource.reservationCount,
-            taxId: resource.taxId,
+            id,
+            agencyName:              resource.agencyName,
+            description:       resource.description,
+            ruc:               resource.ruc,
+            avatarUrl:         resource.avatarUrl,
+            rating:            resource.rating  ?? 0,
+            reviewCount:       resource.reviewCount  ?? 0,
+            reservationCount:  resource.reservationCount ?? 0,
+            taxId:             resource.ruc,
             contact: {
                 email: resource.contactEmail,
                 phone: resource.contactPhone
             },
             socialLinks: {
-                facebook: resource.socialLinksFacebook,
-                instagram: resource.socialLinksInstagram,
-                whatsapp: resource.socialLinksWhatsapp
+                facebook:  resource.socialLinkFacebook,
+                instagram: resource.socialLinkInstagram,
+                whatsapp:  resource.socialLinkWhatsapp
             },
             reviews: []
         });
     }
 
     static toEntitiesFromResponse(response) {
-        if (response.status !== 200) {
-            console.error(`${response.status}, ${response.code}, ${response.message}`);
+        const list = Array.isArray(response) ? response : response.data;
+        if (!Array.isArray(list)) {
+            console.error("toEntitiesFromResponse: respuesta inesperada", response);
             return [];
         }
-        return response.data.map((agency) => this.toEntityFromResource(agency));
+        return list.map(item => this.toEntityFromResource(item));
     }
 
     static toRequestPayload(entity) {
         return {
-            id: entity.id,
-            name: entity.name,
-            description: entity.description,
-            avatarUrl: entity.avatarUrl,
-            rating: entity.rating,
-            reviewCount: entity.reviewCount,
-            reservationCount: entity.reservationCount,
-            taxId: entity.taxId,
-            contactEmail: entity.contact.email,
-            contactPhone: entity.contact.phone,
-            socialLinksFacebook: entity.socialLinks.facebook,
-            socialLinksInstagram: entity.socialLinks.instagram,
-            socialLinksWhatsapp: entity.socialLinks.whatsapp
+            agencyName:          entity.name,
+            ruc:                 entity.ruc,
+            description:         entity.description,
+            avatarUrl:           entity.avatarUrl,
+            contactEmail:        entity.contact.email,
+            contactPhone:        entity.contact.phone,
+            socialLinkFacebook:  entity.socialLinks.facebook,
+            socialLinkInstagram: entity.socialLinks.instagram,
+            socialLinkWhatsapp:  entity.socialLinks.whatsapp
         };
     }
 }
