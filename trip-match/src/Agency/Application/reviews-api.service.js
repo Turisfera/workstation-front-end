@@ -1,9 +1,9 @@
-import axios from "axios";
-
-const BASE_URL = import.meta.env.VITE_API_URL;
+import http from '@/Shared/Infrastructure/httpClient.js';
 
 export class ReviewsApiService {
-    async getReviewsByAgencyId(agencyId) {
-        return await axios.get(`${BASE_URL.replace('/Agency/Application','')}/Review/agency/${agencyId}`);
+    getReviewsByAgencyId(agencyId) {
+        // --- ¡CORRECCIÓN AQUÍ! ---
+        // La ruta correcta es "Review" (singular) según tu ReviewController.cs
+        return http.get(`/Review/agency/${agencyId}`);
     }
 }

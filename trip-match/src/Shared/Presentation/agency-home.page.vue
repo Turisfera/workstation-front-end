@@ -4,21 +4,26 @@ import { useRouter } from 'vue-router';
 import { AgenciesApiService } from "@/Agency/Application/agencies-api.service.js";
 import { ReviewsApiService } from "@/Agency/Application/reviews-api.service.js";
 import { QueryApiService } from "@/Queries/Application/query-api.service.js";
+import { BookingApiService } from "@/Bookings/Application/booking-api.service.js";
+import { ExperiencesApiService } from "@/Experience/Application/experiences-api.service.js";
+import { UserService } from "@/Security/Application/user.service.js";
 import StarRating from "@/Agency/Presentation/StarRating.vue";
 import Avatar from "primevue/avatar";
 import { useI18n } from 'vue-i18n';
-
 const router = useRouter();
 const agenciesApi = new AgenciesApiService();
 const reviewsApi = new ReviewsApiService();
 const queriesApi = new QueryApiService();
+const bookingApi = new BookingApiService();
+const experienceApi = new ExperiencesApiService();
+const userApi = new UserService();
 const { t } = useI18n();
 const agencyName = ref('');
 const stats = ref({
-  totalExperiences: 12,
+  totalExperiences: 0,
   newQueries: 0,
   totalBookings: 0,
-  totalEarnings: 'S/ 0.00'
+  totalEarnings: 0.00
 });
 const latestReviews = ref([]);
 const latestBookings = ref([]);
@@ -26,36 +31,59 @@ const isLoading = ref(true);
 
 onMounted(async () => {
   try {
-    const agencyId = "1";
-    const [agencyData, reviewsData, queriesData] = await Promise.all([
+    const agencyId = localStorage.getItem('userId');
+    if (!agencyId) throw new Error("ID de agencia no encontrado.");
+    const results = await Promise.allSettled([
       agenciesApi.getProfile(agencyId),
       reviewsApi.getReviewsByAgencyId(agencyId),
-      queriesApi.getAllQueries()
+      queriesApi.getAllQueries(),
+      bookingApi.getBookingsByAgency(),
+      experienceApi.getExperiencesByAgencyId(agencyId)
     ]);
 
-    agencyName.value = agencyData.data.name;
-    latestReviews.value = reviewsData.data.slice(0, 2);
-    const unansweredQueries = queriesData.data.filter(q => !q.isAnswered);
+    const getData = (result) => result.status === 'fulfilled' ? result.value.data : [];
+
+    const agencyData = getData(results[0]);
+    const reviewsData = getData(results[1]);
+    const queriesData = getData(results[2]);
+    const bookingsData = getData(results[3]);
+    const experiencesData = getData(results[4]);
+
+    // --- El resto de la lógica para procesar los datos es la misma ---
+    agencyName.value = agencyData.agencyName || 'Agencia';
+    stats.value.totalExperiences = experiencesData.length;
+
+    const agencyExperienceIds = experiencesData.map(exp => exp.id);
+    const agencyBookings = bookingsData.filter(booking => agencyExperienceIds.includes(booking.experienceId));
+
+    stats.value.totalBookings = agencyBookings.length;
+    stats.value.totalEarnings = agencyBookings.reduce((sum, booking) => sum + booking.price, 0);
+
+    const unansweredQueries = queriesData.filter(q => q.isAnswered === false);
     stats.value.newQueries = unansweredQueries.length;
-    const mockBookings = [
-      { id: 1, name: 'Carlos Mendoza', experience: 'City Tour Lima', amount: 150 },
-      { id: 2, name: 'Ana Gutierrez', experience: 'Trekking a la Montaña', amount: 250 },
-    ];
-    latestBookings.value = mockBookings;
-    stats.value.totalBookings = 78;
-    stats.value.totalEarnings = 'S/ 12,450';
+
+    const reviewPromises = reviewsData.slice(0, 2).map(async (review) => {
+      const tourist = await userApi.getUserById(review.touristId);
+      return { ...review, name: `${tourist.firstName} ${tourist.lastName}`, avatar: tourist.avatarUrl };
+    });
+    latestReviews.value = await Promise.all(reviewPromises);
+
+    const bookingPromises = agencyBookings.slice(0, 2).map(async (booking) => {
+      const tourist = await userApi.getUserById(booking.touristId);
+      const experience = experiencesData.find(exp => exp.id === booking.experienceId);
+      return { id: booking.id, name: `${tourist.firstName} ${tourist.lastName}`, experience: experience?.title, amount: booking.price };
+    });
+    latestBookings.value = await Promise.all(bookingPromises);
+
   } catch (error) {
-    console.error(t('error.fetchDashboardData'), error);
+    console.error("Falló al obtener los datos del dashboard:", error);
   } finally {
     isLoading.value = false;
   }
 });
 
-const navigateTo = (routeName) => {
-  router.push({ name: routeName });
-};
+const navigateTo = (routeName) => router.push({ name: routeName });
 </script>
-
 <template>
   <div class="agency-dashboard" v-if="!isLoading">
     <header class="dashboard-header">
@@ -83,7 +111,7 @@ const navigateTo = (routeName) => {
         <span class="card-label">{{ $t('agencyDashboard.totalBookingsLabel') }}</span>
       </div>
       <div class="stat-card">
-        <span class="card-value text-green">{{ $t('agencyDashboard.currencySymbol') }} {{ stats.totalEarnings.replace('S/ ', '') }}</span>
+        <span class="card-value text-green">{{ $t('agencyDashboard.currencySymbol') }} {{ stats.totalEarnings.toFixed(2) }}</span>
         <span class="card-label">{{ $t('agencyDashboard.totalEarningsLabel') }}</span>
       </div>
     </div>
@@ -126,7 +154,7 @@ const navigateTo = (routeName) => {
     </div>
   </div>
   <div v-else class="loading-state">
-    {{ $t('agencyDashboard.loadingDashboard') }}
+    <p>{{ $t('agencyDashboard.loadingDashboard') }}</p>
   </div>
 </template>
 
@@ -285,5 +313,8 @@ const navigateTo = (routeName) => {
   padding: 4rem;
   text-align: center;
   color: #64748b;
+}
+.loading-state p {
+  font-size: 1.25rem;
 }
 </style>

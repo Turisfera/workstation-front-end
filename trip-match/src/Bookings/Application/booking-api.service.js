@@ -1,42 +1,58 @@
-import axios from "axios";
-
-const bookingHttp = axios.create({
-    baseURL: "http://localhost:5000/api/v1/Booking",
-    headers: {
-        Authorization: `Bearer ${localStorage.getItem('token')}`, // Incluye el token aquí
-        'Content-Type': 'application/json'
-    }
-});
+import http from '@/Shared/Infrastructure/httpClient.js'; // Importa el cliente http centralizado
 
 export class BookingApiService {
-    constructor() {
-        this.baseUrl = "http://localhost:5000/api/v1/Booking";
-    }
 
+    /**
+     * Obtiene las reservas de un turista específico.
+     * @param {string} touristId - El ID del turista.
+     * @returns {Promise<object>}
+     */
     async getBookingsByTourist(touristId) {
         try {
-            const response = await bookingHttp.get(`/tourist/${touristId}`);
-            return response;
+            return await http.get(`/Booking/tourist/${touristId}`);
         } catch (error) {
-            console.error("Error fetching bookings:", error);
+            console.error("Error fetching tourist bookings:", error);
             throw error;
         }
     }
 
-    async createBooking(booking) {
+    /**
+     * Obtiene las reservas asociadas a una agencia.
+     * @param {string} agencyId - El ID de la agencia.
+     * @returns {Promise<object>}
+     */
+    async getBookingsByAgency() {
         try {
-            const response = await bookingHttp.post('/', booking);
-            return response;
+            // Esta ruta ya era correcta, la dejamos como está.
+            return await http.get(`/Booking`);
+        } catch (error) {
+            console.error("Error fetching all bookings for agency view:", error);
+            throw error;
+        }
+    }
+
+    /**
+     * Crea una nueva reserva.
+     * @param {object} bookingData - Los datos de la reserva a crear.
+     * @returns {Promise<object>}
+     */
+    async createBooking(bookingData) {
+        try {
+            return await http.post('/Booking', bookingData);
         } catch (error) {
             console.error("Error creating booking:", error);
             throw error;
         }
     }
 
-    async deleteBooking(id) {
+    /**
+     * Elimina una reserva por su ID.
+     * @param {string|number} bookingId - El ID de la reserva a eliminar.
+     * @returns {Promise<object>}
+     */
+    async deleteBooking(bookingId) {
         try {
-            const response = await bookingHttp.delete(`/${id}`);
-            return response;
+            return await http.delete(`/Booking/${bookingId}`);
         } catch (error) {
             console.error("Error deleting booking:", error);
             throw error;
