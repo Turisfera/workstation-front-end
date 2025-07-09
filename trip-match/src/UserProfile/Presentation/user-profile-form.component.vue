@@ -12,10 +12,20 @@ const props = defineProps({
 const emit = defineEmits(['save', 'cancel']);
 const { t } = useI18n();
 
-const form = reactive({});
+const form = reactive({
+  name: '',
+  email: '',
+  avatarUrl: '',
+  phone: ''
+});
 
 watch(() => props.user, (newUser) => {
-  Object.assign(form, newUser);
+  if (newUser) {
+    form.name = newUser.name || '';
+    form.email = newUser.email || '';
+    form.avatarUrl = newUser.avatarUrl || '';
+    form.phone = newUser.phone || '';
+  }
 }, { immediate: true, deep: true });
 
 const onSave = () => {
@@ -29,23 +39,20 @@ const onSave = () => {
       <label for="name">{{ $t('userProfile.form.fullNameLabel') }}</label>
       <InputText id="name" v-model="form.name" class="w-full" />
     </div>
+
     <div class="field">
       <label for="email">{{ $t('userProfile.form.emailLabel') }}</label>
       <InputText id="email" v-model="form.email" disabled class="w-full" />
     </div>
+
+    <div class="field">
+      <label for="phone">{{ $t('userProfile.form.phoneLabel') }}</label>
+      <InputText id="phone" v-model="form.phone" class="w-full" />
+    </div>
+
     <div class="field">
       <label for="avatar">{{ $t('userProfile.form.avatarUrlLabel') }}</label>
       <InputText id="avatar" v-model="form.avatarUrl" class="w-full" />
-    </div>
-    <div class="grid grid-cols-2 gap-4">
-      <div class="field">
-        <label for="country">{{ $t('userProfile.form.countryLabel') }}</label>
-        <InputText id="country" v-model="form.country" class="w-full" />
-      </div>
-      <div class="field">
-        <label for="phone">{{ $t('userProfile.form.phoneLabel') }}</label>
-        <InputText id="phone" v-model="form.phone" class="w-full" />
-      </div>
     </div>
 
     <div class="form-button-group">
@@ -59,9 +66,6 @@ const onSave = () => {
 .user-form { padding: 1rem; }
 .field { margin-bottom: 1.25rem; }
 .field label { display: block; margin-bottom: 0.5rem; font-weight: 600; }
-.grid { display: grid; }
-.grid-cols-2 { grid-template-columns: repeat(2, 1fr); }
-.gap-4 { gap: 1rem; }
 .w-full { width: 100%; }
 .form-button-group {
   display: flex;
@@ -74,4 +78,10 @@ const onSave = () => {
 .form-button { padding: 0.75rem 1.5rem; font-size: 1rem; border: none; border-radius: 8px; cursor: pointer; color: white; font-weight: 600; }
 .form-button.save { background-color: #318C8B; }
 .form-button.cancel { background-color: #64748b; }
+
+.p-inputtext:disabled {
+  background-color: #f8f9fa;
+  color: #6c757d;
+  cursor: not-allowed;
+}
 </style>

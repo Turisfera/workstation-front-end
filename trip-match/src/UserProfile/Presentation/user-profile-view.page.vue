@@ -1,6 +1,6 @@
 <script setup>
 import { ref, onMounted } from 'vue';
-import { UserProfileApiService } from '../Application/user-profile-api.service.js';
+import { UserProfileApiService } from '@/UserProfile/Application/user-profile-api.service.js';
 import UserProfileForm from './user-profile-form.component.vue';
 import Dialog from 'primevue/dialog';
 import Button from 'primevue/button';
@@ -13,7 +13,7 @@ const isLoading = ref(true);
 const { t } = useI18n();
 
 onMounted(async () => {
-  const userId = localStorage.getItem('token');
+  const userId = localStorage.getItem('userId');
   if (!userId) {
     console.error(t('error.userIdNotFound'));
     isLoading.value = false;
@@ -31,9 +31,18 @@ onMounted(async () => {
 });
 
 const handleSave = async (updatedUserData) => {
+  const userId = localStorage.getItem('userId');
   try {
-    const response = await userProfileApi.updateProfile(updatedUserData.id, updatedUserData);
+    const promises = [];
+    promises.push(userProfileApi.updateUser(userId, updatedUserData));
+    if (user.value.avatarUrl !== updatedUserData.avatarUrl) {
+      promises.push(userProfileApi.updateTouristAvatar(userId, updatedUserData.avatarUrl));
+    }
+
+    await Promise.all(promises);
+    const response = await userProfileApi.getProfile(userId);
     user.value = response.data;
+
     localStorage.setItem('name', user.value.name);
     localStorage.setItem('avatar', user.value.avatarUrl);
     isEditing.value = false;
@@ -77,10 +86,6 @@ const handleSave = async (updatedUserData) => {
           <div class="detail-item" v-if="user.phone">
             <i class="pi pi-phone"></i>
             <span>{{ user.phone }}</span>
-          </div>
-          <div class="detail-item" v-if="user.country">
-            <i class="pi pi-globe"></i>
-            <span>{{ user.country }}</span>
           </div>
         </div>
       </div>

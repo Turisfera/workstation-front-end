@@ -77,23 +77,6 @@ const goToDeleteExperience = (id) => {
   margin: 0;
 }
 
-/* Estilos de rating eliminados ya que el elemento se ha quitado del template
-.experience-rating {
-  display: flex;
-  align-items: center;
-  margin: 4px 0;
-}
-
-.stars {
-  color: #f5a623;
-  margin-right: 4px;
-}
-
-.score {
-  font-weight: bold;
-}
-*/
-
 .experience-details,
 .experience-schedule {
   margin: 2px 0;

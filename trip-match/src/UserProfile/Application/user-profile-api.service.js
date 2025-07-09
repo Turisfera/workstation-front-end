@@ -1,11 +1,26 @@
-import axios from 'axios';
-const API_URL = import.meta.env.VITE_AUTH_URL;
+
+import apiClient from '../../Shared/Infrastructure/api.js';
 
 export class UserProfileApiService {
+
     async getProfile(userId) {
-        return await axios.get(`${API_URL}/users/${userId}`);
+        const profileUrl = `/users/${userId}`;
+        return await apiClient.get(profileUrl);
     }
-    async updateProfile(userId, userData) {
-        return await axios.put(`${API_URL}/users/${userId}`, userData);
+
+    async updateUser(userId, userData) {
+        const url = `/users/${userId}`;
+        const command = {
+            firstName: userData.name.split(' ')[0],
+            lastName: userData.name.split(' ').slice(1).join(' '),
+            number: userData.phone
+        };
+        return await apiClient.put(url, command);
+    }
+
+    async updateTouristAvatar(userId, avatarUrl) {
+        const url = `/tourists/${userId}`;
+        const command = { avatarUrl: avatarUrl };
+        return await apiClient.put(url, command);
     }
 }

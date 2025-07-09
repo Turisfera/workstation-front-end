@@ -52,7 +52,13 @@ const goToDetails = () => { router.push({ name: 'ExperienceDetail', params: { id
         </p>
         <p class="experience-description">{{ experience.description }}</p>
         <div class="experience-footer">
-          <a href="#" class="experience-agency">{{ experience.agencyName || $t('experienceCardUser.defaultAgencyName') }} {{ $t('experienceCardUser.agencyLinkSuffix') }}</a>
+          <router-link
+              v-if="experience.agency"
+              :to="{ name: 'AgencyPublicProfile', params: { agencyId: experience.agency.userId } }"
+              class="experience-agency">
+            {{ experience.agency.agencyName || $t('experienceCardUser.defaultAgencyName') }} {{ $t('experienceCardUser.agencyLinkSuffix') }}
+          </router-link>
+
           <button class="experience-button" @click="goToDetails">{{ $t('experienceCardUser.viewMoreButton') }}</button>
         </div>
       </div>
