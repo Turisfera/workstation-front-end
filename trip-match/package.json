@@ -10,12 +10,12 @@
   },
   "dependencies": {
     "@fontsource/montserrat": "^5.2.5",
-    "@primeuix/themes": "^1.1.1",
+    "@primeuix/themes": "^1.2.1",
     "@primevue/themes": "^4.0.0",
     "axios": "^1.7.2",
     "primeflex": "^3.3.1",
     "primeicons": "^7.0.0",
-    "primevue": "^4.0.0",
+    "primevue": "^4.3.6",
     "vue": "^3.4.27",
     "vue-i18n": "^9.13.1",
     "vue-router": "^4.3.3"
