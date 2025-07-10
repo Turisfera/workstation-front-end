@@ -8,8 +8,6 @@
           class="input-text full-width"
       />
     </div>
-
-    <!-- NUEVO CAMPO RUC -->
     <div class="field">
       <label for="ruc">{{ t('createAgency.ruc', 'RUC') }}</label>
       <InputText
@@ -102,7 +100,7 @@ const emit = defineEmits(['cancel','saved'])
 const { t } = useI18n()
 const form = reactive({
   name: props.agency?.agencyName || props.agency?.name || '',
-  ruc: props.agency?.ruc || '', // NUEVO: Agregar el campo RUC
+  ruc: props.agency?.ruc || '',
   description: props.agency?.description || '',
   avatarUrl: props.agency?.avatarUrl || '',
   contact: {
@@ -117,7 +115,7 @@ const form = reactive({
 })
 
 function onSave() {
-  console.log('Form data before assembling:', form) // Para debug
+  console.log('Form data before assembling:', form)
   emit('saved', AgencyAssembler.toRequestPayload(form))
 }
 </script>

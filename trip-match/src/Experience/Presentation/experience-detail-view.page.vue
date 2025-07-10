@@ -127,13 +127,13 @@ const setDisabledDaysOfWeek = (frequencies) => {
 
   switch (normalizedFrequencies) {
     case 'weekdays':
-      disabledDays.value = [0, 6]; // Domingo y Sábado
+      disabledDays.value = [0, 6];
       break;
     case 'weekends':
-      disabledDays.value = [1, 2, 3, 4, 5]; // Lunes a Viernes
+      disabledDays.value = [1, 2, 3, 4, 5];
       break;
     case 'daily':
-      disabledDays.value = []; // Todos los días
+      disabledDays.value = [];
       break;
     default:
       console.warn(`Frecuencia de experiencia desconocida o no mapeada: "${frequencies}". Se deshabilitarán todos los días por precaución.`);
@@ -187,7 +187,6 @@ const handleBooking = async () => {
     return;
   }
 
-  // Frontend validation for frequency
   const dayOfWeekSelected = selectedDate.value.getDay();
   const frequencies = experience.value.frequencies.toLowerCase();
   let isValidFrequencySelection = false;
@@ -226,7 +225,7 @@ const handleBooking = async () => {
     time: selectedSchedule.value
   };
 
-  console.log("Booking data sent:", bookingData); // Para depuración
+  console.log("Booking data sent:", bookingData);
 
   try {
     const response = await bookingApiService.createBooking(bookingData);

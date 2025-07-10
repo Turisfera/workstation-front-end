@@ -46,7 +46,7 @@ async function loadAgencyData() {
       console.error("No userId found in localStorage for agency.");
       return;
     }
-    const response = await userService.getAgencyProfile(userId); // <--- ¡CAMBIO AQUÍ! Usa userService
+    const response = await userService.getAgencyProfile(userId);
 
     userName.value = response.agencyName;
     userAvatar.value = response.avatarUrl;

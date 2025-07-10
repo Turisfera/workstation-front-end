@@ -1,7 +1,7 @@
 import axios from 'axios'
 
-//const AUTH_API = import.meta.env.VITE_AUTH_URL || 'https://trip-match-hfaqachdend9amey.canadacentral-01.azurewebsites.net/api/v1'
-const AUTH_API = import.meta.env.VITE_AUTH_URL || 'http://localhost:5000/api/v1'
+
+const AUTH_API = import.meta.env.VITE_AUTH_URL || 'https://backend-prueba-vqqv.onrender.com/api/v1'
 export class UserService {
     /**
      * POST /auth/signin

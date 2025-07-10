@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const API_BASE_URL = import.meta.env.VITE_EXPERIENCE_API_URL || 'http://localhost:5000/api/v1';
+const API_BASE_URL = import.meta.env.VITE_EXPERIENCE_API_URL || 'https://backend-prueba-vqqv.onrender.com/api/v1';
 
 
 const http = axios.create({
@@ -35,7 +35,6 @@ export class ExperiencesApiService {
 
     async createExperience(experienceData) {
         try {
-            // El endpoint para crear es /Experience (POST)
             const response = await http.post('/Experience', experienceData);
             return response;
         } catch (error) {
@@ -86,7 +85,7 @@ export class ExperiencesApiService {
 
     async getAllExperiences() {
         try {
-            const response = await http.get(`/Experience`); // Endpoint para todas las experiencias
+            const response = await http.get(`/Experience`);
             return response;
         } catch (error) {
             console.error("Error fetching all experiences:", error);

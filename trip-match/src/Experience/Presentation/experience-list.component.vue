@@ -21,7 +21,7 @@ onMounted(async () => {
       categoryResponse.data.forEach(cat => {
         categoriesMap.set(cat.id, cat.name);
       });
-      console.log("Categories loaded for mapping:", categoriesMap); // Depuración
+      console.log("Categories loaded for mapping:", categoriesMap);
     } else {
       console.warn("API de categorías no devolvió un array válido.");
     }

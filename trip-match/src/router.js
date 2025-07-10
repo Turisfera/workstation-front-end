@@ -20,8 +20,6 @@ import AgencyPublicProfile from '@/Agency/Presentation/agency-public-profile.pag
 const routes = [
     { path: '/login', component: TheLogin, meta: { layout: 'auth' } },
     { path: '/register', component: TheRegisterComponent, meta: { layout: 'auth' } },
-
-    // --- Layout de la Agencia (sin cambios) ---
     {
         path: '/agency',
         component: AgencyLayoutPage,
@@ -37,8 +35,6 @@ const routes = [
             { path: 'queries', name: 'Queries', component: QueryView },
         ]
     },
-
-    // --- Layout del Turista (AQUÍ ESTÁ LA CORRECCIÓN) ---
     {
         path: '/',
         component: TouristLayout,
@@ -54,17 +50,13 @@ const routes = [
                 component: () => import('@/Experience/Presentation/experience-detail-view.page.vue'),
                 props: true
             },
-            // --- ¡MOVIDA AQUÍ! ---
-            // Esta ruta ahora es hija del TouristLayout, por lo que mostrará el header y el sidebar.
             {
-                path: 'agency/:agencyId', // El path es relativo al padre ('/')
+                path: 'agency/:agencyId',
                 name: 'AgencyPublicProfile',
                 component: AgencyPublicProfile
             }
         ]
     },
-
-    // Ruta de búsqueda (sin cambios)
     {
         path: '/search',
         component: TouristLayout,
@@ -81,8 +73,6 @@ const router = createRouter({
     history: createWebHistory(),
     routes
 });
-
-// El guard de navegación (beforeEach) no necesita cambios.
 router.beforeEach((to, from, next) => {
     const token = localStorage.getItem('token');
     const rol = localStorage.getItem('rol');
@@ -96,8 +86,6 @@ router.beforeEach((to, from, next) => {
         const userRole = rol === 'agency' ? 'agency' : 'tourist';
 
         if (expectedRole !== userRole) {
-            // Si un turista intenta acceder a una ruta de agencia o viceversa, lo redirige.
-            // La nueva ruta de perfil público no tiene 'role', por lo que no entra en este conflicto.
             return next(userRole === 'agency' ? '/agency/home' : '/');
         }
     }

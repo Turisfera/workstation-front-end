@@ -7,8 +7,6 @@ export class ExperienceApiService {
      * @returns {Promise<any>}
      */
     getExperiencesByAgencyId(agencyUserId) {
-        // --- ¡CORRECCIÓN AQUÍ! ---
-        // La ruta correcta es "Experience" (singular) según tu ExperienceController.cs
         return http.get(`/Experience/agency/${agencyUserId}`);
     }
 }

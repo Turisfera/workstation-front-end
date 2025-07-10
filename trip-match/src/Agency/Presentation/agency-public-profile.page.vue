@@ -122,7 +122,6 @@ async function handleNewReview() {
     </div>
 
     <div v-else class="content-grid">
-      <!-- Columna principal -->
       <div class="main-col">
         <p class="tax-id">
           <strong>{{ t('agencyProfile.taxIdLabel', 'RUC:') }}</strong>
@@ -148,7 +147,6 @@ async function handleNewReview() {
         </div>
 
         <div class="reviews">
-          <!-- Vista previa de las primeras 2 reseñas -->
           <div
               v-for="rev in agency.reviews.slice(0, 2)"
               :key="rev.id"
@@ -164,8 +162,6 @@ async function handleNewReview() {
               <p class="review-text">{{ rev.comment }}</p>
             </div>
           </div>
-
-          <!-- Enlace “Ver más” -->
           <a
               v-if="agency.reviews.length > 2"
               href="#"
@@ -175,17 +171,14 @@ async function handleNewReview() {
             {{ t('agencyProfile.viewMore', 'Ver más') }} ›
           </a>
         </div>
-
-        <!-- Diálogo con todas las reseñas -->
         <AgencyReviewsDialog
             v-model:visible="showReviews"
             :reviews="agency.reviews"
             :rating="agency.rating"
             :reviewCount="agency.reviewCount"
         />
-      </div> <!-- ← Cierre de .main-col -->
+      </div>
 
-      <!-- Columna lateral -->
       <div class="side-col">
         <img
             :src="agency.avatarUrl"
@@ -206,9 +199,8 @@ async function handleNewReview() {
           </a>
         </div>
       </div>
-    </div> <!-- ← Cierre de .content-grid -->
+    </div>
 
-    <!-- Modal para enviar nueva reseña -->
     <Dialog
         v-model:visible="showReviewModal"
         modal
