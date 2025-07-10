@@ -85,7 +85,7 @@ const totalRevenue = computed(() => {
         </IconField>
 
         <div class="revenue-display">
-          {{ $t("reservation-view.revenues") }}: {{ $t("reservation-view.currencySymbol") }} {{ totalRevenue.toFixed(2) }}
+          {{ $t("reservation-view.revenues") }}: S/ {{ totalRevenue.toFixed(2) }}
         </div>
       </div>
     </div>

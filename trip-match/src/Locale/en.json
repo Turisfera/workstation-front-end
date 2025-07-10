@@ -3,7 +3,7 @@
     "logo": "TripMatch",
     "home": "Home",
     "experienceManager": "Experience Management",
-    "reservations": "Reservations",
+    "reservations": "Bookings",
     "queries": "Queries",
     "agencyProfile": "Agency Profile",
     "favorites": "My Favorites",
@@ -25,8 +25,7 @@
     "dayPlaceholder": "Select a day",
     "experienceTypePlaceholder": "Select a type"
   },
-
-  "experience-view":{
+  "experience-view": {
     "title": "Your Published Experiences",
     "button": "Add New"
   },
@@ -34,7 +33,7 @@
     "frequenciesOptions": {
       "weekdays": "Weekdays",
       "weekends": "Weekends",
-      "everyDay": "Every Day"
+      "everyDay": "Every day"
     },
     "delete": "Delete",
     "edit": "Edit",
@@ -42,17 +41,23 @@
     "name": "Name",
     "description": "Description",
     "hour": "Duration in hours",
-    "location": "Venue",
+    "location": "Location",
     "price": "Price",
     "frequencies": "Select frequencies",
-    "schedules": "Select times",
+    "schedules": "Select schedules",
     "include": "What does this experience include? (max. 3)",
-    "img": "Paste the image URL (e.g. https://i.imgur.com/abc.jpg)",
+    "img": "Paste the image URL (e.g., https://i.imgur.com/abc.jpg)",
     "img-button": "Add image by URL",
     "include-button": "Add",
     "category": "Category",
-    "imageUrlLabel": "Image by URL"
-    },
+    "imageUrlLabel": "Image by URL",
+    "addedImagesLabel": "Added images",
+    "alert": "Please complete all required fields.",
+    "save": "Save Experience",
+    "existingImageName": "Existing image",
+    "externalImageName": "External image",
+    "imageAltText": "Experience image"
+  },
   "agencyProfile": {
     "edit": "Edit Profile",
     "taxIdLabel": "RUC / NIT:",
@@ -63,10 +68,11 @@
     "editprofile": "Edit Agency Profile",
     "reviewsTitle": "Agency Reviews"
   },
-    "experience": {
-      "cancel": "cancel",
-      "save": "save"
-    },
+
+  "experience": {
+    "cancel": "Cancel",
+    "save": "Save"
+  },
   "createAgency": {
     "name": "Agency Name",
     "description": "Description",
@@ -75,44 +81,37 @@
     "email": "Contact Email",
     "facebook": "Facebook Link",
     "instagram": "Instagram Link",
-    "whatsapp": "WhatsApp Link",
-    "placeholder": {
-      "avatarUrl": "https://...",
-      "phone": "+51 987 654 321",
-      "email": "contacto@andesexplorer.pe",
-      "whatsapp": "https://wa.me/..."
-    }
+    "whatsapp": "WhatsApp Link"
   },
   "common": {
     "cancel": "Cancel",
     "save": "Save",
     "items_count": {
-      "zero": "No ítems",
-      "one": "{count} ítem",
-      "other": "{count} ítems"
+      "zero": "No items",
+      "one": "{count} item",
+      "other": "{count} items"
     }
   },
-    "reservation-view": {
-      "listItem": {
-        "travelerAvatarAlt": "Traveler Avatar",
-        "bookingDateLabel": "Booking Date",
-        "experienceLabel": "Experience",
-        "paxLabel": "People",
-        "totalPaidLabel": "Total Paid"
-      },
-      "title": "Reservation panel",
-      "no-reserves": "No results were found for reservations",
-      "search": "Search by traveler name or experience",
-      "revenues": "Revenues",
-      "currencySymbol": "S/",
-      "noResults": "No reservations were found with the term \"{searchTerm}\""
+  "reservation-view": {
+    "listItem": {
+      "travelerAvatarAlt": "Traveler Avatar",
+      "bookingDateLabel": "Booking Date",
+      "experienceLabel": "Experience",
+      "paxLabel": "People",
+      "totalPaidLabel": "Total Paid"
     },
-    "reservation-info": {
-      "date": "Reservation date",
-      "experience": "Experience",
-      "people": "People",
-      "total-paid": "Total paid"
-    },
+    "title": "Booking Dashboard",
+    "no-reserves": "No booking results found",
+    "search": "Search by traveler name or experience",
+    "revenues": "Revenue",
+    "noResults": "No bookings found with the term \"{searchTerm}\""
+  },
+  "reservation-info": {
+    "date": "Booking Date",
+    "experience": "Experience",
+    "people": "People",
+    "total-paid": "Total Paid"
+  },
   "error": {
     "fetchQueries": "Error fetching queries:",
     "submitResponse": "Error sending response:",
@@ -126,200 +125,185 @@
     "accountCreationFailure": "Could not create account. Please try again.",
     "authError": "Authentication error: Please check your credentials.",
     "agencyProfileLoadError": "Header: Failed to load agency profile.",
-    "experienceDeleteSuccess": "Experience successfully deleted.",
-    "experienceDeleteFailed": "Failed to delete experience.",
+    "experienceDeleteSuccess": "Experience deleted successfully.",
+    "experienceDeleteFailed": "Experience could not be deleted.",
     "loadExperienceError": "Error loading experience:",
     "selectDateAlert": "Please select a date for booking.",
-    "bookingSuccessAlert": "Thank you for your interest! Booking functionality under development. You have selected: {people} for {date}.",
+    "bookingSuccessAlert": "Thank you for your interest! Booking functionality under development.\nYou have selected: {people} person(s) for {date}.",
     "articleUpdateSuccess": "Experience updated successfully.",
     "experienceCreateSuccess": "Experience created successfully.",
     "loadSearchResultsError": "Error loading search data:",
     "loadAgencyDataError": "Error loading agency data or reviews:",
     "saveAgencyChangesError": "Error saving changes:",
-    "selectScheduleAlert": "Please select a time slot for your booking.",
-    "bookingSuccessAlertWithSchedule": "Thank you for your interest! Booking functionality is under development. You have selected: {people} for {date} at {schedule}."
+    "selectScheduleAlert": "Please select a time for booking.",
+    "bookingSuccessAlertWithSchedule": "Thank you for your interest! Booking functionality Reservation in progress. You have selected: {people} person(s) for {date} at {schedule}."
   },
-    "queryView": {
-      "title": "Query Inbox",
-      "subtitle": "Manage traveler questions and respond in a timely manner to improve your reputation.",
-      "searchPlaceholder": "Search by traveler name or experience",
-      "filterNotAnswered": "Unanswered",
-      "filterAnswered": "Answered",
-      "tableHeader": {
-        "user": "User",
-        "experience": "Experience",
-        "date": "Date",
-        "query": "Query",
-        "action": "Action"
-      },
-      "noQueriesInCategory": "There are no queries in this category.",
-      "buttonAnswer": "Answer",
-      "buttonViewAnswer": "View answer",
-      "modalHeaderAnswered": "Answer Sent",
-      "modalHeaderAddAnswer": "Add Answer",
-      "modalHint": "(max. 200 characters)",
-      "buttonCancel": "Cancel",
-      "buttonSendAnswer": "Submit Answer",
-      "pagination": {
-        "no_entries": "0 of 0",
-        "display_range": "{start} - {end} of {total}"
-      }
+  "queryView": {
+    "title": "Query Inbox",
+    "subtitle": "Manage traveler questions and respond in a timely manner to improve your reputation.",
+    "searchPlaceholder": "Search by traveler name or experience",
+    "filterNotAnswered": "Unanswered",
+    "filterAnswered": "Answered",
+    "tableHeader": {
+      "user": "User",
+      "experience": "Experience",
+      "date": "Date",
+      "query": "Query",
+      "action": "Action"
     },
-    "favoritesView": {
-      "title": "My Favorite Experiences",
-      "subtitle": "Here you'll find all the experiences you've saved.",
-      "loadingState": "Loading your favorites...",
-      "emptyStateTitle": "You don't have any favorites yet",
-      "emptyStateSubtitle": "Browse experiences and press the heart to save them here.",
-      "exploreButton": "Explore experiences"
+    "noQueriesInCategory": "There are no queries in this category.",
+    "buttonAnswer": "Answer",
+    "buttonViewAnswer": "View Answer",
+    "modalHeaderAnswered": "Answer Sent",
+    "modalHeaderAddAnswer": "Add Answer",
+    "modalHint": "(max. 200 characters)",
+    "buttonCancel": "Cancel",
+    "buttonSendAnswer": "Submit Answer",
+    "pagination": {
+      "no_entries": "0 of 0",
+      "display_range": "{start} - {end} of {total}"
+    }
+  },
+  "agencyDashboard": {
+    "welcome": "Welcome, {agencyName}!",
+    "summary": "This is a summary of your recent activity.",
+    "addExperienceButton": "Add Experience",
+    "totalExperiencesLabel": "Total Experiences",
+    "newQueriesLabel": "New Queries",
+    "totalBookingsLabel": "Total Bookings",
+    "totalEarningsLabel": "Total Earnings",
+    "latestReviewsTitle": "Latest Reviews",
+    "latestBookingsTitle": "Latest Bookings",
+    "viewAll": "View All",
+    "loadingDashboard": "Loading dashboard...",
+    "currencySymbol": "S/"
+  },
+  "favoritesView": {
+    "title": "My Favorite Experiences",
+    "subtitle": "Here you'll find all the experiences you've saved.",
+    "loadingState": "Loading your favorites...",
+    "emptyStateTitle": "You don't have any favorites yet",
+    "emptyStateSubtitle": "Browse experiences and press the heart to save them here.",
+    "exploreButton": "Explore experiences"
+  },
+  "itineraryView": {
+    "title": "My Travel Itinerary",
+    "subtitle": "Select a day on the calendar to see your reservation details.",
+    "placeholderSelectDay": "Select a marked day to see your activities",
+    "placeholderNoActivities": "You have no activities scheduled for this day",
+    "cancelReservationButton": "Cancel Reservation",
+    "confirmDialog": {
+      "message": "Are you sure you want to cancel this reservation?",
+      "header": "Cancellation Confirmation",
+      "rejectLabel": "No, go back",
+      "acceptLabel": "Yes, cancel"
     },
-    "agencyDashboard": {
-      "welcome": "Welcome, {agencyName}!",
-      "summary": "This is a summary of your recent activity.",
-      "addExperienceButton": "Add Experience",
-      "totalExperiencesLabel": "Total Experiences",
-      "newQueriesLabel": "New Queries",
-      "totalBookingsLabel": "Total Bookings",
-      "totalEarningsLabel": "Total Earnings",
-      "latestReviewsTitle": "Latest Reviews",
-      "latestBookingsTitle": "Latest Bookings",
-      "viewAll": "View All",
-      "loadingDashboard": "Loading dashboard...",
-      "currencySymbol": "S/"
+
+    "toast": {
+      "cancelSuccessSummary": "Cancelled",
+      "cancelSuccessDetail": "The reservation has been cancelled.",
+      "cancelAbortSummary": "Action Aborted",
+      "cancelAbortDetail": "The reservation has not been cancelled."
+    }
+  },
+  "userProfile": {
+    "form": {
+      "fullNameLabel": "Full Name",
+      "emailLabel": "Email (cannot be changed)",
+      "avatarUrlLabel": "Profile Picture URL",
+      "countryLabel": "Country",
+      "phoneLabel": "Phone",
+      "cancelButton": "Cancel",
+      "saveButton": "Save Changes"
     },
-    "itineraryView": {
-      "title": "My Travel Itinerary",
-      "subtitle": "Select a day on the calendar to view your reservation details.",
-      "placeholderSelectDay": "Select a marked day to view your activities.",
-      "placeholderNoActivities": "You have no activities scheduled for this day.",
-      "cancelReservationButton": "Cancel Reservation.",
-      "confirmDialog": {
-        "message": "Are you sure you want to cancel this reservation?",
-        "header": "Cancel Confirmation.",
-        "rejectLabel": "No, go back.",
-        "acceptLabel": "Yes, cancel."
-      },
-      "toast": {
-        "cancelSuccessSummary": "Canceled.",
-        "cancelSuccessDetail": "The reservation has been canceled.",
-        "cancelAbortSummary": "Action Aborted.",
-        "cancelAbortDetail": "I don't know. has canceled the reservation."
-      }
-    },
-    "userProfile": {
-      "form": {
-        "fullNameLabel": "Full Name",
-        "emailLabel": "Email (cannot be changed)",
-        "avatarUrlLabel": "Profile Picture URL",
-        "countryLabel": "Country",
-        "phoneLabel": "Phone",
-        "cancelButton": "Cancel",
-        "saveButton": "Save Changes"
-      },
-      "title": "My Profile",
-      "editButton": "Edit Profile",
-      "avatarAlt": "Avatar",
-      "editModalHeader": "Edit My Profile",
-      "loadingProfile": "Loading profile...",
-      "updateSuccessAlert": "Profile updated successfully!",
-      "updateFailedAlert": "Profile could not be updated."
-    },
-    "register": {
-      "title": "Create account",
-      "subtitle": "Register to get started",
-      "nameLabel": "Full name",
-      "namePlaceholder": "Your name",
-      "emailLabel": "Email",
-      "emailPlaceholder": "correo",
-      "passwordLabel": "Password",
-      "numberLabel": "Número de celular",
-      "numberPlaceholder": "999999999",
-      "passwordPlaceholder": "••••••••",
-      "confirmPasswordLabel": "Confirm password",
-      "confirmPasswordPlaceholder": "••••••••",
-      "accountTypeLabel": "Account type",
-      "userType": "User",
-      "agencyType": "Agency",
-      "registerButton": "Register",
-      "alreadyHaveAccount": "Already have an account?",
-      "loginLink": "Sign in",
-      "accountCreatedSuccess": "Account created, you can now log in.",
-      "travelerImageAlt": "Traveler Image"
-    },
-    "login": {
-      "title": "Hello!",
-      "subtitle": "Log in to your account",
-      "emailLabel": "Email",
-      "emailPlaceholder": "correo",
-      "passwordLabel": "Password",
-      "passwordPlaceholder": "••••••••",
-      "forgotPassword": "Forgot your password?",
-      "loginButton": "Log in",
-      "orDivider": "Or",
-      "newHere": "Are you new here?",
-      "createAccountLink": "Create an account",
-      "travelerImageAlt": "Traveler Image"
-    },
-    "header": {
-      "agencyProfileMenu": "Agency Profile",
-      "logoutMenu": "Log Out",
-      "myProfileMenu": "My Profile",
-      "myFavoritesMenu": "My Favorites",
-      "defaultTouristName": "Traveler",
-      "languageChangeAriaLabel": "Change Language",
-      "englishLang": "English",
-      "spanishLang": "Spanish",
-      "travelerAvatarAlt": "Traveler Avatar",
-      "defaultPageTitle": "Page"
-    },
-    "experienceCard": {
-      "imageAlt": "Experience image",
-      "stars": "★★★★★",
-      "durationUnit": "h",
-      "separator": " · ",
-      "pricePrefix": "S/",
-      "scheduleSeparator": " | "
-    },
-    "experienceCardUser": {
-      "imageAlt": "Experience image",
-      "currencyPrefix": "S/",
-      "detailsSeparator": " · ",
-      "durationUnit": "h",
-      "schedulesPrefix": "Schedules: ",
-      "scheduleItemSeparator": " | ",
-      "agencyLinkSuffix": " →",
-      "defaultAgencyName": "Verified Agency",
-      "viewMoreButton": "View more"
-    },
-    "experienceDelete": {
-      "title": "Delete Experience",
-      "confirmMessage1": "Are you sure you want to cancel this tour experience?",
-      "confirmMessage2": "This action cannot be undone.",
-      "deleteButton": "Delete"
-    },
-    "experienceDetail": {
-      "scheduleLabel": "Schedule",
-      "schedulePlaceholder": "Choose a time slot",
-      "loadingDetails": "Loading experience details...",
-      "descriptionTitle": "Description",
-      "includesTitle": "What's included?",
-      "schedulesTitle": "Times and Frequency",
-      "frequencyLabel": "Frequency:",
-      "availableSchedulesLabel": "Available start times:",
-      "priceCurrency": "S/",
-      "priceUnit": "/ person",
-      "dateLabel": "Date",
-      "datePlaceholder": "Choose a date",
-      "numberOfPeopleLabel": "Number of people",
-      "totalLabel": "Total",
-      "bookNowButton": "Book now",
-      "notFoundTitle": "Experience not found",
-      "notFoundMessage": "The experience you are looking for does not exist or is not available.",
-      "backToHomeButton": "Back to home"
-    },
+    "title": "My Profile",
+    "editButton": "Edit Profile",
+    "avatarAlt": "Avatar",
+    "editModalHeader": "Edit My Profile",
+    "loadingProfile": "Loading profile...",
+    "updateSuccessAlert": "Profile updated successfully!",
+    "updateFailedAlert": "Profile update failed."
+  },
+  "register": {
+    "title": "Create account",
+    "subtitle": "Register to get started",
+    "nameLabel": "Full name",
+    "namePlaceholder": "Your name",
+    "emailLabel": "Email",
+    "emailPlaceholder": "email",
+    "passwordLabel": "Password",
+    "numberLabel": "Mobile number",
+    "numberPlaceholder": "999999999",
+    "passwordPlaceholder": "••••••••",
+    "confirmPasswordLabel": "Confirm password",
+    "confirmPasswordPlaceholder": "••••••••",
+    "accountTypeLabel": "Account type",
+    "userType": "User",
+    "agencyType": "Agency",
+    "registerButton": "Register",
+    "alreadyHaveAccount": "Already have an account?",
+    "loginLink": "Log in",
+    "accountCreatedSuccess": "Account created, you can now log in.",
+    "travelerImageAlt": "Traveler Image"
+  },
+  "login": {
+    "title": "Hello!",
+    "subtitle": "Log in to your account",
+    "emailLabel": "Email",
+    "emailPlaceholder": "email",
+    "passwordLabel": "Password",
+    "passwordPlaceholder": "••••••••",
+    "forgotPassword": "Forgot your password?",
+    "loginButton": "Log in",
+    "orDivider": "Or",
+    "newHere": "Are you new here?",
+    "createAccountLink": "Create an account",
+    "travelerImageAlt": "Traveler Image"
+  },
+  "header": {
+    "agencyProfileMenu": "Agency Profile",
+    "logoutMenu": "Log Out",
+    "myProfileMenu": "My Profile",
+    "myFavoritesMenu": "My Favorites",
+    "defaultTouristName": "Traveler",
+    "languageChangeAriaLabel": "Change Language",
+    "englishLang": "English",
+    "spanishLang": "Spanish",
+    "travelerAvatarAlt": "Traveler Avatar",
+    "defaultPageTitle": "Page"
+  },
+  "experienceCardUser": {
+    "imageAlt": "Experience Image",
+    "defaultAgencyName": "Verified Agency",
+    "viewMoreButton": "View More"
+  },
+  "experienceDelete": {
+    "title": "Delete Experience",
+    "confirmMessage1": "Are you sure you want to cancel this tour experience?",
+    "confirmMessage2": "This action cannot be undone.",
+    "deleteButton": "Delete"
+  },
+  "experienceDetail": {
+    "scheduleLabel": "Schedule",
+    "schedulePlaceholder": "Choose a time",
+    "loadingDetails": "Loading experience details...",
+    "descriptionTitle": "Description",
+    "includesTitle": "What's included?",
+    "schedulesTitle": "Times and Frequency",
+    "frequencyLabel": "Frequency:",
+    "availableSchedulesLabel": "Available start times:",
+    "dateLabel": "Date",
+    "datePlaceholder": "Choose a date",
+    "numberOfPeopleLabel": "Number of people",
+    "totalLabel": "Total",
+    "bookNowButton": "Book now",
+    "notFoundTitle": "Experience not found",
+    "notFoundMessage": "The experience you are looking for does not exist or is not available.",
+    "backToHomeButton": "Back to home"
+  },
   "searchResults": {
     "filterDestinationLabel": "Destination",
-    "filterDestinationPlaceholder": "Ex., Cusco",
+    "filterDestinationPlaceholder": "E.g., Cusco",
     "filterDayLabel": "Day",
     "filterBudgetLabel": "Budget",
     "filterBudgetPlaceholder": "Max. S/. 100",
@@ -328,7 +312,6 @@
     "mapDefaultCountry": "Peru",
     "filterDayPlaceholder": "Select a day",
     "filterExperienceTypePlaceholder": "Select a type",
-    "applyFilters": "Apply Filters"
+    "applyFilters": "Apply filters"
   }
 }
-

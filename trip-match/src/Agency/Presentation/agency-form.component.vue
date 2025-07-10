@@ -8,15 +8,13 @@
           class="input-text full-width"
       />
     </div>
-
-    <!-- NUEVO CAMPO RUC -->
     <div class="field">
-      <label for="ruc">{{ t('createAgency.ruc', 'RUC') }}</label>
+      <label for="ruc">RUC</label>
       <InputText
           id="ruc"
           v-model="form.ruc"
           class="input-text full-width"
-          :placeholder="t('createAgency.placeholder.ruc', 'Ingresa el RUC')"
+          placeholder="Ingresa el RUC"
       />
     </div>
 
@@ -29,33 +27,37 @@
           rows="4"
       ></textarea>
     </div>
+
     <div class="field">
       <label for="avatar">{{ t('createAgency.img') }}</label>
       <InputText
           id="avatar"
           v-model="form.avatarUrl"
           class="input-text full-width"
-          :placeholder="t('createAgency.placeholder.avatarUrl')"
+          placeholder="https://..."
       />
     </div>
+
     <div class="field">
       <label for="phone">{{ t('createAgency.phone') }}</label>
       <InputText
           id="phone"
           v-model="form.contact.phone"
           class="input-text full-width"
-          :placeholder="t('createAgency.placeholder.phone')"
+          placeholder="+51 987 654 321"
       />
     </div>
+
     <div class="field">
       <label for="email">{{ t('createAgency.email') }}</label>
       <InputText
           id="email"
           v-model="form.contact.email"
           class="input-text full-width"
-          :placeholder="t('createAgency.placeholder.email')"
+          placeholder="contacto@andesexplorer.pe"
       />
     </div>
+
     <div class="field">
       <label for="facebook">{{ t('createAgency.facebook') }}</label>
       <InputText
@@ -64,6 +66,7 @@
           class="input-text full-width"
       />
     </div>
+
     <div class="field">
       <label for="instagram">{{ t('createAgency.instagram') }}</label>
       <InputText
@@ -72,15 +75,17 @@
           class="input-text full-width"
       />
     </div>
+
     <div class="field">
       <label for="whatsapp">{{ t('createAgency.whatsapp') }}</label>
       <InputText
           id="whatsapp"
           v-model="form.socialLinks.whatsapp"
           class="input-text full-width"
-          :placeholder="t('createAgency.placeholder.whatsapp')"
+          placeholder="https://wa.me/..."
       />
     </div>
+
     <div class="form-button-group">
       <button class="form-button cancel" @click="$emit('cancel')">
         {{ t('common.cancel') }}
@@ -92,6 +97,7 @@
   </div>
 </template>
 
+
 <script setup>
 import { defineProps, defineEmits, reactive } from 'vue'
 import { useI18n } from 'vue-i18n'
@@ -102,7 +108,7 @@ const emit = defineEmits(['cancel','saved'])
 const { t } = useI18n()
 const form = reactive({
   name: props.agency?.agencyName || props.agency?.name || '',
-  ruc: props.agency?.ruc || '', // NUEVO: Agregar el campo RUC
+  ruc: props.agency?.ruc || '',
   description: props.agency?.description || '',
   avatarUrl: props.agency?.avatarUrl || '',
   contact: {
@@ -117,7 +123,7 @@ const form = reactive({
 })
 
 function onSave() {
-  console.log('Form data before assembling:', form) // Para debug
+  console.log('Form data before assembling:', form)
   emit('saved', AgencyAssembler.toRequestPayload(form))
 }
 </script>

@@ -34,5 +34,7 @@ app.component('pv-input-number',  InputNumber)
 app.component('pv-toast',         Toast)
 
 app.use(i18n)
+window.i18n = i18n
+window.__VUE_I18N__ = i18n
 app.use(router)
 app.mount('#app')

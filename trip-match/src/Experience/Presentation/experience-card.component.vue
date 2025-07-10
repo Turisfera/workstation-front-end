@@ -19,24 +19,34 @@ const goToDeleteExperience = (id) => {
 <template>
   <div class="experience-card">
     <div class="experience-header">
-      <img :src="experience.experienceImages && experience.experienceImages.length > 0 ? experience.experienceImages[0].url : '/path/to/default-image.jpg'" :alt="$t('experienceCard.imageAlt')" class="experience-img" />
+      <img
+          :src="experience.experienceImages && experience.experienceImages.length > 0
+          ? experience.experienceImages[0].url
+          : '/path/to/default-image.jpg'"
+          alt="Experience image"
+          class="experience-img"
+      />
       <div class="experience-info">
         <h2 class="experience-title">{{ experience.title }}</h2>
         <p class="experience-details">
-          {{ $t('experienceCard.pricePrefix') }}{{ experience.price }} {{ $t('experienceCard.separator') }} {{ experience.duration }}{{ $t('experienceCard.durationUnit') }} {{ $t('experienceCard.separator') }} {{ experience.frequencies}} {{ $t('experienceCard.separator') }} {{ categoryDescription}}
+          S/{{ experience.price }} · {{ experience.duration }}h · {{ experience.frequencies }} · {{ categoryDescription }}
         </p>
         <p class="experience-schedule">
-          {{ experience.schedule.map(s => s.time).join($t('experienceCard.scheduleSeparator')) }}
+          {{ experience.schedule.map(s => s.time).join(' | ') }}
         </p>
       </div>
     </div>
 
     <p class="experience-description">{{ experience.description }}</p>
 
-    <template class="experience-buttons" >
-      <button @click="goToDeleteExperience(experience.id)" class="btn delete">{{ $t("create-experience-form.delete") }}</button>
-      <button class="btn edit" @click="editArticle(props.experience)">{{ $t("create-experience-form.edit") }}</button>
-    </template>
+    <div class="experience-buttons">
+      <button @click="goToDeleteExperience(experience.id)" class="btn delete">
+        {{ $t("create-experience-form.delete") }}
+      </button>
+      <button class="btn edit" @click="editArticle(props.experience)">
+        {{ $t("create-experience-form.edit") }}
+      </button>
+    </div>
   </div>
 </template>
 

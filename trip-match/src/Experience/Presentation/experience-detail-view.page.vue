@@ -41,7 +41,7 @@
 
     <div class="booking-column">
       <div class="booking-card">
-        <h3 class="price">{{ $t('experienceDetail.priceCurrency') }} {{ experience.price }} <span class="price-unit">{{ $t('experienceDetail.priceUnit') }}</span></h3>
+        <h3 class="price">S/ {{ experience.price }} <span class="price-unit">/ persona</span></h3>
         <div class="booking-form">
           <div class="form-group">
             <label>{{ $t('experienceDetail.dateLabel') }}</label>
@@ -50,25 +50,44 @@
                 :placeholder="$t('experienceDetail.datePlaceholder')"
                 dateFormat="dd/mm/yy"
                 class="w-full"
-                :disabledDays="disabledDays" :minDate="new Date()"
+                :disabledDays="disabledDays"
+                :minDate="new Date()"
                 selectionMode="single"
                 touchUI
             />
           </div>
           <div class="form-group">
             <label>{{ $t('experienceDetail.scheduleLabel') }}</label>
-            <Dropdown v-model="selectedSchedule" :options="availableSchedules" :placeholder="$t('experienceDetail.schedulePlaceholder')" class="w-full" />
+            <Dropdown
+                v-model="selectedSchedule"
+                :options="availableSchedules"
+                :placeholder="$t('experienceDetail.schedulePlaceholder')"
+                class="w-full"
+            />
           </div>
           <div class="form-group">
             <label>{{ $t('experienceDetail.numberOfPeopleLabel') }}</label>
-            <InputNumber v-model="numberOfPeople" mode="decimal" showButtons :min="1" :max="10" class="w-full" />
+            <InputNumber
+                v-model="numberOfPeople"
+                mode="decimal"
+                showButtons
+                :min="1"
+                :max="10"
+                class="w-full"
+            />
           </div>
         </div>
+
         <div class="total-price">
           <span>{{ $t('experienceDetail.totalLabel') }}</span>
-          <span>{{ $t('experienceDetail.priceCurrency') }} {{ totalPrice.toFixed(2) }}</span>
+          <span>S/ {{ totalPrice.toFixed(2) }}</span>
         </div>
-        <Button :label="$t('experienceDetail.bookNowButton')" class="w-full booking-button" @click="handleBooking" />
+
+        <Button
+            label="$t('experienceDetail.bookNowButton')"
+            class="w-full booking-button"
+            @click="handleBooking"
+        />
       </div>
     </div>
   </div>
@@ -79,6 +98,7 @@
     <router-link to="/">{{ $t('experienceDetail.backToHomeButton') }}</router-link>
   </div>
 </template>
+
 
 <script setup>
 import {ref, onMounted, computed, watch} from 'vue';

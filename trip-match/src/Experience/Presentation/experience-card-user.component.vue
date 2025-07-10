@@ -41,25 +41,36 @@ const goToDetails = () => { router.push({ name: 'ExperienceDetail', params: { id
 <template>
   <div class="experience-card">
     <div class="experience-header">
-      <img :src="experience.experienceImages && experience.experienceImages.length > 0 ? experience.experienceImages[0].url : '/path/to/default-image.jpg'" :alt="$t('experienceCardUser.imageAlt')" class="experience-img" />
+      <img
+          :src="experience.experienceImages && experience.experienceImages.length > 0
+          ? experience.experienceImages[0].url
+          : '/path/to/default-image.jpg'"
+          :alt="$t('experienceCardUser.imageAlt')"
+          class="experience-img"
+      />
       <div class="experience-info">
         <h2 class="experience-title">{{ experience.title }}</h2>
         <p class="experience-details">
-          {{ $t('experienceCardUser.currencyPrefix') }} {{ experience.price }} {{ $t('experienceCardUser.detailsSeparator') }} {{ experience.duration }}{{ $t('experienceCardUser.durationUnit') }} {{ $t('experienceCardUser.detailsSeparator') }} {{ categoryDescription }}
+          S/{{ experience.price }} · {{ experience.duration }}h · {{ categoryDescription }}
         </p>
         <p class="experience-schedule">
-          {{ $t('experienceCardUser.schedulesPrefix') }}{{ experience.schedule.map(s => s.time).join($t('experienceCardUser.scheduleItemSeparator')) }}
+          ★★★★★
+          {{ experience.schedule.map(s => s.time).join(' | ') }}
         </p>
         <p class="experience-description">{{ experience.description }}</p>
         <div class="experience-footer">
           <router-link
               v-if="experience.agency"
               :to="{ name: 'AgencyPublicProfile', params: { agencyId: experience.agency.userId } }"
-              class="experience-agency">
-            {{ experience.agency.agencyName || $t('experienceCardUser.defaultAgencyName') }} {{ $t('experienceCardUser.agencyLinkSuffix') }}
+              class="experience-agency"
+          >
+            {{ experience.agency.agencyName || $t('experienceCardUser.defaultAgencyName') }}
+            →
           </router-link>
 
-          <button class="experience-button" @click="goToDetails">{{ $t('experienceCardUser.viewMoreButton') }}</button>
+          <button class="experience-button" @click="goToDetails">
+            {{ $t('experienceCardUser.viewMoreButton') }}
+          </button>
         </div>
       </div>
       <button class="favorite-btn" @click.stop.prevent="toggleFavorite">

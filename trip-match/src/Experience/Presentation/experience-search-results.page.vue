@@ -7,31 +7,24 @@ import { ExperienceAssembler } from '@/Experience/Application/experience.assembl
 import { CategoryApiService } from '@/Experience/Application/category-api.service.js'
 import { CategoryAssembler } from '@/Experience/Application/category.assembler.js'
 import { useI18n } from 'vue-i18n';
-
 const route = useRoute()
 const experiencesApiService = new ExperiencesApiService()
 const categoryApiService = new CategoryApiService()
 const { t } = useI18n();
-
 const experiences = ref([])
 const categories = ref([]);
 const categoryMap = ref({})
 const mapUrl = ref('')
-
 const destination = ref('')
 const day = ref('')
 const experienceType = ref('')
 const budget = ref('')
-
 const isLoading = ref(true);
-
-
 const frequencyOptions = [
   { label: t('create-experience-form.frequenciesOptions.weekdays'), value: 'weekdays' },
   { label: t('create-experience-form.frequenciesOptions.weekends'), value: 'weekends' },
   { label: t('create-experience-form.frequenciesOptions.everyDay'), value: 'daily' }
 ];
-
 const loadFilteredExperiences = async () => {
   try {
     isLoading.value = true;
@@ -108,32 +101,52 @@ function getMapUrl(dest) {
       <div class="filters-summary">
         <div class="filter-item">
           <label class="filter-item-text">{{ $t('searchResults.filterDestinationLabel') }}</label>
-          <input v-model="destination" class="filter-input" type="text" :placeholder="$t('searchResults.filterDestinationPlaceholder')" />
+          <input
+              v-model="destination"
+              class="filter-input"
+              type="text"
+              :placeholder="$t('searchResults.filterDestinationPlaceholder')"
+          />
         </div>
         <div class="filter-item">
           <label class="filter-item-text">{{ $t('searchResults.filterDayLabel') }}</label>
           <select v-model="day" class="filter-input">
             <option value="">{{ $t('searchResults.filterDayPlaceholder') }}</option>
-            <option v-for="option in frequencyOptions" :key="option.value" :value="option.value">
+            <option
+                v-for="option in frequencyOptions"
+                :key="option.value"
+                :value="option.value"
+            >
               {{ option.label }}
             </option>
           </select>
         </div>
         <div class="filter-item">
           <label class="filter-item-text">{{ $t('searchResults.filterBudgetLabel') }}</label>
-          <input v-model="budget" class="filter-input" type="number" :placeholder="$t('searchResults.filterBudgetPlaceholder')" />
+          <input
+              v-model="budget"
+              class="filter-input"
+              type="number"
+              placeholder="Máx. S/ 100"
+          />
         </div>
         <div class="filter-item">
           <label class="filter-item-text">{{ $t('searchResults.filterExperienceTypeLabel') }}</label>
           <select v-model="experienceType" class="filter-input">
             <option value="">{{ $t('searchResults.filterExperienceTypePlaceholder') }}</option>
-            <option v-for="category in categories" :key="category.id" :value="category.description">
-              {{ category.description }}
+            <option
+                v-for="cat in categories"
+                :key="cat.id"
+                :value="cat.description"
+            >
+              {{ cat.description }}
             </option>
           </select>
         </div>
         <div class="filter-button-container">
-          <button @click="loadFilteredExperiences" class="search-button-local">{{ $t('searchResults.applyFilters') }}</button>
+          <button @click="loadFilteredExperiences" class="search-button-local">
+            {{ $t('searchResults.applyFilters') }}
+          </button>
         </div>
       </div>
 
@@ -146,10 +159,10 @@ function getMapUrl(dest) {
 
       <div v-else class="result-list">
         <ExperienceCardUser
-            v-for="experience in experiences"
-            :key="experience.id"
-            :experience="experience"
-            :categoryDescription="categoryMap[String(experience.categoryId)]"
+            v-for="exp in experiences"
+            :key="exp.id"
+            :experience="exp"
+            :categoryDescription="categoryMap[exp.categoryId]"
         />
       </div>
     </div>
@@ -161,8 +174,8 @@ function getMapUrl(dest) {
           height="700"
           style="border:0;"
           allowfullscreen=""
-          loading="lazy">
-      </iframe>
+          loading="lazy"
+      ></iframe>
     </div>
   </div>
 </template>

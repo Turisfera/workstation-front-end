@@ -80,13 +80,7 @@
     "email": "Email de Contacto",
     "facebook": "Enlace de Facebook",
     "instagram": "Enlace de Instagram",
-    "whatsapp": "Enlace de WhatsApp",
-    "placeholder": {
-      "avatarUrl": "https://...",
-      "phone": "+51 987 654 321",
-      "email": "contacto@andesexplorer.pe",
-      "whatsapp": "https://wa.me/..."
-    }
+    "whatsapp": "Enlace de WhatsApp"
   },
   "common": {
     "cancel": "Cancelar",
@@ -109,7 +103,6 @@
     "no-reserves": "No se encontraron resultados de reservas",
     "search": "Buscar por nombre de viajero o experiencia",
     "revenues": "Ingresos",
-    "currencySymbol": "S/",
     "noResults": "No se encontraron reservas con el término \"{searchTerm}\""
   },
   "reservation-info": {
@@ -278,22 +271,8 @@
     "travelerAvatarAlt": "Avatar viajero",
     "defaultPageTitle": "Página"
   },
-  "experienceCard": {
-    "imageAlt": "Imagen experiencia",
-    "stars": "★★★★★",
-    "durationUnit": " h",
-    "separator": " · ",
-    "pricePrefix": "S/",
-    "scheduleSeparator": " | "
-  },
   "experienceCardUser": {
     "imageAlt": "Imagen experiencia",
-    "currencyPrefix": "S/",
-    "detailsSeparator": " · ",
-    "durationUnit": "h",
-    "schedulesPrefix": "Horarios: ",
-    "scheduleItemSeparator": " | ",
-    "agencyLinkSuffix": " →",
     "defaultAgencyName": "Agencia Verificada",
     "viewMoreButton": "Ver más"
   },
@@ -312,8 +291,6 @@
     "schedulesTitle": "Horarios y Frecuencia",
     "frequencyLabel": "Frecuencia:",
     "availableSchedulesLabel": "Horarios de inicio disponibles:",
-    "priceCurrency": "S/",
-    "priceUnit": "/ persona",
     "dateLabel": "Fecha",
     "datePlaceholder": "Elige una fecha",
     "numberOfPeopleLabel": "Número de personas",

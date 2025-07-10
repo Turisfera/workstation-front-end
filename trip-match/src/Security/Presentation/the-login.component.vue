@@ -133,7 +133,6 @@ async function login() {
 </script>
 
 <style scoped>
-/* Estilos sin cambios */
 .login-container {
   display: flex;
   height: 100vh;

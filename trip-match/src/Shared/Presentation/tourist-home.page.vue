@@ -14,13 +14,20 @@ const { t } = useI18n();
 
 const user = ref('');
 const categories = ref([]);
-const categoryMap= ref({});
+const categoryMap = ref({});
 const destination = ref('');
 const day = ref('');
 const experienceType = ref('');
 const budget = ref('');
 const experiences = ref([]);
 const isLoading = ref(true);
+
+
+const frequencyOptions = [
+  { label: t('create-experience-form.frequenciesOptions.weekdays'), value: 'weekdays' },
+  { label: t('create-experience-form.frequenciesOptions.weekends'), value: 'weekends' },
+  { label: t('create-experience-form.frequenciesOptions.everyDay'), value: 'daily' }
+];
 
 onMounted(async () => {
   try {
@@ -63,10 +70,19 @@ const searchExperiences = () => {
       <div class="search-form">
         <div class="row">
           <input type="text" :placeholder="$t('home.destination')" class="input" v-model="destination" />
-          <input type="text" :placeholder="$t('home.day')" class="input" v-model="day" />
+          <select v-model="day" class="input">
+            <option value="">{{ $t('home.dayPlaceholder') }}</option> <option v-for="option in frequencyOptions" :key="option.value" :value="option.value">
+            {{ option.label }}
+          </option>
+          </select>
         </div>
         <div class="row">
-          <input type="text" :placeholder="$t('home.experienceType')" class="input" v-model="experienceType" />
+          <select v-model="experienceType" class="input">
+            <option value="">{{ $t('home.experienceTypePlaceholder') }}</option>
+            <option v-for="category in categories" :key="category.id" :value="category.description">
+              {{ category.description }}
+            </option>
+          </select>
           <input type="number" :placeholder="$t('home.budget')" class="input" v-model="budget" />
           <button class="search-button" @click="searchExperiences">{{ $t('home.search') }}</button>
         </div>
@@ -131,4 +147,15 @@ const searchExperiences = () => {
 .recommendation-title { font-weight: 600; font-size: 1.25rem; margin-bottom: 1.5rem; }
 .recommendation-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(500px, 1fr)); gap: 1.5rem; }
 .loading-state { text-align: center; padding: 3rem; color: #64748b; }
+
+.input {
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  background-image: url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2020%2020%22%3E%3Cpath%20d%3D%22M9.293%2012.95l.707.707L15.657%208l-1.414-1.414L10%2010.828l-4.243-4.243L4.343%208z%22%2F%3E%3C%2Fsvg%3E'); /* Flecha personalizada */
+  background-repeat: no-repeat;
+  background-position: right 1rem center;
+  background-size: 0.8em;
+  padding-right: 2.5rem;
+}
 </style>

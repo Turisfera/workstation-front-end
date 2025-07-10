@@ -37,7 +37,7 @@ defineProps({
       </div>
       <div class="detail-item">
         <label>{{ $t('reservation-view.listItem.totalPaidLabel') }}</label>
-        <span class="total-paid">{{ $t('reservation-view.currencySymbol') }} {{ reservation.totalPaid.toFixed(2) }}</span>
+        <span class="total-paid">S/ {{ reservation.totalPaid.toFixed(2) }}</span>
       </div>
     </div>
   </div>
