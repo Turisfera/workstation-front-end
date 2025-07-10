@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const API_BASE_URL = import.meta.env.VITE_BACKEND_API_URL || 'https://trip-match-hfaqachdend9amey.canadacentral-01.azurewebsites.net/api/v1';
+const API_BASE_URL = import.meta.env.VITE_BACKEND_API_URL || 'https://backend-prueba-vqqv.onrender.com/api/v1';
 
 const http = axios.create({
     baseURL: API_BASE_URL,

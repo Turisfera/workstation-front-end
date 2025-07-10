@@ -21,7 +21,7 @@ const router = useRouter();
 onMounted(async () => {
   try {
     const response = await favoritesApiService.getFavorites();
-    const experiences = response.map(f => f.experience); // la API ya te da el objeto
+    const experiences = response.map(f => f.experience);
     favoriteExperiences.value = experiences.map(data =>
         ExperienceAssembler.toEntityFromResource(data)
     );

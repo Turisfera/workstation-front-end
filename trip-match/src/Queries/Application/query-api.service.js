@@ -1,7 +1,7 @@
 import axios from "axios";
 
 export class QueryApiService {
-    BASE_URL = 'https://681cab18f74de1d219ad571f.mockapi.io/api/v2';
+    BASE_URL = 'https://backend-prueba-vqqv.onrender.com/api/v2';
 
     async getAllQueries() {
         return await axios.get(`${this.BASE_URL}/queries`);
