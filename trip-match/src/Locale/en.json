@@ -87,6 +87,7 @@
     "cancel": "Cancel",
     "save": "Save",
     "items_count": {
+      "zero": "No ítems",
       "one": "{count} ítem",
       "other": "{count} ítems"
     }

@@ -92,6 +92,7 @@
     "cancel": "Cancelar",
     "save": "Guardar",
     "items_count": {
+      "zero": "No hay ítems",
       "one": "{count} ítem",
       "other": "{count} ítems"
     }
