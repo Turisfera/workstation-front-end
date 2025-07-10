@@ -1,4 +1,4 @@
-import http from '@/Shared/Infrastructure/httpClient.js'; // <-- Solo importamos el cliente compartido
+import http from '@/Shared/Infrastructure/httpClient.js';
 
 export class AgenciesApiService {
     /**
@@ -6,7 +6,6 @@ export class AgenciesApiService {
      * @param {string} userId - El ID de usuario de la agencia.
      */
     getProfile(userId) {
-        // La URL base y el token son manejados automáticamente
         return http.get(`/Agencies/${userId}`);
     }
 

@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const API_BASE_URL = import.meta.env.VITE_EXPERIENCE_API_URL || 'http://localhost:5000/api/v1';
+const API_BASE_URL = import.meta.env.VITE_EXPERIENCE_API_URL || 'https://trip-match-hfaqachdend9amey.canadacentral-01.azurewebsites.net/api/v1';
 
 
 const http = axios.create({
@@ -35,7 +35,6 @@ export class ExperiencesApiService {
 
     async createExperience(experienceData) {
         try {
-            // El endpoint para crear es /Experience (POST)
             const response = await http.post('/Experience', experienceData);
             return response;
         } catch (error) {
@@ -84,9 +83,9 @@ export class ExperiencesApiService {
         }
     }a
 
-    async getAllExperiences() {
+    async getAllExperiences(params = {}) {
         try {
-            const response = await http.get(`/Experience`); // Endpoint para todas las experiencias
+            const response = await http.get(`/Experience`, { params: params });
             return response;
         } catch (error) {
             console.error("Error fetching all experiences:", error);

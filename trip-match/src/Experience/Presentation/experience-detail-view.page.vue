@@ -226,7 +226,7 @@ const handleBooking = async () => {
     time: selectedSchedule.value
   };
 
-  console.log("Booking data sent:", bookingData); // Para depuración
+  console.log("Booking data sent:", bookingData);
 
   try {
     const response = await bookingApiService.createBooking(bookingData);

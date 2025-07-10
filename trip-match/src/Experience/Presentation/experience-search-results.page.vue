@@ -14,7 +14,7 @@ const categoryApiService = new CategoryApiService()
 const { t } = useI18n();
 
 const experiences = ref([])
-const filteredExperiences = ref([])
+const categories = ref([]);
 const categoryMap = ref({})
 const mapUrl = ref('')
 
@@ -23,47 +23,83 @@ const day = ref('')
 const experienceType = ref('')
 const budget = ref('')
 
-onMounted(async () => {
+const isLoading = ref(true);
+
+
+const frequencyOptions = [
+  { label: t('create-experience-form.frequenciesOptions.weekdays'), value: 'weekdays' },
+  { label: t('create-experience-form.frequenciesOptions.weekends'), value: 'weekends' },
+  { label: t('create-experience-form.frequenciesOptions.everyDay'), value: 'daily' }
+];
+
+const loadFilteredExperiences = async () => {
   try {
-    const experiencesResponse = await experiencesApiService.getExperiences();
+    isLoading.value = true;
+    const searchParams = {
+      destination: destination.value,
+      day: day.value,
+      experienceType: experienceType.value,
+      budget: budget.value ? parseFloat(budget.value) : null
+    };
+
+    const cleanedSearchParams = Object.fromEntries(
+        Object.entries(searchParams).filter(([, v]) => v !== '' && v !== null && v !== undefined)
+    );
+
+    const experiencesResponse = await experiencesApiService.getAllExperiences(cleanedSearchParams);
     experiences.value = ExperienceAssembler.toEntitiesFromResponse(experiencesResponse);
 
-    const categoriesResponse = await categoryApiService.getCategory();
-    categoryMap.value = Object.fromEntries(CategoryAssembler.toEntitiesFromResponse(categoriesResponse).map(c => [c.id, c.description]));
-    destination.value = route.query.destination || '';
-    day.value = route.query.day || '';
-    experienceType.value = route.query.experienceType || '';
-    budget.value = route.query.budget || '';
+
+    if (categories.value.length === 0) {
+      const categoriesResponse = await categoryApiService.getCategory();
+      categories.value = CategoryAssembler.toEntitiesFromResponse(categoriesResponse);
+      categoryMap.value = Object.fromEntries(categories.value.map(c => [c.id, c.description]));
+    }
 
     mapUrl.value = getMapUrl(destination.value);
-    filterExperiences();
+
   } catch (error) {
     console.error(t('error.loadSearchResultsError'), error);
+    experiences.value = [];
+  } finally {
+    isLoading.value = false;
   }
+};
+
+onMounted(async () => {
+  try {
+    const categoriesResponse = await categoryApiService.getCategory();
+    categories.value = CategoryAssembler.toEntitiesFromResponse(categoriesResponse);
+    categoryMap.value = Object.fromEntries(categories.value.map(c => [c.id, c.description]));
+  } catch (error) {
+    console.error("Error al cargar categorías/frecuencias en ExperienceSearch:", error);
+  }
+
+  destination.value = route.query.destination || '';
+  day.value = route.query.day || '';
+  experienceType.value = route.query.experienceType || '';
+  budget.value = route.query.budget || '';
+
+  await loadFilteredExperiences();
 });
+
+watch(() => route.query, async (newQuery) => {
+  destination.value = newQuery.destination || '';
+  day.value = newQuery.day || '';
+  experienceType.value = newQuery.experienceType || '';
+  budget.value = newQuery.budget || '';
+
+  await loadFilteredExperiences();
+}, { deep: true });
 
 watch(destination, (newDest) => {
   mapUrl.value = getMapUrl(newDest);
-})
-watch([destination, day, experienceType, budget], () => {
-  filterExperiences();
 });
-
 
 function getMapUrl(dest) {
   if (!dest) return '';
-  return `https://maps.google.com/maps?q=$${encodeURIComponent(dest)},+${t('searchResults.mapDefaultCountry')}&output=embed`;
+  return `https://maps.google.com/maps?q=$${encodeURIComponent(dest)},+${encodeURIComponent(t('searchResults.mapDefaultCountry'))}&output=embed`;
 }
-
-const filterExperiences = () => {
-  filteredExperiences.value = experiences.value.filter((exp) => {
-    const matchesDestination = destination.value === '' || exp.location.toLowerCase().includes(destination.value.toLowerCase());
-    const matchesDay = day.value === '' || exp.frequencies.toLowerCase().includes(day.value.toLowerCase());
-    const matchesType = experienceType.value === '' || exp.title.toLowerCase().includes(experienceType.value.toLowerCase());
-    const matchesBudget = budget.value === '' || !budget.value || exp.price <= parseFloat(budget.value);
-    return matchesDestination && matchesDay && matchesType && matchesBudget;
-  });
-};
 </script>
 
 <template>
@@ -76,7 +112,12 @@ const filterExperiences = () => {
         </div>
         <div class="filter-item">
           <label class="filter-item-text">{{ $t('searchResults.filterDayLabel') }}</label>
-          <input v-model="day" class="filter-input" type="text" :placeholder="$t('searchResults.filterDayPlaceholder')" />
+          <select v-model="day" class="filter-input">
+            <option value="">{{ $t('searchResults.filterDayPlaceholder') }}</option>
+            <option v-for="option in frequencyOptions" :key="option.value" :value="option.value">
+              {{ option.label }}
+            </option>
+          </select>
         </div>
         <div class="filter-item">
           <label class="filter-item-text">{{ $t('searchResults.filterBudgetLabel') }}</label>
@@ -84,17 +125,28 @@ const filterExperiences = () => {
         </div>
         <div class="filter-item">
           <label class="filter-item-text">{{ $t('searchResults.filterExperienceTypeLabel') }}</label>
-          <input v-model="experienceType" class="filter-input" type="text" :placeholder="$t('searchResults.filterExperienceTypePlaceholder')" />
+          <select v-model="experienceType" class="filter-input">
+            <option value="">{{ $t('searchResults.filterExperienceTypePlaceholder') }}</option>
+            <option v-for="category in categories" :key="category.id" :value="category.description">
+              {{ category.description }}
+            </option>
+          </select>
+        </div>
+        <div class="filter-button-container">
+          <button @click="loadFilteredExperiences" class="search-button-local">{{ $t('searchResults.applyFilters') }}</button>
         </div>
       </div>
 
-      <div v-if="filteredExperiences.length === 0" class="no-results">
+      <div v-if="isLoading" class="loading-results">
+        <p>{{ $t('searchResults.loadingResults') }}</p>
+      </div>
+      <div v-else-if="experiences.length === 0" class="no-results">
         <p>{{ $t('searchResults.noResultsMessage') }}</p>
       </div>
 
-      <div class="result-list">
+      <div v-else class="result-list">
         <ExperienceCardUser
-            v-for="experience in filteredExperiences"
+            v-for="experience in experiences"
             :key="experience.id"
             :experience="experience"
             :categoryDescription="categoryMap[String(experience.categoryId)]"
@@ -114,6 +166,7 @@ const filterExperiences = () => {
     </div>
   </div>
 </template>
+
 
 <style scoped>
 .search-view {
@@ -136,18 +189,26 @@ const filterExperiences = () => {
   border-radius: 12px;
   padding: 1rem 1.5rem;
   display: flex;
-  justify-content: space-between;
+  gap: 1rem;
   flex-wrap: wrap;
   margin-bottom: 1rem;
+  align-items: flex-end;
 }
 
 .filters-summary .filter-item {
   flex: 1 1 200px;
-  margin-right: 1rem;
-  margin-bottom: 0.5rem;
+  margin-bottom: 0;
   font-weight: bold;
   font-size: 0.9rem;
   background-color: transparent;
+  min-width: 180px;
+}
+
+.filter-button-container {
+  flex-basis: 150px;
+  min-width: 150px;
+  margin-left: auto;
+  margin-top: 1.5rem;
 }
 
 .filter-item-text {
@@ -191,5 +252,39 @@ const filterExperiences = () => {
   border-radius: 6px;
   font-weight: normal;
   width: 100%;
+}
+
+.filter-input {
+  margin-top: 0.3rem;
+  padding: 0.5rem 0.75rem;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  font-weight: normal;
+  width: 100%;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  background-image: url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2020%2020%22%3E%3Cpath%20d%3D%22M9.293%2012.95l.707.707L15.657%208l-1.414-1.414L10%2010.828l-4.243-4.243L4.343%208z%22%2F%3E%3C%2Fsvg%3E');
+  background-repeat: no-repeat;
+  background-position: right 0.75rem center;
+  background-size: 0.8em;
+  padding-right: 2rem;
+}
+
+.search-button-local {
+  height: 48px;
+  padding: 0 2rem;
+  background-color: #6E58AA;
+  color: white;
+  font-weight: 600;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+  width: 100%;
+}
+
+.search-button-local:hover {
+  background-color: #372b50;
 }
 </style>

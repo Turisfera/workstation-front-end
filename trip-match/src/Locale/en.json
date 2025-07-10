@@ -21,7 +21,9 @@
     "recommendations": "Recommendations for you",
     "defaultUser": "Traveler",
     "loadingRecommendations": "Loading recommendations...",
-    "greetingSubtitle2": "Find your next adventure."
+    "greetingSubtitle2": "Find your next adventure.",
+    "dayPlaceholder": "Select a day",
+    "experienceTypePlaceholder": "Select a type"
   },
 
   "experience-view":{
@@ -29,6 +31,11 @@
     "button": "Add New"
   },
   "create-experience-form": {
+    "frequenciesOptions": {
+      "weekdays": "Weekdays",
+      "weekends": "Weekends",
+      "everyDay": "Every Day"
+    },
     "delete": "Delete",
     "edit": "Edit",
     "title": "Add New Experience",
@@ -78,7 +85,11 @@
   },
   "common": {
     "cancel": "Cancel",
-    "save": "Save"
+    "save": "Save",
+    "items_count": {
+      "one": "{count} ítem",
+      "other": "{count} ítems"
+    }
   },
     "reservation-view": {
       "listItem": {
@@ -309,12 +320,14 @@
     "filterDestinationLabel": "Destination",
     "filterDestinationPlaceholder": "Ex., Cusco",
     "filterDayLabel": "Day",
-    "filterDayPlaceholder": "Ex., Monday",
     "filterBudgetLabel": "Budget",
     "filterBudgetPlaceholder": "Max. S/. 100",
     "filterExperienceTypeLabel": "Experience Type",
-    "filterExperienceTypePlaceholder": "Ex. Adventure",
     "noResultsMessage": "No experiences were found with these criteria.",
-    "mapDefaultCountry": "Peru"
+    "mapDefaultCountry": "Peru",
+    "filterDayPlaceholder": "Select a day",
+    "filterExperienceTypePlaceholder": "Select a type",
+    "applyFilters": "Apply Filters"
   }
-  }
+}
+

@@ -21,13 +21,20 @@
     "recommendations": "Recomendaciones para ti",
     "defaultUser": "Viajero",
     "loadingRecommendations": "Cargando recomendaciones...",
-    "greetingSubtitle2": "Encuentra tu próxima aventura."
+    "greetingSubtitle2": "Encuentra tu próxima aventura.",
+    "dayPlaceholder": "Selecciona un día",
+    "experienceTypePlaceholder": "Selecciona un tipo"
   },
   "experience-view": {
     "title": "Tus Experiencias Publicadas",
     "button": "Añadir Nueva"
   },
   "create-experience-form": {
+    "frequenciesOptions": {
+      "weekdays": "Días de Semana",
+      "weekends": "Fines de Semana",
+      "everyDay": "Todos los días"
+    },
     "delete": "Eliminar",
     "edit": "Editar",
     "title": "Añadir Nueva Experiencia",
@@ -47,11 +54,6 @@
     "addedImagesLabel": "Imágenes agregadas",
     "alert": "Por favor, completa todos los campos requeridos.",
     "save": "Guardar Experiencia",
-    "frequenciesOptions": {
-      "weekdays": "Lunes a Viernes",
-      "weekends": "Fines de Semana",
-      "everyDay": "Todos los días"
-    },
     "existingImageName": "Imagen existente",
     "externalImageName": "Imagen externa",
     "imageAltText": "Imagen de la experiencia"
@@ -88,7 +90,11 @@
   },
   "common": {
     "cancel": "Cancelar",
-    "save": "Guardar"
+    "save": "Guardar",
+    "items_count": {
+      "one": "{count} ítem",
+      "other": "{count} ítems"
+    }
   },
   "reservation-view": {
     "listItem": {
@@ -320,12 +326,13 @@
     "filterDestinationLabel": "Destino",
     "filterDestinationPlaceholder": "Ej. Cusco",
     "filterDayLabel": "Día",
-    "filterDayPlaceholder": "Ej. Lunes",
     "filterBudgetLabel": "Presupuesto",
     "filterBudgetPlaceholder": "Máx. S/ 100",
     "filterExperienceTypeLabel": "Tipo de experiencia",
-    "filterExperienceTypePlaceholder": "Ej. Aventura",
     "noResultsMessage": "No se encontraron experiencias con estos criterios.",
-    "mapDefaultCountry": "Peru"
+    "mapDefaultCountry": "Peru",
+    "filterDayPlaceholder": "Selecciona un día",
+    "filterExperienceTypePlaceholder": "Selecciona un tipo",
+    "applyFilters": "Aplicar filtros"
   }
 }

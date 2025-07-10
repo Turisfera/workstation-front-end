@@ -8,8 +8,8 @@ import { ExperienceAssembler } from '@/Experience/Application/experience.assembl
 import { CategoryApiService } from "@/Experience/Application/category-api.service.js";
 import { CategoryAssembler } from "@/Experience/Application/category.assembler.js";
 const router = useRouter();
-const categoryApiService = new CategoryApiService(); // Instancia
-const experiencesApiService = new ExperiencesApiService(); // Instancia
+const categoryApiService = new CategoryApiService();
+const experiencesApiService = new ExperiencesApiService();
 const { t } = useI18n();
 
 const user = ref('');

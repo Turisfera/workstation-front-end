@@ -227,7 +227,7 @@ const SaveExperience = async () => {
 
           <div class="field-group">
             <label for="description">{{$t('create-experience-form.description')}}</label>
-            <textarea v-model="description" id="description" :placeholder="$t('create-experience-form.description')" class="input no-resize" rows="4" maxlength="200"></textarea>
+            <textarea v-model="description" id="description" :placeholder="$t('create-experience-form.description')" class="input no-resize" rows="4" maxlength="800"></textarea>
           </div>
 
           <div class="field-group">

@@ -49,7 +49,6 @@ onMounted(async () => {
     const bookingsData = getData(results[3]);
     const experiencesData = getData(results[4]);
 
-    // --- El resto de la lógica para procesar los datos es la misma ---
     agencyName.value = agencyData.agencyName || 'Agencia';
     stats.value.totalExperiences = experiencesData.length;
 

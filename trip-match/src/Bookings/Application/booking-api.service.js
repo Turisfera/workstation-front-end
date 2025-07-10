@@ -23,7 +23,6 @@ export class BookingApiService {
      */
     async getBookingsByAgency() {
         try {
-            // Esta ruta ya era correcta, la dejamos como está.
             return await http.get(`/Booking`);
         } catch (error) {
             console.error("Error fetching all bookings for agency view:", error);

@@ -7,7 +7,6 @@ export class ReviewsApiService {
     }
 
     async createReview(reviewData) {
-        // Asegúrate de que la ruta coincide con tu ReviewController
         return http.post(`/Review`, reviewData);
     }
 }

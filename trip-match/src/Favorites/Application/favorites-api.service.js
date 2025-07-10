@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const API_URL = import.meta.env.VITE_AUTH_URL || 'http://localhost:5000/api/v1';
+const API_URL = import.meta.env.VITE_AUTH_URL || 'https://trip-match-hfaqachdend9amey.canadacentral-01.azurewebsites.net/api/v1';
 
 export class FavoritesApiService {
     constructor() {
@@ -18,7 +18,7 @@ export class FavoritesApiService {
         const response = await axios.get(`${API_URL}/Favorite/tourist/${this.touristId}`, {
             headers: this.getAuthHeaders()
         });
-        return response.data; // lista de favoritos con experiencias
+        return response.data;
     }
 
     async addFavorite(experienceId) {

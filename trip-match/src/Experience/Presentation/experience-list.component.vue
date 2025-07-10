@@ -13,6 +13,7 @@ const publishedExperiences = ref([]);
 const experiences = ref([])
 const categories = ref([])
 const categoriesMap = reactive(new Map());
+const isLoading = ref(true);
 
 onMounted(async () => {
   try {
@@ -21,14 +22,13 @@ onMounted(async () => {
       categoryResponse.data.forEach(cat => {
         categoriesMap.set(cat.id, cat.name);
       });
-      console.log("Categories loaded for mapping:", categoriesMap); // Depuración
+      console.log("Categories loaded for mapping:", categoriesMap);
     } else {
       console.warn("API de categorías no devolvió un array válido.");
     }
   } catch (error) {
     console.error("Error loading categories for list:", error);
   }
-
 
   const agencyId = localStorage.getItem('userId');
   if (!agencyId) {
