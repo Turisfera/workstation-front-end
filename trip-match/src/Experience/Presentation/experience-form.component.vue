@@ -1,170 +1,125 @@
 <script setup>
-import {ref, reactive, onMounted} from 'vue'
-import {ExperiencesApiService} from "@/Experience/Application/experiences-api.service.js"
-import {CategoryApiService} from "@/Experience/Application/category-api.service.js";
-import router from "@/router.js";
-import {useRoute} from "vue-router";
-import { useI18n } from 'vue-i18n';
-import {useToast} from "primevue/usetoast";
-
+import { ref, onMounted } from 'vue'
+import { ExperiencesApiService } from '@/Experience/Application/experiences-api.service.js'
+import { CategoryApiService }    from '@/Experience/Application/category-api.service.js'
+import { useRoute, useRouter }   from 'vue-router'
+import { useI18n }               from 'vue-i18n'
+import { useToast }              from 'primevue/usetoast'
 const experiencesApiService = new ExperiencesApiService()
-const categoryApiService = new CategoryApiService()
-const { t } = useI18n();
-const toast = useToast();
-
-const title = ref("")
-const description = ref("")
-const location = ref("")
-const duration = ref(null)
-const price = ref(null)
-const frequencies = ref("")
-const schedules = ref([])
-const images = ref([])
-const imageUrl = ref("")
-const category = ref("")
-const categories = ref([])
-
-const formInvalid = ref(false)
-const routes = useRoute();
-const id = ref(routes.params.id || '');
-
-const includes = ref([]);
-const newIncludeItem = ref("");
-
-
-defineProps({
-  existingArticle: {
-    type: Object,
-    default: () => ({
-      title: "",
-      description: "",
-      location: "",
-      duration: 0,
-      price: 0.0,
-      frequencies: "",
-      schedules: [],
-      images: [],
-      includes: [],
-      categoryId: null
-    })
-  }
-});
-
-onMounted(async () => {
-  try {
-    const categoryResponse = await categoryApiService.getCategory();
-    if (categoryResponse && categoryResponse.data && Array.isArray(categoryResponse.data)) {
-      categories.value = categoryResponse.data.map(cat => ({ id: cat.id, description: cat.name }));
-    } else {
-      console.warn("API de categorías no devolvió un array válido:", categoryResponse);
-      toast.add({severity:'warn', summary: t('common.warning'), detail: t('create-experience-form.loadCategoriesError'), life: 3000});
-    }
-
-
-    if (id.value !== '') {
-      const response = await experiencesApiService.getExperienceById(id.value);
-      const experienceData = response.data;
-
-      title.value = experienceData.title;
-      description.value = experienceData.description;
-      location.value = experienceData.location;
-      duration.value = experienceData.duration;
-      price.value = experienceData.price;
-
-      frequencies.value = frecuencias.find(f => f.value === experienceData.frequencies) || "";
-      if (!frequencies.value && experienceData.frequencies) {
-        console.warn(`Frecuencia "${experienceData.frequencies}" del backend no encontrada en opciones locales.`)
-      }
-
-
-      schedules.value = (experienceData.schedules || []).map(s => ({
-        label: s.time,
-        value: s.time
-      }));
-
-      images.value = (experienceData.experienceImages || []).map(img => ({
-        name: t('create-experience-form.existingImageName'),
-        url: img.url
-      }));
-
-      includes.value = (experienceData.includes || []).map(inc => inc.description);
-
-
-      category.value = experienceData.categoryId;
-    }
-  } catch (error) {
-    console.error("Error loading data (categories or experience):", error);
-    toast.add({severity:'error', summary: t('common.error'), detail: t('create-experience-form.loadDataError'), life: 3000});
-  }
-});
-
-const addImageByUrl = () => {
-  if (imageUrl.value.trim() !== "") {
-    images.value.push({
-      name: t('create-experience-form.externalImageName'),
-      url: imageUrl.value.trim()
-    })
-    imageUrl.value = ""
-  }
-}
-
-const addIncludeItem = () => {
-  const trimmed = newIncludeItem.value.trim();
-  if (trimmed !== "" && includes.value.length < 3) {
-    includes.value.push(trimmed);
-    newIncludeItem.value = "";
-  }
-};
-
-const removeIncludeItem = (index) => {
-  includes.value.splice(index, 1);
-};
+const categoryApiService    = new CategoryApiService()
+const route                 = useRoute()
+const router                = useRouter()
+const { t }                 = useI18n()
+const toast                 = useToast()
+const id = ref(route.params.id || '')
 
 const frecuencias = [
   { label: t('create-experience-form.frequenciesOptions.weekdays'), value: 'weekdays' },
   { label: t('create-experience-form.frequenciesOptions.weekends'), value: 'weekends' },
   { label: t('create-experience-form.frequenciesOptions.everyDay'), value: 'daily' }
-];
+]
 
-const horariosDisponibles = [
-  { label: '08:00', value: '08:00' },
-  { label: '09:00', value: '09:00' },
-  { label: '10:00', value: '10:00' },
-  { label: '11:00', value: '11:00' },
-  { label: '12:00', value: '12:00' },
-  { label: '13:00', value: '13:00' },
-  { label: '14:00', value: '14:00' },
-  { label: '15:00', value: '15:00' },
-  { label: '16:00', value: '16:00' },
-  { label: '17:00', value: '17:00' },
-  { label: '18:00', value: '18:00' },
-  { label: '19:00', value: '19:00' },
-  { label: '20:00', value: '20:00' },
-];
+const title       = ref('')
+const description = ref('')
+const location    = ref('')
+const duration    = ref(null)
+const price       = ref(null)
+const frequencies = ref('')
+const schedules   = ref([])
+const images      = ref([])
+const imageUrl    = ref('')
+const category    = ref('')
+const categories  = ref([])
+const includes    = ref([])
+const newInclude  = ref('')
+const formInvalid = ref(false)
 
-const close = async () => {
-  await router.replace({ name: 'ExperienceList' });
+const horariosDisponibles = Array.from({ length: 13 }, (_, i) => {
+  const hour = 8 + i
+  const label = hour.toString().padStart(2, '0') + ':00'
+  return { label, value: label }
+})
+onMounted(async () => {
+  try {
+    const catRes = await categoryApiService.getCategory()
+    if (Array.isArray(catRes.data)) {
+      categories.value = catRes.data.map(c => ({ id: c.id, description: c.name }))
+    } else {
+      toast.add({ severity: 'warn', summary: t('common.warning'), detail: t('create-experience-form.loadCategoriesError'), life: 3000 })
+    }
+
+    if (id.value) {
+      const { data } = await experiencesApiService.getExperienceById(id.value)
+      title.value       = data.title
+      description.value = data.description
+      location.value    = data.location
+      duration.value    = data.duration
+      price.value       = data.price
+      const found = frecuencias.find(f => f.value === data.frequencies)
+      frequencies.value = found || ''
+      if (!found && data.frequencies) console.warn(`Frecuencia desconocida: ${data.frequencies}`)
+
+      schedules.value = (data.schedules || []).map(s => ({ label: s.time, value: s.time }))
+      images.value    = (data.experienceImages || []).map(img => ({
+        name: t('create-experience-form.existingImageName'),
+        url: img.url
+      }))
+      includes.value = (data.includes || []).map(i => i.description)
+      category.value = data.categoryId
+    }
+  } catch (e) {
+    console.error(e)
+    toast.add({ severity: 'error', summary: t('common.error'), detail: t('create-experience-form.loadDataError'), life: 3000 })
+  }
+})
+function addImageByUrl() {
+  if (imageUrl.value.trim()) {
+    images.value.push({ name: t('create-experience-form.externalImageName'), url: imageUrl.value.trim() })
+    imageUrl.value = ''
+  }
+}
+function addInclude() {
+  const txt = newInclude.value.trim()
+  if (txt && includes.value.length < 3) {
+    includes.value.push(txt)
+    newInclude.value = ''
+  }
+}
+function removeInclude(i) {
+  includes.value.splice(i, 1)
 }
 
-const SaveExperience = async () => {
-
-  if (!title.value || !description.value || !location.value || duration.value === null || duration.value <= 0 ||
-      price.value === null || price.value < 0 || !frequencies.value || schedules.value.length === 0 ||
-      images.value.length === 0 || !category.value || !includes.value.length) {
-    formInvalid.value = true;
-    toast.add({severity:'warn', summary: t('common.warning'), detail: t('create-experience-form.alert'), life: 3000});
-    return;
+async function close() {
+  await router.replace({ name: 'ExperienceList' })
+}
+async function SaveExperience() {
+  if (
+      !title.value ||
+      !description.value ||
+      !location.value ||
+      !duration.value ||
+      duration.value <= 0 ||
+      price.value == null ||
+      price.value < 0 ||
+      !frequencies.value ||
+      schedules.value.length === 0 ||
+      images.value.length === 0 ||
+      !category.value ||
+      includes.value.length === 0
+  ) {
+    formInvalid.value = true
+    toast.add({ severity: 'warn', summary: t('common.warning'), detail: t('create-experience-form.alert'), life: 3000 })
+    return
   }
-  formInvalid.value = false;
+  formInvalid.value = false
 
-  const agencyUserId = localStorage.getItem('userId');
+  const agencyUserId = localStorage.getItem('userId')
   if (!agencyUserId) {
-    console.error("No agencyUserId found in localStorage. User must be an agency to create/edit experiences.");
-    toast.add({severity:'error', summary: t('common.error'), detail: t('create-experience-form.agencyUserError'), life: 5000});
-    return;
+    toast.add({ severity: 'error', summary: t('common.error'), detail: t('create-experience-form.agencyUserError'), life: 5000 })
+    return
   }
 
-  const experiencePayload = {
+  const payload = {
     title: title.value,
     description: description.value,
     location: location.value,
@@ -172,135 +127,223 @@ const SaveExperience = async () => {
     price: parseFloat(price.value),
     frequencies: frequencies.value.value,
     schedules: schedules.value.map(s => ({ time: s.value })),
-    experienceImages: images.value.map(img => ({ url: img.url })),
-    includes: includes.value.map(item => ({ description: item })),
+    experienceImages: images.value.map(i => ({ url: i.url })),
+    includes: includes.value.map(i => ({ description: i })),
     categoryId: parseInt(category.value),
-    agencyUserId: agencyUserId
-  };
+    agencyUserId
+  }
+  if (id.value) payload.id = parseInt(id.value)
 
-  console.log("Payload enviado:", JSON.stringify(experiencePayload, null, 2));
-  console.log("Tipo de agencyUserId:", typeof agencyUserId, "Valor:", agencyUserId);
   try {
-    let response;
-    if (id.value !== '') {
-      experiencePayload.id = parseInt(id.value);
-      response = await experiencesApiService.updateExperience(experiencePayload.id, experiencePayload);
-      if (response.status === 200) {
-        toast.add({severity:'success', summary: t('common.success'), detail: t('create-experience-form.experienceUpdateSuccess'), life: 3000});
-        await router.push({ name: 'ExperienceList' });
-      } else {
-        throw new Error(t('create-experience-form.updateFailed'));
-      }
+    const res = id.value
+        ? await experiencesApiService.updateExperience(payload.id, payload)
+        : await experiencesApiService.createExperience(payload)
+
+    const okStatus = id.value ? 200 : 201
+    if (res.status === okStatus) {
+      toast.add({
+        severity: 'success',
+        summary: t('common.success'),
+        detail: id.value
+            ? t('create-experience-form.experienceUpdateSuccess')
+            : t('create-experience-form.experienceCreateSuccess'),
+        life: 3000
+      })
+      await router.push({ name: 'ExperienceList' })
     } else {
-      response = await experiencesApiService.createExperience(experiencePayload);
-      if (response.status === 201) {
-        toast.add({severity:'success', summary: t('common.success'), detail: t('create-experience-form.experienceCreateSuccess'), life: 3000});
-        await router.push({ name: 'ExperienceList' });
-      } else {
-        throw new Error(t('create-experience-form.createFailed'));
-      }
+      throw new Error('Unexpected status')
     }
-  } catch (error) {
-    console.error("Error saving experience:", error);
-    const errorMessage = error.response?.data?.message || error.message || t('common.unknownError');
-    toast.add({severity:'error', summary: t('common.error'), detail: errorMessage, life: 5000});
+  } catch (err) {
+    console.error(err)
+    toast.add({
+      severity: 'error',
+      summary: t('common.error'),
+      detail: err.response?.data?.message || err.message || t('common.unknownError'),
+      life: 5000
+    })
   }
 }
 </script>
 
 <template>
-  <div class="fixed flex items-center justify-center ">
-    <div class=" rounded-lg relative form-container">
+  <div class="fixed flex items-center justify-center">
+    <div class="rounded-lg relative form-container">
       <div class="form-title">
-        <h2>{{$t("create-experience-form.title")}}</h2>
+        <h2>{{ $t('create-experience-form.title') }}</h2>
         <button @click="close" class="button-close pi pi-times"></button>
       </div>
       <div class="separator mb-4"></div>
       <div class="form form-scroll">
-        <form @submit.prevent="submit" class="form-fields form1">
+        <form @submit.prevent="SaveExperience" class="form-fields form1">
           <Toast />
-
           <div class="field-group">
-            <label for="title">{{$t('create-experience-form.name')}}</label>
-            <input v-model="title" id="title" type="text" :placeholder="$t('create-experience-form.name')" class="input" required />
+            <label for="title">{{ $t('create-experience-form.name') }}</label>
+            <input
+                id="title"
+                v-model="title"
+                type="text"
+                :placeholder="$t('create-experience-form.name')"
+                class="input"
+                required
+            />
           </div>
 
           <div class="field-group">
-            <label for="description">{{$t('create-experience-form.description')}}</label>
-            <textarea v-model="description" id="description" :placeholder="$t('create-experience-form.description')" class="input no-resize" rows="4" maxlength="800"></textarea>
+            <label for="description">{{ $t('create-experience-form.description') }}</label>
+            <textarea
+                id="description"
+                v-model="description"
+                :placeholder="$t('create-experience-form.description')"
+                class="input no-resize"
+                rows="4"
+                maxlength="800"
+            ></textarea>
           </div>
 
           <div class="field-group">
-            <label for="location">{{$t('create-experience-form.location')}}</label>
-            <input v-model="location" id="location" type="text" :placeholder="$t('create-experience-form.location')" class="input" required />
+            <label for="location">{{ $t('create-experience-form.location') }}</label>
+            <input
+                id="location"
+                v-model="location"
+                type="text"
+                :placeholder="$t('create-experience-form.location')"
+                class="input"
+                required
+            />
           </div>
 
           <div class="field-group">
-            <label for="duration">{{$t('create-experience-form.hour')}}</label>
-            <input v-model="duration" id="duration" type="number" min="1" step="1" :placeholder="$t('create-experience-form.hour')" class="input" />
+            <label for="duration">{{ $t('create-experience-form.hour') }}</label>
+            <input
+                id="duration"
+                v-model="duration"
+                type="number"
+                min="1"
+                step="1"
+                :placeholder="$t('create-experience-form.hour')"
+                class="input"
+            />
           </div>
 
           <div class="field-group">
-            <label for="price">{{$t('create-experience-form.price')}}</label>
-            <input v-model="price" id="price" type="number" min="0" step="0.10" :placeholder="$t('create-experience-form.price')" class="input" />
+            <label for="price">{{ $t('create-experience-form.price') }}</label>
+            <input
+                id="price"
+                v-model="price"
+                type="number"
+                min="0"
+                step="0.1"
+                :placeholder="$t('create-experience-form.price')"
+                class="input"
+            />
           </div>
-
           <div class="field-group">
-            <label for="frequencies">{{$t('create-experience-form.frequencies')}}</label>
-            <pv-input-select v-model="frequencies" :options="frecuencias" optionLabel="label" :placeholder="$t('create-experience-form.frequencies')" class="w-full custom-multiselect"></pv-input-select>
+            <label for="frequencies">{{ $t('create-experience-form.frequencies') }}</label>
+            <pv-input-select
+                v-model="frequencies"
+                :options="frecuencias"
+                option-label="label"
+                :placeholder="$t('create-experience-form.frequencies')"
+                class="w-full custom-multiselect"
+            />
           </div>
-
           <div class="field-group">
-            <label for="schedules">{{$t('create-experience-form.schedules')}}</label>
-            <pv-multi-select v-model="schedules" :options="horariosDisponibles" option-label="label" :placeholder="$t('create-experience-form.schedules')" class="custom-multiselect" />
+            <label for="schedules">{{ $t('create-experience-form.schedules') }}</label>
+            <pv-multi-select
+                v-model="schedules"
+                :options="horariosDisponibles"
+                option-label="label"
+                :placeholder="$t('create-experience-form.schedules')"
+                class="custom-multiselect"
+            />
           </div>
-
           <div class="field-group">
-            <label for="category">{{$t('create-experience-form.category')}}</label>
-            <pv-input-select v-model="category" :options="categories" optionLabel="description" optionValue="id" :placeholder="$t('create-experience-form.category')" class="w-full custom-multiselect"></pv-input-select>
+            <label for="category">{{ $t('create-experience-form.category') }}</label>
+            <pv-input-select
+                v-model="category"
+                :options="categories"
+                option-label="description"
+                option-value="id"
+                :placeholder="$t('create-experience-form.category')"
+                class="w-full custom-multiselect"
+            />
           </div>
-
           <div class="field-group includes-section">
-            <label for="includes">{{$t('create-experience-form.include')}}</label>
+            <label for="includes">{{ $t('create-experience-form.include') }}</label>
             <div class="includes-input-wrapper">
-              <input v-model="newIncludeItem" id="includes" type="text" class="input include-input" :placeholder="$t('create-experience-form.include')" />
+              <input
+                  id="includes"
+                  v-model="newInclude"
+                  type="text"
+                  class="input include-input"
+                  :placeholder="$t('create-experience-form.include')"
+              />
               <button
                   type="button"
                   class="include-add-button"
-                  @click="addIncludeItem"
-                  :disabled="includes.length >= 3 || !newIncludeItem"
+                  @click="addInclude"
+                  :disabled="includes.length >= 3 || !newInclude"
               >
                 <i class="pi pi-plus mr-1"></i>
-                {{ $t("create-experience-form.include-button") }}
+                {{ $t('create-experience-form.include-button') }}
               </button>
             </div>
             <div class="include-chip-wrapper">
-              <div class="include-chip" v-for="(item, index) in includes" :key="index">
+              <div
+                  class="include-chip"
+                  v-for="(item, idx) in includes"
+                  :key="idx"
+              >
                 {{ item }}
-                <button type="button" class="include-chip-remove pi pi-times" @click="removeIncludeItem(index)"></button>
+                <button
+                    type="button"
+                    class="include-chip-remove pi pi-times"
+                    @click="removeInclude(idx)"
+                ></button>
               </div>
             </div>
           </div>
-
           <div class="field-group">
             <label for="imageUrl">{{ $t('create-experience-form.imageUrlLabel') }}</label>
-            <input v-model="imageUrl" id="imageUrl" type="text" :placeholder="$t('create-experience-form.img')" class="input mt-2" />
-            <button type="button" @click="addImageByUrl" class="button-add-image">{{ $t("create-experience-form.img-button") }}</button>
+            <input
+                id="imageUrl"
+                v-model="imageUrl"
+                type="text"
+                :placeholder="$t('create-experience-form.img')"
+                class="input mt-2"
+            />
+            <button
+                type="button"
+                @click="addImageByUrl"
+                class="button-add-image"
+            >
+              {{ $t('create-experience-form.img-button') }}
+            </button>
           </div>
 
           <div class="field-group">
             <label>{{ $t('create-experience-form.addedImagesLabel') }}</label>
             <div class="mt-2 grid grid-cols-3 gap-2">
-              <div v-for="(img, index) in images" :key="index" class="border p-1 rounded">
-                <img :src="img.url || img.objectUrl" :alt="$t('create-experience-form.imageAltText')" class="w-full h-32 object-cover rounded" width="40px" height="40px" />
+              <div
+                  v-for="(img, i) in images"
+                  :key="i"
+                  class="border p-1 rounded"
+              >
+                <img
+                    :src="img.url"
+                    :alt="$t('create-experience-form.imageAltText')"
+                    class="w-full h-32 object-cover rounded"
+                />
                 <p class="text-xs mt-1 break-all">{{ img.name }}</p>
               </div>
             </div>
           </div>
-
-          <p v-if="formInvalid" class="alert">{{ $t("create-experience-form.alert") }}</p>
-
-          <button @click="SaveExperience" type="submit" class="button-add-experience">{{ $t("create-experience-form.save") }}</button>
+          <p v-if="formInvalid" class="alert">
+            {{ $t('create-experience-form.alert') }}
+          </p>
+          <button type="submit" class="button-add-experience">
+            {{ $t('create-experience-form.save') }}
+          </button>
         </form>
       </div>
     </div>

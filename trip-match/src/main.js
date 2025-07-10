@@ -15,6 +15,7 @@ import MultiSelect         from 'primevue/multiselect'
 import FileUpload          from 'primevue/fileupload'
 import InputNumber         from 'primevue/inputnumber'
 import Toast               from 'primevue/toast'
+import Dropdown       from 'primevue/dropdown'
 
 const app = createApp(App)
 
@@ -30,6 +31,7 @@ app.component('pv-input-text',    InputText)
 app.component('pv-select-button', SelectButton)
 app.component('pv-multi-select',  MultiSelect)
 app.component('pv-file-upload',   FileUpload)
+app.component('pv-input-select',  Dropdown)
 app.component('pv-input-number',  InputNumber)
 app.component('pv-toast',         Toast)
 

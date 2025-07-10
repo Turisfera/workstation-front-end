@@ -120,7 +120,6 @@ async function login() {
       } else {
         alert(t('error.invalidRole'));
       }
-
       alert(t('login.successMessage'));
     } else {
       alert(t('error.loginFailed'));
